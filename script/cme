@@ -12,6 +12,38 @@ use Pod::Usage;
 use Path::Tiny;
 use POSIX qw/setsid/;
 
+# Replace all this stuff by App::Cme::Command::*  ??
+sub load_cme_extensions {
+    my $command        = shift;
+    my $command_option = shift;
+
+    # scan lib/Config/Model/extensions dir to find cme-* subcommands
+    my @dir_to_scan = @INC;
+    my %extension_path;
+    foreach my $inc (@dir_to_scan) {
+        my $dir = path("$inc/Config/Model/extensions/");
+        next unless -d $dir;
+        foreach my $ext ( $dir->children ) {
+            my $cmd = substr $ext->basename, 4;
+
+            # don't clobber commands found before in @$INC
+            next if $extension_path{$cmd};
+
+            $command_option->{$cmd} = [];
+            $extension_path{$cmd} = $ext;
+        }
+    }
+
+    # run extension if the command matches one extension
+    if ( my $path = $extension_path{$command} )
+    {
+        say "doing $path";
+        do $path;             # thus @$INC and @$ARGV  are still valid
+        exit;
+    }
+
+}
+
 sub run_shell_ui ($$) {
     my ($root, $root_model) = @_;
 
@@ -107,29 +139,7 @@ pod2usage( -message => 'no command specified', -verbose => 0 )
 pod2usage( -verbose => 1 ) if $command =~ /help/;
 pod2usage( -verbose => 2 ) if $command =~ /man/;
 
-# scan lib/Config/Model/extensions dir to find cme-* subcommands
-my @dir_to_scan = @INC;
-my %extension_path;
-foreach my $inc (@dir_to_scan) {
-    my $dir = path("$inc/Config/Model/extensions/");
-    next unless -d $dir;
-    foreach my $ext ( $dir->children ) {
-        my $cmd = substr $ext->basename, 4;
-
-        # don't clobber commands found before in @INC
-        next if $extension_path{$cmd};
-
-        $command_option{$cmd} = [];
-        $extension_path{$cmd} = $ext;
-    }
-}
-
-# run extention if the command matches one extension
-if ( my $path = $extension_path{$command} ) {
-    say "doing $path";
-    do $path;    # thus @INC and @ARGV  are still valid
-    exit;
-}
+load_cme_extensions ($command, \%command_option);
 
 my $cmd_options = $command_option{$command}
     || pod2usage( -message => "unknown command: $command", -verbose => 0 );
