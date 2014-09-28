@@ -1,48 +1,75 @@
-#!/usr/bin/env perl
+package App::Cme ;
 
 use strict;
 use warnings;
 use 5.10.1;
 
+use App::Cmd::Setup -app;
+
 use Config::Model;
 use Config::Model::Lister;
-use Config::Model::ObjTreeScanner;
-use Getopt::Long;
-use Pod::Usage;
-use Path::Tiny;
-use POSIX qw/setsid/;
+#use Config::Model::ObjTreeScanner;
+#use Getopt::Long;
+#use Pod::Usage;
+#use Path::Tiny;
+#use POSIX qw/setsid/;
 
-# Replace all this stuff by App::Cme::Command::*  ??
-sub load_cme_extensions {
-    my $command        = shift;
-    my $command_option = shift;
+sub opt_spec {
+  my ( $class, $app ) = @_;
 
-    # scan lib/Config/Model/extensions dir to find cme-* subcommands
-    my @dir_to_scan = @INC;
-    my %extension_path;
-    foreach my $inc (@dir_to_scan) {
-        my $dir = path("$inc/Config/Model/extensions/");
-        next unless -d $dir;
-        foreach my $ext ( $dir->children ) {
-            my $cmd = substr $ext->basename, 4;
+  my @global_options = (
+      "model_dir|model-dir=s"  => "Specify an alternate directory to find model files",
+      "try-app-as-model!"      => "try to load a model using directly the application name specified as 3rd parameter on the command line",
+      "dev!"                   => "test a model under development",
+      "force_load|force-load!" => "Load file even if error are found in data. Bad data are discarded",
+      "create!"                => "start from scratch.",
+      # "root_dir|root-dir=s"    => \$root_dir,
+      "backend=s"              => "Specify a read/write backend",
+      "stack-trace|trace!"     => "Provides a full stack trace when exiting on error",
+      "backup:s"               => "Create a backup of configuration files before saving.",
+      "save!"                  => "Force a save even if no change was done",
+      "strict!"                => "cme will exit 1 if warnings are found during check",
+  );
 
-            # don't clobber commands found before in @$INC
-            next if $extension_path{$cmd};
+  return (
+      \@global_options,
+      $class->options($app),
+  );
+}
 
-            $command_option->{$cmd} = [];
-            $extension_path{$cmd} = $ext;
-        }
-    }
-
-    # run extension if the command matches one extension
-    if ( my $path = $extension_path{$command} )
-    {
-        say "doing $path";
-        do $path;             # thus @$INC and @$ARGV  are still valid
+sub validate_args {
+    my ( $self, $opt, $args ) = @_;
+    if ( $opt->{help} ) {
+        my ($command) = $self->command_names;
+        $self->app->execute_command(
+            $self->app->prepare_command("help", $command)
+        );
         exit;
     }
 
+    if ( not $args->application ) {
+        my $command = (split('::', ref($self)))[-1] ;
+
+        say "You forgot to specify an application to run cme on. Like 'cme $command stuff'.";
+        say "The following applications are available:";
+
+        my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
+        foreach my $cat ( keys %$categories ) {
+            my $names = $categories->{$cat} || [];
+            next unless @$names;
+            print "$cat:\n  ", join( "\n  ", @$names ), "\n";
+        }
+        exit 1;
+    }
+
+    $self->validate( $opt, $args );
 }
+
+
+
+1;
+
+__END__
 
 sub run_shell_ui ($$) {
     my ($root, $root_model) = @_;
@@ -88,7 +115,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    check   => [],
     migrate => [],
     fix     => [
         "from=s"   => \@fix_from,
@@ -116,19 +142,6 @@ my %command_option = (
     ],
 );
 
-my @global_options = (
-    "model_dir|model-dir=s"  => \$model_dir,
-    "try-app-as-model!"      => \$try_application_as_model,
-    "dev!"                   => \$dev,
-    "force_load|force-load!" => \$force_load,
-    "create!"                => \$auto_create,
-    "root_dir|root-dir=s"    => \$root_dir,
-    "backend=s"              => \$backend,
-    "stack-trace|trace!"     => \$trace,
-    "backup:s"               => \$backup,
-    "save!"                  => \$force_save,
-    "strict!"                => \$strict,
-);
 
 # retrieve the main command, i.e. the first arg without leading dash
 my ($command) = grep { !/^-/ } @ARGV;
@@ -166,72 +179,6 @@ if ( defined $root_dir && !-e $root_dir ) {
     mkdir $root_dir, 0755 || die "can't create $root_dir:$!";
 }
 
-my $model = Config::Model->new( model_dir => $model_dir );
-
-my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
-
-if ( not $application or $command eq 'list' ) {
-    print "You forgot to specify an application to run cme on. Like 'cme $command stuff'.\n"
-        unless $application;
-    print "The following applications are available:\n";
-    foreach my $cat ( keys %$categories ) {
-        my $names = $categories->{$cat} || [];
-        next unless @$names;
-        print "$cat:\n  ", join( "\n  ", @$names ), "\n";
-    }
-    exit 1;
-}
-
-my $root_model = $appli_map->{$application};
-$root_model ||= $application if $try_application_as_model;
-
-if ( not defined $root_model ) {
-    die "Unknown application: $application. Run 'cme list' to list available applications\n";
-}
-
-# @ARGV should be [ $config_file ] [ ~~ ] [ modification_instructions ]
-my $config_file;
-if ( $appli_info->{$application}{require_config_file} ) {
-    $config_file = shift @ARGV;
-    pod2usage(
-        -message => "no config file specified. Command should be cme $command $application file",
-        -verbose => 0
-    ) unless defined $config_file;
-}
-elsif ( $appli_info->{$application}{allow_config_file_override} and $ARGV[0] and $ARGV[0] ne '~~' )
-{
-    $config_file = shift @ARGV;
-}
-
-# else cannot distinguish between bogus config_file and modification_instructions
-
-# slurp any '~~'
-if ( $ARGV[0] and $ARGV[0] eq '~~' ) {
-    shift @ARGV;
-}
-
-# now @ARGV contains modification_instructions (or bogus config_file) which can only be used by command modify
-if ( @ARGV and $command ne 'modify' ) {
-    pod2usage(
-        -message => "cannot specify config modification with command $command",
-        -verbose => 0
-    );
-}
-
-my $inst = $model->instance(
-    root_class_name => $root_model,
-    instance_name   => $application,
-    application     => $application,
-    root_dir        => $root_dir,
-    check           => $force_load ? 'no' : 'yes',
-    auto_create     => $auto_create,
-    skip_read       => $load ? 1 : 0,
-    backend         => $backend,
-    backup          => $backup,
-    config_file     => $config_file,
-);
-
-my $root         = $inst->config_root;
 my $request_save = 0;
 
 if ( $command eq 'dump' ) {
@@ -239,11 +186,6 @@ if ( $command eq 'dump' ) {
     print $dump_string ;
 }
 elsif ( $command eq 'check' ) {
-    say "loading data";
-    Config::Model::ObjTreeScanner->new( leaf_cb => sub { } )->scan_node( undef, $root );
-    say "checking data";
-    $root->dump_tree( mode => 'full' );
-    say "check done";
 }
 elsif ( $command eq 'search' ) {
     pod2usage( -message => "missing -search option with search command" )

@@ -1,0 +1,4 @@
+#!/usr/bin/perl
+
+use App::Cme;
+App::Cme->run;
