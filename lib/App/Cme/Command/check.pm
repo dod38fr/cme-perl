@@ -36,8 +36,7 @@ EOD
 sub execute {
     my ($self, $opt, $args) = @_;
 
-    my ($model, $inst) = $self->init_cme($opt,$args);
-    my $root = $inst->config_root;
+    my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
     say "loading data";
     Config::Model::ObjTreeScanner->new( leaf_cb => sub { } )->scan_node( undef, $root );

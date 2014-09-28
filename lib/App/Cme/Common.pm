@@ -67,7 +67,8 @@ sub init_cme {
         config_file     => $config_file,
     );
 
-    return ($model , $inst);
+    # model and inst are deleted if not kept in a scope
+    return ( $model , $inst, $inst->config_root );
 }
 
 1;
