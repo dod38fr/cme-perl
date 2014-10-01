@@ -11,10 +11,22 @@ use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
 
+sub validate_args {
+    shift->process_args(@_);
+}
+
+sub opt_spec {
+    my ( $class, $app ) = @_;
+    return ( 
+        [ "strict!" => "cme will exit 1 if warnings are found during check" ],
+        $class->global_options,
+    );
+}
+
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]";
+  return "$desc [application]  [ config_file | ~~ ]";
 }
 
 sub description {
@@ -43,6 +55,12 @@ sub execute {
     say "checking data";
     $root->dump_tree( mode => 'full' );
     say "check done";
+
+    my $ouch = $inst->has_warning;
+
+    if ( $opt->{strict} and $ouch ) {
+        die "Found $ouch warnings in strict mode\n";
+    }
 }
 
 1;

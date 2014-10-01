@@ -14,29 +14,6 @@ use Config::Model::Lister;
 #use Path::Tiny;
 #use POSIX qw/setsid/;
 
-sub opt_spec {
-  my ( $class, $app ) = @_;
-
-  my @global_options = (
-      "model_dir|model-dir=s"  => "Specify an alternate directory to find model files",
-      "try-app-as-model!"      => "try to load a model using directly the application name specified as 3rd parameter on the command line",
-      "dev!"                   => "test a model under development",
-      "force_load|force-load!" => "Load file even if error are found in data. Bad data are discarded",
-      "create!"                => "start from scratch.",
-      # "root_dir|root-dir=s"    => \$root_dir,
-      "backend=s"              => "Specify a read/write backend",
-      "stack-trace|trace!"     => "Provides a full stack trace when exiting on error",
-      "backup:s"               => "Create a backup of configuration files before saving.",
-      "save!"                  => "Force a save even if no change was done",
-      "strict!"                => "cme will exit 1 if warnings are found during check",
-  );
-
-  return (
-      \@global_options,
-      $class->options($app),
-  );
-}
-
 sub validate_args {
     my ( $self, $opt, $args ) = @_;
     if ( $opt->{help} ) {
