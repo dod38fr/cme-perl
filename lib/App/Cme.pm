@@ -195,13 +195,6 @@ elsif ( $command eq 'fix' ) {
     $request_save = 1;
 }
 elsif ( $command eq 'modify' ) {
-    if (@ARGV) {
-        $root->load("@ARGV");
-    }
-    else {
-        pod2usage( -message => "No modification instructions given on command line", verbose => 0 );
-    }
-    $request_save = 1;
 }
 elsif ( $command =~ /^fuse/ ) {
     eval { require Config::Model::FuseUI; };
