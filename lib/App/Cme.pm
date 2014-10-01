@@ -73,7 +73,6 @@ my $help       = 0;
 my $force_load = 0;
 my $dev        = 0;
 my $backend;
-my $dumptype;
 my $load;
 my @fix_from;
 my $fix_filter;
@@ -108,9 +107,6 @@ my %command_option = (
     ],
     shell => [
         "open_item|open-item=s" => \$open_item,
-    ],
-    dump => [
-        "dumptype:s" => \$dumptype,
     ],
     fusefs => [
         "fuse_dir|fuse-dir=s" => \$fuse_dir,
@@ -158,13 +154,7 @@ if ( defined $root_dir && !-e $root_dir ) {
 
 my $request_save = 0;
 
-if ( $command eq 'dump' ) {
-    my $dump_string = $root->dump_tree( mode => $dumptype || 'custom' );
-    print $dump_string ;
-}
-elsif ( $command eq 'check' ) {
-}
-elsif ( $command eq 'search' ) {
+if ( $command eq 'search' ) {
     pod2usage( -message => "missing -search option with search command" )
         unless defined $search;
     my @res = $root->tree_searcher( type => $search_type )->search($search);
@@ -603,19 +593,6 @@ Example:
  sections:base source -> 'http://ftp.fr.debian.org'
  sections:debian source -> 'http://ftp.uk.debian.org/debian'
  sections:toolchains source -> 'http://www.emdebian.org/debian'
-
-=head2 dump
-
-Dump configuration content on STDOUT with Config::Model syntax.
-
-By default, dump only custom values, i.e. different from application
-built-in values or model default values. You can use the C<-dumptype> option for
-other types of dump:
-
- -dumptype [ full | preset | custom ]
-
-Choose to dump every values (full), only preset values or only
-customized values (default)
 
 =head2 fusefs 
 

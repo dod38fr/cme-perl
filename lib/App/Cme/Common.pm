@@ -10,7 +10,7 @@ use XXX ;
 sub global_options {
   my ( $class, $app ) = @_;
 
-  my @global_options = YYY (
+  my @global_options = (
       [ "model_dir|model-dir=s"  => "Specify an alternate directory to find model files"],
       [ "try-app-as-model!"      => "try to load a model using directly the application name specified as 3rd parameter on the command line"],
       [ "dev!"                   => "test a model under development"],
