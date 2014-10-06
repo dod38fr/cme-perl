@@ -19,6 +19,8 @@ sub global_options {
       # ["root_dir|root-dir=s"    => \$root_dir],
       [ "backend=s"              => "Specify a read/write backend"],
       [ "stack-trace|trace!"     => "Provides a full stack trace when exiting on error"],
+      # no bundling
+      { getopt_conf => [ qw/no_bundling/ ] }
   );
 
   return (
