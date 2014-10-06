@@ -4,7 +4,6 @@ package App::Cme::Command::dump ;
 use strict;
 use warnings;
 use 5.10.1;
-use XXX;
 
 use App::Cme -command ;
 
@@ -19,11 +18,14 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
-        ["dumptype=s" => "Dump all values (full) or only preset values or customized values",
-         { regex => qr/^(?:full|custom|preset)$/,
-           required => 1,
-           #default => 'custom'
-       } ],
+        [
+            "dumptype=s" => "Dump all values (full) or only preset values or customized values",
+            {
+                regex => qr/^(?:full|custom|preset)$/,
+                required => 1,
+                #default => 'custom'
+            }
+        ],
         $class->global_options,
     );
 }
@@ -31,7 +33,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]  [ config_file | ~~ ]";
+  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom|preset ]";
 }
 
 sub description {
