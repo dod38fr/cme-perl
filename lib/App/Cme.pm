@@ -97,10 +97,6 @@ my %command_option = (
         "filter=s" => \$fix_filter,
     ],
     modify => [],
-    search => [
-        "search=s"        => \$search,
-        "narrow-search=s" => \$search_type,
-    ],
     edit => [
         "ui|if=s"               => \$ui_type,
         "open_item|open-item=s" => \$open_item,
@@ -154,22 +150,7 @@ if ( defined $root_dir && !-e $root_dir ) {
 
 my $request_save = 0;
 
-if ( $command eq 'search' ) {
-    pod2usage( -message => "missing -search option with search command" )
-        unless defined $search;
-    my @res = $root->tree_searcher( type => $search_type )->search($search);
-    foreach my $path (@res) {
-        print "$path";
-        my $obj = $root->grab($path);
-        if ( $obj->get_type =~ /leaf|check_list/ ) {
-            my $v = $obj->fetch;
-            $v = defined $v ? $v : '<undef>';
-            print " -> '$v'";
-        }
-        print "\n";
-    }
-}
-elsif ( $command eq 'migrate' ) {
+if ( $command eq 'migrate' ) {
     $request_save = 1;
     $root->migrate;
 }
@@ -545,54 +526,6 @@ Another example which restores the default value of the text of all GPL like lic
 Or update the copyright years of the package maintainer's file:
 
    cme modify dpkg-copyright ~~ 'File=debian/* Copyright=~s/2013/2014/'
-
-=head2 search
-
-You can search the configuration with the following options
-
-=over 
-
-=item -search
-
-Specifies a string or pattern to search. C<cme> will a list of path pointing 
-to the matching tree element and their value. 
-See L<Config::Model::AnyThing/grab(...)> for details
-on the path syntax.
-
-=item -narrow-search
-
-Narrows down the search to:
-
-=over 
-
-=item element 
-
-=item value 
-
-=item key 
-
-=item summary 
-
-Summary text
-
-=item description
-
-description text 
-
-=item help
-
-value help text
-
-=back 
-
-=back 
-
-Example:
-
- $ cme search multistrap my_mstrap.conf -search http -narrow value
- sections:base source -> 'http://ftp.fr.debian.org'
- sections:debian source -> 'http://ftp.uk.debian.org/debian'
- sections:toolchains source -> 'http://www.emdebian.org/debian'
 
 =head2 fusefs 
 
