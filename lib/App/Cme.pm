@@ -91,11 +91,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    fix     => [
-        "from=s"   => \@fix_from,
-        "filter=s" => \$fix_filter,
-    ],
-    modify => [],
     edit => [
         "ui|if=s"               => \$ui_type,
         "open_item|open-item=s" => \$open_item,
@@ -149,20 +144,7 @@ if ( defined $root_dir && !-e $root_dir ) {
 
 my $request_save = 0;
 
-elsif ( $command eq 'fix' ) {
-    @fix_from = ('') unless @fix_from;
-    foreach my $path (@fix_from) {
-        my $node_to_fix = $inst->config_root->grab($path);
-        my $msg = "Fixing $application configuration";
-        $msg .= "from node", $node_to_fix->name if $path;
-        say $msg. "...";
-        $node_to_fix->apply_fixes($fix_filter);
-    }
-    $request_save = 1;
-}
-elsif ( $command eq 'modify' ) {
-}
-elsif ( $command =~ /^fuse/ ) {
+if ( $command =~ /^fuse/ ) {
     eval { require Config::Model::FuseUI; };
     my $has_fuse = $@ ? 0 : 1;
 
@@ -451,37 +433,7 @@ Some applications will allow to override the default configuration file. For ins
   curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
   | cme check dpkg-copyright -
 
-
 =head2 fix
-
-A bit like C<migrate> command, except that warnings are fixed. The configuration
-is saved if anything was changed. If no changes are done, the file is not saved.
-Options are:
-
-=over 
-
-=item from
-
-Use option C<-from> to fix only a subset of a configuration tree. Example:
-
- cme fix dpkg -from 'control binary:foo Depends'
-
-This option can be repeated:
-
- cme fix dpkg -from 'control binary:foo Depends' -from 'control source Build-Depends'
-
-=item filter
-
-Filter the leaf according to a pattern. The pattern is applied to the element name to be fixed
-Example:
-
- cme fix dpkg -from control -filter Build # will fix all Build-Depends and Build-Depend-Indep
-
-or 
-
- cme fix dpkg -filter Depend 
-
-=back
 
 =head2 modify
 
