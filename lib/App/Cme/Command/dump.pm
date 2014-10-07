@@ -41,7 +41,7 @@ sub description {
 Dump configuration content on STDOUT with Config::Model syntax.
 
 By default, dump only custom values, i.e. different from application
-built-in values or model default values. You can use the C<-dumptype> option for
+built-in values or model default values. You can use the -dumptype option for
 other types of dump.
 EOD
 

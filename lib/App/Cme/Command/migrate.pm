@@ -41,8 +41,6 @@ Example:
   # check dpkg files, update deprecated parameters and save
   cme migrate dpkg
 
-For more details, see L<Config::Model::Value/Upgrade>
-
 EOD
 
 }

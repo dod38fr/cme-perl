@@ -35,36 +35,31 @@ sub description {
     return << "EOD"
 Checks the content of the configuration file of an application (and show
 warnings if needed), update deprecated parameters (old value are saved
-to new parameters), fix most warnings.
-The configuration is saved if anything was changed. If no changes are done, 
-the file is not saved.
+to new parameters), fix most warnings. The configuration is saved if
+anything was changed. If no changes are done, the file is not saved.
 
 Options are:
 
-=over 
+* from
+    Use option "-from" to fix only a subset of a configuration tree.
+    Example:
 
-=item from
+     cme fix dpkg -from 'control binary:foo Depends'
 
-Use option C<-from> to fix only a subset of a configuration tree. Example:
+    This option can be repeated:
 
- cme fix dpkg -from 'control binary:foo Depends'
+     cme fix dpkg -from 'control binary:foo Depends' -from 'control source Build-Depends'
 
-This option can be repeated:
+* filter
+    Filter the leaf according to a pattern. The pattern is applied to
+    the element name to be fixed Example:
 
- cme fix dpkg -from 'control binary:foo Depends' -from 'control source Build-Depends'
+     # will fix all Build-Depends and Build-Depend-Indep
+     cme fix dpkg -from control -filter Build 
 
-=item filter
+    or
 
-Filter the leaf according to a pattern. The pattern is applied to the element name to be fixed
-Example:
-
- cme fix dpkg -from control -filter Build # will fix all Build-Depends and Build-Depend-Indep
-
-or 
-
- cme fix dpkg -filter Depend 
-
-=back
+     cme fix dpkg -filter Depend
 
 EOD
 

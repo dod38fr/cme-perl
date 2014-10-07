@@ -38,12 +38,10 @@ sub usage_desc {
 
 sub description {
     return << 'EOD'
-Specifies a string or pattern to search. C<cme> will a list of path pointing
+Specifies a string or pattern to search. cme will a list of path pointing
 to the matching tree element and their value.
-See L<Config::Model::AnyThing/grab(...)> for details
-on the path syntax.
 
-The C<-narrow_search> option narrows down the search to element,
+The -narrow_search option narrows down the search to element,
 value, key, summary, description or help text.
 
 Example:
