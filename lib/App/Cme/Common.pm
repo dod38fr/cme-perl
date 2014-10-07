@@ -112,5 +112,19 @@ sub save {
 
 }
 
+sub run_shell_ui ($$) {
+    my ($self, $root, $root_model) = @_;
+
+    require Config::Model::TermUI;
+    my $shell_ui = Config::Model::TermUI->new(
+        root   => $root,
+        title  => $root_model . ' configuration',
+        prompt => ' >',
+    );
+
+    # engage in user interaction
+    $shell_ui->run_loop;
+}
+
 
 1;

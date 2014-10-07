@@ -1,0 +1,148 @@
+# ABSTRACT: Edit the configuration of an application
+
+package App::Cme::Command::edit ;
+use strict;
+use warnings;
+use 5.10.1;
+
+use App::Cme -command ;
+
+use base qw/App::Cme::Common/;
+
+use Config::Model::ObjTreeScanner;
+
+sub validate_args {
+    my ($self, $opt, $args) = @_;
+    $self->process_args($opt,$args);
+}
+
+sub opt_spec {
+    my ( $class, $app ) = @_;
+    return (
+        [ "ui|if=s" => "user interface type. Either tk, curses, shell" ],
+        [ "open-item=s" => "open a specific item of the configuration" ],
+        $class->global_options,
+    );
+}
+
+sub usage_desc {
+  my ($self) = @_;
+  my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
+  return "$desc [application] [file | ~~ ] [ -ui tk|curses|shell ] [ -open-item xxx ] ";
+}
+
+sub description {
+    return << 'EOD'
+Edit a configuration. By default, a Tk GUI will be opened If
+Config::Model::TkUI is installed. You can choose another user
+interface with the "-ui" option:
+
+*   "tk": provides a Tk graphical interface (If Config::Model::TkUI is
+    installed).
+
+*   "curses": provides a curses user interface (If
+    Config::Model::CursesUI is installed).
+
+*   "shell": provides a shell like interface. See Config::Model::TermUI
+    for details.
+
+The "-open-item" option will force the UI to open directly a specific
+item in the configuration.
+EOD
+
+}
+
+sub execute {
+    my ($self, $opt, $args) = @_;
+
+    my ($model, $inst, $root) = $self->init_cme($opt,$args);
+
+    eval { require Config::Model::TkUI; };
+    my $has_tk = $@ ? 0 : 1;
+
+    eval { require Config::Model::CursesUI; };
+    my $has_curses = $@ ? 0 : 1;
+
+    my $ui_type = $opt->{ui};
+
+    if ( not defined $ui_type ) {
+        if ($has_tk) {
+            $ui_type = 'tk';
+        }
+        elsif ($has_curses) {
+            warn "You should install Config::Model::TkUI for a ", "more friendly user interface\n";
+            $ui_type = 'curses';
+        }
+        else {
+            warn "You should install Config::Model::TkUI or ",
+                "Config::Model::CursesUI ",
+                "for a more friendly user interface\n";
+            $ui_type = 'shell';
+        }
+    }
+
+    if ( $ui_type eq 'simple' ) {
+
+        require Config::Model::SimpleUI;
+        my $shell_ui = Config::Model::SimpleUI->new(
+            root   => $root,
+            title  => $inst->application . ' configuration',
+            prompt => ' >',
+        );
+
+        # engage in user interaction
+        $shell_ui->run_loop;
+    }
+    elsif ( $ui_type eq 'shell' ) {
+        $self->run_shell_ui($root, $inst->application) ;
+    }
+    elsif ( $ui_type eq 'curses' ) {
+        die "cannot run curses interface: ", "Config::Model::CursesUI is not installed\n"
+            unless $has_curses;
+        my $err_file = '/tmp/cme-error.log';
+
+        print "In case of error, check $err_file\n";
+
+        open( FH, "> $err_file" ) || die "Can't open $err_file: $!";
+        open STDERR, ">&FH";
+
+        my $dialog = Config::Model::CursesUI->new();
+
+        # engage in user interaction
+        $dialog->start($model);
+
+        close FH;
+    }
+    elsif ( $ui_type eq 'tk' ) {
+        die "cannot run Tk interface: Config::Model::TkUI is not installed\n"
+            unless $has_tk;
+
+        require Tk;
+        require Tk::ErrorDialog;
+        Tk->import;
+
+        no warnings 'once';
+        my $mw = MainWindow->new;
+        $mw->withdraw;
+
+        # Thanks to Jerome Quelin for the tip
+        $mw->optionAdd( '*BorderWidth' => 1 );
+
+        my $cmu = $mw->ConfigModelUI(
+            -root       => $root,
+        );
+
+        if ($opt->{open_item}) {
+            my $obj = $root->grab($opt->{open_item});
+            $cmu->force_element_display($obj);
+        }
+
+        &MainLoop;    # Tk's
+    }
+    else {
+        die "Unsupported user interface: $ui_type";
+    }
+}
+
+1;
+

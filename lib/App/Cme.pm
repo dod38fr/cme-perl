@@ -91,10 +91,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    edit => [
-        "ui|if=s"               => \$ui_type,
-        "open_item|open-item=s" => \$open_item,
-    ],
     shell => [
         "open_item|open-item=s" => \$open_item,
     ],
@@ -180,96 +176,6 @@ if ( $command =~ /^fuse/ ) {
 elsif ( $command eq 'shell' ) {
     run_shell_ui($root, $root_model) ;
 }
-elsif ( $command eq 'edit' ) {
-    eval { require Config::Model::TkUI; };
-    my $has_tk = $@ ? 0 : 1;
-
-    eval { require Config::Model::CursesUI; };
-    my $has_curses = $@ ? 0 : 1;
-
-    if ( not defined $ui_type ) {
-        if ($has_tk) {
-            $ui_type = 'tk';
-        }
-        elsif ($has_curses) {
-            warn "You should install Config::Model::TkUI for a ", "more friendly user interface\n";
-            $ui_type = 'curses';
-        }
-        else {
-            warn "You should install Config::Model::TkUI or ",
-                "Config::Model::CursesUI ",
-                "for a more friendly user interface\n";
-            $ui_type = 'shell';
-        }
-    }
-
-    if ( $ui_type eq 'simple' ) {
-
-        require Config::Model::SimpleUI;
-        my $shell_ui = Config::Model::SimpleUI->new(
-            root   => $root,
-            title  => $root_model . ' configuration',
-            prompt => ' >',
-        );
-
-        # engage in user interaction
-        $shell_ui->run_loop;
-    }
-    elsif ( $ui_type eq 'shell' ) {
-        run_shell_ui($root, $root_model) ;
-    }
-    elsif ( $ui_type eq 'curses' ) {
-        die "cannot run curses interface: ", "Config::Model::CursesUI is not installed\n"
-            unless $has_curses;
-        my $err_file = '/tmp/cme-error.log';
-
-        print "In case of error, check $err_file\n";
-
-        open( FH, "> $err_file" ) || die "Can't open $err_file: $!";
-        open STDERR, ">&FH";
-
-        my $dialog = Config::Model::CursesUI->new();
-
-        # engage in user interaction
-        $dialog->start($model);
-
-        close FH;
-    }
-    elsif ( $ui_type eq 'tk' ) {
-        die "cannot run Tk interface: Config::Model::TkUI is not installed\n"
-            unless $has_tk;
-
-        require Tk;
-        require Tk::ErrorDialog;
-        Tk->import;
-
-        no warnings 'once';
-        my $mw = MainWindow->new;
-        $mw->withdraw;
-
-        # Thanks to Jerome Quelin for the tip
-        $mw->optionAdd( '*BorderWidth' => 1 );
-
-        my $cmu = $mw->ConfigModelUI(
-            -root       => $root,
-        );
-
-        if ($open_item) {
-            my $obj = $root->grab($open_item);
-            $cmu->force_element_display($obj);
-        }
-
-        &MainLoop;    # Tk's
-    }
-    elsif ( $ui_type =~ /^no/i ) {
-
-        # trigger a dump to load all sub-models
-        my $dump = $root->dump_tree;
-        $request_save = 1 if $apply_fixes or $load;
-    }
-    else {
-        die "Unsupported user interface: $ui_type";
-    }
 }
 else {
     die "Looks like the author forgot to implement $command. Bad author, bad.";
