@@ -91,7 +91,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    migrate => [],
     fix     => [
         "from=s"   => \@fix_from,
         "filter=s" => \$fix_filter,
@@ -150,10 +149,6 @@ if ( defined $root_dir && !-e $root_dir ) {
 
 my $request_save = 0;
 
-if ( $command eq 'migrate' ) {
-    $request_save = 1;
-    $root->migrate;
-}
 elsif ( $command eq 'fix' ) {
     @fix_from = ('') unless @fix_from;
     foreach my $path (@fix_from) {
@@ -456,13 +451,6 @@ Some applications will allow to override the default configuration file. For ins
   curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
   | cme check dpkg-copyright -
 
-=head2 migrate
-
-Checks the content of the configuration file of an application (and show
-warnings if needed), update deprecated parameters (old value are saved
-to new parameters) and save the new configuration.
-
-For more details, see L<Config::Model::Value/Upgrade>
 
 =head2 fix
 
