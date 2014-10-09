@@ -42,6 +42,17 @@ sub process_args {
         die "Unknown application: $application. Run 'cme list' to list available applications\n";
     }
 
+    if ($opt->{dev}) {
+        # ignore $dev if run as root
+        if ( $> ) {
+            unshift @INC, 'lib';
+            $opt->{model_dir} = 'lib/Config/Model/models/';
+        }
+        else {
+            warn "-dev option is ignored when run as root\n";
+        }
+    }
+
     # @ARGV should be [ $config_file ] [ ~~ ] [ modification_instructions ]
     my $config_file;
     if ( $appli_info->{$application}{require_config_file} ) {

@@ -117,13 +117,6 @@ pod2usage( -verbose => 0 ) if not $result;
 shift @ARGV;
 my $application = shift @ARGV;
 
-# ignore $dev if run as root
-if ( $> and $dev ) {
-    unshift @INC, 'lib';
-    $model_dir = 'lib/Config/Model/models/';
-    warn "-dev option is ignored when run as root\n";
-}
-
 Config::Model::Exception::Any->Trace(1) if $trace;
 
 if ( defined $root_dir && !-e $root_dir ) {
