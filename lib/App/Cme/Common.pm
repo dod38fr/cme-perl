@@ -38,6 +38,8 @@ sub process_args {
     $root_model ||= $application if $opt->{try_application_as_model};
     say "Using $root_model";
 
+    Config::Model::Exception::Any->Trace(1) if $opt->{trace};
+
     if ( not defined $root_model ) {
         die "Unknown application: $application. Run 'cme list' to list available applications\n";
     }

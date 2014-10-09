@@ -117,7 +117,6 @@ pod2usage( -verbose => 0 ) if not $result;
 shift @ARGV;
 my $application = shift @ARGV;
 
-Config::Model::Exception::Any->Trace(1) if $trace;
 
 if ( defined $root_dir && !-e $root_dir ) {
     mkdir $root_dir, 0755 || die "can't create $root_dir:$!";
