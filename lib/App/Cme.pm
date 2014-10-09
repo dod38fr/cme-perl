@@ -91,11 +91,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    fusefs => [
-        "fuse_dir|fuse-dir=s" => \$fuse_dir,
-        "dfuse!"              => \$fuse_debug,
-        "dir-char=s"          => \$dir_char_mockup,
-    ],
 );
 
 
@@ -137,39 +132,6 @@ if ( defined $root_dir && !-e $root_dir ) {
 
 my $request_save = 0;
 
-if ( $command =~ /^fuse/ ) {
-    eval { require Config::Model::FuseUI; };
-    my $has_fuse = $@ ? 0 : 1;
-
-    die "could not load Config::Model::FuseUI. Is Fuse installed ?\n"
-        unless $has_fuse;
-    die "Missing -fuse_dir option\n" unless defined $fuse_dir;
-    die "Directory $fuse_dir does not exists\n" unless -d $fuse_dir;
-
-    my @extra;
-    push @extra, dir_char_mockup => $dir_char_mockup if $dir_char_mockup;
-    my $ui = Config::Model::FuseUI->new(
-        root       => $root,
-        mountpoint => "$fuse_dir",
-        @extra,
-    );
-
-    print "Mounting config on $fuse_dir in background.\n",
-        "Use command 'fusermount -u $fuse_dir' to unmount\n";
-
-    # now fork
-    my $pid = fork;
-
-    if ( defined $pid and $pid == 0 ) {
-
-        # child process, just run fuse and wait for exit
-        $ui->run_loop( debug => $fuse_debug );
-        $request_save = 1;
-    }
-    else {
-        exit;    # don't save data in parent process
-    }
-}
 }
 else {
     die "Looks like the author forgot to implement $command. Bad author, bad.";
