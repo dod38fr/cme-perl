@@ -66,17 +66,7 @@ sub process_args {
 
     $opt->{_application} = $application ;
     $opt->{_config_file} = $config_file;
-    $opt->{_root_model} = $root_model;
-    
-    # now @ARGV contains modification_instructions (or bogus
-    # config_file) which can only be used by command modify
-#    if ( @ARGV and $command ne 'modify' ) {
-#    pod2usage(
-#        -message => "cannot specify config modification with command $command",
-#        -verbose => 0
-#    );
-#}
-
+    $opt->{_root_model}  = $root_model;
 }
 
 sub init_cme {
