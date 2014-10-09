@@ -122,25 +122,7 @@ if ( defined $root_dir && !-e $root_dir ) {
     mkdir $root_dir, 0755 || die "can't create $root_dir:$!";
 }
 
-my $request_save = 0;
 
-}
-else {
-    die "Looks like the author forgot to implement $command. Bad author, bad.";
-}
-
-if ($request_save) {
-    $inst->say_changes;
-
-    # if load was forced, must write back to clean up errors (even if they are not changes
-    # at semantic level, i.e. removed unnecessary stuff)
-    $inst->write_back( force => $force_load || $force_save );
-}
-
-my $ouch = $inst->has_warning;
-if ( $strict and $ouch ) {
-    die "Found $ouch warnings in strict mode\n";
-}
 
 exit 0;
 
