@@ -91,9 +91,6 @@ my $strict = 0;
 
 my %command_option = (
     list    => [],
-    shell => [
-        "open_item|open-item=s" => \$open_item,
-    ],
     fusefs => [
         "fuse_dir|fuse-dir=s" => \$fuse_dir,
         "dfuse!"              => \$fuse_debug,
@@ -172,9 +169,6 @@ if ( $command =~ /^fuse/ ) {
     else {
         exit;    # don't save data in parent process
     }
-}
-elsif ( $command eq 'shell' ) {
-    run_shell_ui($root, $root_model) ;
 }
 }
 else {
