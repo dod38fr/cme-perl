@@ -1,7 +1,7 @@
 # cme(1) completion
 #
 #
-# This file is part of Config-Model
+# This file is part of App::Cmd::Cme
 #
 # This software is Copyright (c) 2011, 2014 by Dominique Dumont
 #
@@ -25,7 +25,7 @@ _cme_appli()
 _cme_commands()
 {
     COMPREPLY=( $( compgen -W 'list check migrate fix modify search edit shell dump fusefs' -- $cur ) )
-}    
+}
 
 _cme_handle_app_arg()
 {
@@ -38,9 +38,9 @@ _cme()
 
     COMPREPLY=()
     _get_comp_words_by_ref -n : cur prev
-    
-    global_options='-application -model -ui -dev -model-dir -root-dir -force-load -backend -dump -dumptype -load -save -fuse-dir -search -narrow-search'
-    
+
+    global_options='-dev -force-load -create -backend -trace'
+
     if [[ $COMP_CWORD -eq 1 ]] ; then
         _cme_commands
     elif [[ $COMP_CWORD -eq 2 ]] ; then
@@ -48,7 +48,7 @@ _cme()
     elif ! _cme_handle_app_arg; then
         case $prev in
             -ui)
-                COMPREPLY=( $( compgen -W 'none tk curses shell' -- $cur ) )
+                COMPREPLY=( $( compgen -W 'tk curses shell' -- $cur ) )
             ;;
            -dumptype)
                 COMPREPLY=( $( compgen -W 'full preset custom' -- $cur ) )
@@ -58,24 +58,33 @@ _cme()
             ;;
              *)
             case ${COMP_WORDS[1]} in
+                check)
+                   COMPREPLY=( $( compgen -W "$global_options -strict" -- $cur ) )
+                ;;
+                dump)
+                   COMPREPLY=( $( compgen -W "$global_options -dumptype" -- $cur ) )
+                ;;
                 edit)
                    COMPREPLY=( $( compgen -W "$global_options -ui -open-item" -- $cur ) )
                 ;;
+                fix)
+                   COMPREPLY=( $( compgen -W "$global_options -from -filter" -- $cur ) )
+                ;;
+                fusefs)
+                   COMPREPLY=( $( compgen -W "$global_options -fuse-dir -dfuse -dir-char" -- $cur ) )
+                ;;
+                migrate)
+                   COMPREPLY=( $( compgen -W "$global_options" -- $cur ) )
+                ;;
                 # modify completion could be much more elaborate...
-                list|check|migrate|fix|modify)
-                   COMPREPLY=( $( compgen -W "$global_options" -- $cur ) ) 
+                modify)
+                   COMPREPLY=( $( compgen -W "$global_options -save -backup" -- $cur ) )
                 ;;
                 search)
                    COMPREPLY=( $( compgen -W "$global_options -search -narrow-search" -- $cur ) )
+                edit)
+                   COMPREPLY=( $( compgen -W "$global_options -open-item" -- $cur ) )
                 ;;
-                dump)
-                   COMPREPLY=( $( compgen -W "$global_options -dump-type" -- $cur ) )
-                ;;
-                fusefs)
-                   COMPREPLY=( $( compgen -W "$global_options -fuse-dir -dfuse" -- $cur ) )
-                ;;
-                fix)
-                   COMPREPLY=( $( compgen -W "$global_options -from -filter" -- $cur ) )
                 ;;
             esac
         esac
