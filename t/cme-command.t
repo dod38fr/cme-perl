@@ -32,7 +32,7 @@ my $perl_cmd = $path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->perl_i
 
 my $oops =
     Test::Command->new(
-    cmd => "$perl_cmd script/cme modify popcon -root_dir $wr_dir PARITICIPATE=yes" );
+    cmd => "$perl_cmd script/cme modify popcon -root-dir $wr_dir PARITICIPATE=yes" );
 
 exit_cmp_ok( $oops, '>', 0, 'missing config file detected' );
 stderr_like( $oops, qr/cannot find configuration file/, 'check auto_read_error' );
@@ -48,14 +48,14 @@ close CONF;
 
 $oops =
     Test::Command->new(
-    cmd => "$perl_cmd script/cme modify popcon -root_dir $wr_dir PARITICIPATE=yes" );
+    cmd => "$perl_cmd script/cme modify popcon -root-dir $wr_dir PARITICIPATE=yes" );
 exit_cmp_ok( $oops, '>', 0, 'wrong parameter detected' );
 stderr_like( $oops, qr/unknown element/, 'check unknown element' );
 
 # use -force-load to force a file save to update file header
 my $ok =
     Test::Command->new(
-    cmd => "$perl_cmd script/cme modify popcon -force-load -root_dir $wr_dir PARTICIPATE=yes" );
+    cmd => "$perl_cmd script/cme modify popcon -force-load -root-dir $wr_dir PARTICIPATE=yes" );
 exit_is_num( $ok, 0, 'all went well' );
 
 file_contents_like $conf_file,   qr/cme/,      "updated header";
@@ -63,7 +63,7 @@ file_contents_unlike $conf_file, qr/removed`/, "double comment is removed";
 
 my $search =
     Test::Command->new(
-    cmd => "$perl_cmd script/cme search popcon -root_dir $wr_dir -search y -narrow value" );
+    cmd => "$perl_cmd script/cme search popcon -root-dir $wr_dir -search y -narrow value" );
 exit_is_num( $search, 0, 'search went well' );
 stdout_like( $search, qr/PARTICIPATE/, "got PARTICIPATE" );
 stdout_like( $search, qr/USEHTTP/,     "got USEHTTP" );
