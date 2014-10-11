@@ -17,7 +17,7 @@ sub global_options {
       [ "dev!"                   => "test a model under development"],
       [ "force-load!" => "Load file even if error are found in data. Bad data are discarded"],
       [ "create!"                => "start from scratch."],
-      # ["root_dir|root-dir=s"    => \$root_dir],
+      [ "root-dir=s"    => "Change root directory. Mostly used for test"],
       [ "backend=s"              => "Specify a read/write backend"],
       [ "stack-trace|trace!"     => "Provides a full stack trace when exiting on error"],
       # no bundling
