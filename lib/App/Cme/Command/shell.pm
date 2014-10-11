@@ -1,6 +1,7 @@
 # ABSTRACT: Edit the configuration of an application with a shell
 
 package App::Cme::Command::shell ;
+
 use strict;
 use warnings;
 use 5.10.1;

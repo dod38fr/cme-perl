@@ -1,6 +1,7 @@
 # ABSTRACT: Modify the configuration of an application
 
 package App::Cme::Command::modify ;
+
 use strict;
 use warnings;
 use 5.10.1;

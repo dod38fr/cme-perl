@@ -1,6 +1,7 @@
 # ABSTRACT: Migrate the configuration of an application
 
 package App::Cme::Command::migrate ;
+
 use strict;
 use warnings;
 use 5.10.1;

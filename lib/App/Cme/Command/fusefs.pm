@@ -1,6 +1,7 @@
 # ABSTRACT: Edit the configuration of an application with fuse
 
 package App::Cme::Command::fusefs ;
+
 use strict;
 use warnings;
 use 5.10.1;

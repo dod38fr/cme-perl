@@ -1,6 +1,7 @@
 # ABSTRACT: Dump the configuration of an application
 
 package App::Cme::Command::dump ;
+
 use strict;
 use warnings;
 use 5.10.1;

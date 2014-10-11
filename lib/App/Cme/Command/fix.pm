@@ -1,6 +1,7 @@
 # ABSTRACT: Fix the configuration of an application
 
 package App::Cme::Command::fix ;
+
 use strict;
 use warnings;
 use 5.10.1;
