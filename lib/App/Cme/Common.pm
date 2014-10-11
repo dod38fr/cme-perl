@@ -91,7 +91,7 @@ sub init_cme {
         root_class_name => $opt->{_root_model},
         instance_name   => $opt->{_application},
         application     => $opt->{_application},
-        root_dir        => $opt->{root_dir},
+#        root_dir        => $opt->{root_dir},
         check           => $opt->{force_load} ? 'no' : 'yes',
         auto_create     => $opt->{auto_create},
         skip_read       => $opt->{load} ? 1 : 0,
