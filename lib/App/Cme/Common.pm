@@ -93,7 +93,7 @@ sub init_cme {
         application     => $opt->{_application},
         root_dir        => $opt->{root_dir},
         check           => $opt->{force_load} ? 'no' : 'yes',
-        auto_create     => $opt->{auto_create},
+        auto_create     => $opt->{create},
         skip_read       => $opt->{load} ? 1 : 0,
         backend         => $opt->{backend},
         backup          => $opt->{backup},
