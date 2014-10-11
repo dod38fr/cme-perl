@@ -6,7 +6,6 @@ use 5.10.1;
 
 use Config::Model;
 use Config::Model::Lister;
-use XXX ;
 
 sub global_options {
   my ( $class, $app ) = @_;

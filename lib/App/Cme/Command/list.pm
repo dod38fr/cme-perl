@@ -8,15 +8,6 @@ use 5.10.1;
 
 use App::Cme -command ;
 use Config::Model::Lister;
-use base qw/App::Cme::Common/;
-
-
-sub opt_spec {
-    my ( $class, $app ) = @_;
-    return (
-        $class->global_options,
-    );
-}
 
 sub description {
     return << "EOD"
