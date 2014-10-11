@@ -8,6 +8,6 @@ use App::Cmd::Setup -app;
 
 1;
 
+# ABSTRACT: Check or edit configuration data with Config::Model
 
-__END__
 

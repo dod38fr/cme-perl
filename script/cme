@@ -7,7 +7,7 @@ App::Cme->run;
 
 =head1 NAME
 
-cme - Check or edit data of configuration managed by Config::Model
+cme - Check or edit configuration data with Config::Model
 
 =head1 SYNOPSIS
 
