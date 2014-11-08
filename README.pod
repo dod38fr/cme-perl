@@ -1,6 +1,6 @@
 =head1 cme - Check or edit configuration data
 
-cme provides a command to check or edit configration data with L<Config::Model>.
+cme provides a command to check or edit configuration data with L<Config::Model>.
 
 L<cme> user interface can be:
 
@@ -29,6 +29,10 @@ By default, C<cme edit> will try to launch a GUI.
 See
 
 =over
+
+=item *
+
+L<cme> man page
 
 =item *
 
