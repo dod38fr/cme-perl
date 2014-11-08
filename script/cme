@@ -191,6 +191,10 @@ Options:
 
 =over
 
+=item -quiet
+
+Suppress progress messages.
+
 =item -fuse-dir
 
 Mandatory. Directory where the virtual file system will be mounted.

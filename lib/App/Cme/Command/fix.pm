@@ -77,7 +77,7 @@ sub execute {
         my $node_to_fix = $inst->config_root->grab($path);
         my $msg = "Fixing ".$inst->name." configuration";
         $msg .= "from node", $node_to_fix->name if $path;
-        say $msg. "...";
+        say $msg. "..." unless $opt->{quiet};
         $node_to_fix->apply_fixes($opt->{fix_filter});
     }
 

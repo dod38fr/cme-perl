@@ -51,11 +51,11 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    say "loading data";
+    say "loading data" unless $opt->{quiet};
     Config::Model::ObjTreeScanner->new( leaf_cb => sub { } )->scan_node( undef, $root );
-    say "checking data";
+    say "checking data" unless $opt->{quiet};
     $root->dump_tree( mode => 'full' );
-    say "check done";
+    say "check done" unless $opt->{quiet};
 
     my $ouch = $inst->has_warning;
 

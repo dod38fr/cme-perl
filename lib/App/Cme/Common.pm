@@ -19,6 +19,7 @@ sub global_options {
       [ "root-dir=s"    => "Change root directory. Mostly used for test"],
       [ "backend=s"              => "Specify a read/write backend"],
       [ "stack-trace|trace!"     => "Provides a full stack trace when exiting on error"],
+      [ "quiet!" => "Suppress progress messages" ],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );
@@ -36,7 +37,7 @@ sub process_args {
 
     my $root_model = $appli_map->{$application};
     $root_model ||= $application if $opt->{try_application_as_model};
-    say "Using $root_model";
+    say "Using $root_model" unless $opt->{quiet};
 
     Config::Model::Exception::Any->Trace(1) if $opt->{trace};
 
@@ -98,6 +99,7 @@ sub init_cme {
         backend         => $opt->{backend},
         backup          => $opt->{backup},
         config_file     => $opt->{_config_file},
+        quiet           => $opt->{quiet},
     );
 
     # model and inst are deleted if not kept in a scope
@@ -107,7 +109,7 @@ sub init_cme {
 sub save {
     my ($self,$inst,$opt) = @_;
 
-    $inst->say_changes;
+    $inst->say_changes unless $opt->{quiet};
 
     # if load was forced, must write back to clean up errors (even if they are not changes
     # at semantic level, i.e. removed unnecessary stuff)
