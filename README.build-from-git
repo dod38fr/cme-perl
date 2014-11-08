@@ -1,4 +1,4 @@
-Config::Model from git is built with Dist::Zilla.
+cme from git is built with Dist::Zilla.
 
 You must make sure that the following modules are installed:
 Dist::Zilla::Plugin::MetaResources
