@@ -30,3 +30,18 @@ sub execute {
 
 1;
 
+
+=head1 SYNOPSIS
+
+ cme list
+
+=head1 DESCRIPTION
+
+Show a list all applications where a model is available. This list depends on
+installed Config::Model modules.
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut
