@@ -1,3 +1,5 @@
+#ABSTRACT: Common methods for App::Cme
+
 package App::Cme::Common;
 
 use strict;
@@ -151,3 +153,16 @@ sub get_documentation {
 }
 
 1;
+
+__END__
+
+=head1 SYNOPSIS
+
+ # Internal. Used by App::Cme::Command::*
+
+=head1 DESCRIPTION
+
+Common methods for all cme commands
+
+
+=cut
