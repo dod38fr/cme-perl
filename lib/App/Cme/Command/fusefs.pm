@@ -47,27 +47,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << 'EOD'
-Map the configuration file content to a FUSE virtual file system on a
-directory specified with option "-fuse-dir". To stop (and write the
-configuration data back to the configuration file), run 
-
- fusermount -u <mounted_fuse_dir>
-
-Options:
-
--fuse-dir
-    Mandatory. Directory where the virtual file system will be mounted.
-
--dfuse
-    Use this option to debug fuse problems.
-
--dir-char
-    Fuse will fail if an element name or key name contains '/'. You can
-    specify a subsitution string to replace '/' in the fused dir.
-    Default is "<slash>".
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -105,3 +86,47 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+
+=head1 DESCRIPTION
+
+Map the configuration file content to a FUSE virtual file system on a
+directory specified with option C<-fuse-dir>.  Modifications done in
+the fuse file system are saved to the configuration file when
+C<< fusermount -u <mounted_fuse_dir> >> is run.
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over
+
+=item -quiet
+
+Suppress progress messages.
+
+=item -fuse-dir
+
+Mandatory. Directory where the virtual file system will be mounted.
+
+=item -dfuse
+
+Use this option to debug fuse problems.
+
+=item -dir-char
+
+Fuse will fail if an element name or key name contains '/'. You can specify a
+subsitution string to replace '/' in the fused dir. Default is C<< <slash> >>.
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut

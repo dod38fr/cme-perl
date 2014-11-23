@@ -33,37 +33,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << "EOD"
-Checks the content of the configuration file of an application (and show
-warnings if needed), update deprecated parameters (old value are saved
-to new parameters), fix most warnings. The configuration is saved if
-anything was changed. If no changes are done, the file is not saved.
-
-Options are:
-
-* from
-    Use option "-from" to fix only a subset of a configuration tree.
-    Example:
-
-     cme fix dpkg -from 'control binary:foo Depends'
-
-    This option can be repeated:
-
-     cme fix dpkg -from 'control binary:foo Depends' -from 'control source Build-Depends'
-
-* filter
-    Filter the leaf according to a pattern. The pattern is applied to
-    the element name to be fixed Example:
-
-     # will fix all Build-Depends and Build-Depend-Indep
-     cme fix dpkg -from control -filter Build 
-
-    or
-
-     cme fix dpkg -filter Depend
-
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -86,3 +57,54 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+  # fix dpkg (requires Config::Model::Dpkg)
+  cme fix dpkg
+
+=head1 DESCRIPTION
+
+Checks the content of the configuration file of an application (and
+show warnings if needed), update deprecated parameters (old value are
+saved to new parameters) and fix warnings are fixed. The configuration
+is saved if anything was changed. If no changes are done, the file is
+not saved.
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over 
+
+=item from
+
+Use option C<-from> to fix only a subset of a configuration tree. Example:
+
+ cme fix dpkg -from 'control binary:foo Depends'
+
+This option can be repeated:
+
+ cme fix dpkg -from 'control binary:foo Depends' -from 'control source Build-Depends'
+
+=item filter
+
+Filter the leaf according to a pattern. The pattern is applied to the element name to be fixed
+Example:
+
+ cme fix dpkg -from control -filter Build # will fix all Build-Depends and Build-Depend-Indep
+
+or 
+
+ cme fix dpkg -filter Depend 
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>, L<App::Cme::Command::migrate>
+
+=cut

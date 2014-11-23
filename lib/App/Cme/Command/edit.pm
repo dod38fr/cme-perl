@@ -33,26 +33,9 @@ sub usage_desc {
 }
 
 sub description {
-    return << 'EOD'
-Edit a configuration. By default, a Tk GUI will be opened If
-Config::Model::TkUI is installed. You can choose another user
-interface with the "-ui" option:
-
-*   "tk": provides a Tk graphical interface (If Config::Model::TkUI is
-    installed).
-
-*   "curses": provides a curses user interface (If
-    Config::Model::CursesUI is installed).
-
-*   "shell": provides a shell like interface. See Config::Model::TermUI
-    for details.
-
-The "-open-item" option will force the UI to open directly a specific
-item in the configuration.
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
-
 sub execute {
     my ($self, $opt, $args) = @_;
 

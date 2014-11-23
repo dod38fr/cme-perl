@@ -38,22 +38,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << 'EOD'
-Specifies a string or pattern to search. cme will a list of path pointing
-to the matching tree element and their value.
-
-The -narrow_search option narrows down the search to element,
-value, key, summary, description or help text.
-
-Example:
-
- $ cme search multistrap my_mstrap.conf -search http -narrow value
- sections:base source -> 'http://ftp.fr.debian.org'
- sections:debian source -> 'http://ftp.uk.debian.org/debian'
- sections:toolchains source -> 'http://www.emdebian.org/debian'
-
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -76,3 +62,66 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+
+=head1 DESCRIPTION
+
+Search configuration data with the following options:
+
+=over
+
+=item -search
+
+Specifies a string or pattern to search. C<cme> will a list of path pointing
+to the matching tree element and their value.
+See L<Config::Model::AnyThing/grab(...)> for details
+on the path syntax.
+
+=item -narrow-search
+
+Narrows down the search to:
+
+=over
+
+=item element
+
+=item value
+
+=item key
+
+=item summary
+
+Summary text
+
+=item description
+
+description text
+
+=item help
+
+value help text
+
+=back
+
+=back
+
+Example:
+
+ $ cme search multistrap my_mstrap.conf -search http -narrow value
+ sections:base source -> 'http://ftp.fr.debian.org'
+ sections:debian source -> 'http://ftp.uk.debian.org/debian'
+ sections:toolchains source -> 'http://www.emdebian.org/debian'
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut

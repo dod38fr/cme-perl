@@ -30,11 +30,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << 'EOD'
-Edit the configuration with a shell like interface.
-This is a shortcut for "cme edit -ui shell" command.
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {

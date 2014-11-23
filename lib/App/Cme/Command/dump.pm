@@ -38,14 +38,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << "EOD"
-Dump configuration content on STDOUT with Config::Model syntax.
-
-By default, dump only custom values, i.e. different from application
-built-in values or model default values. You can use the -dumptype option for
-other types of dump.
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -60,3 +54,35 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+  # dump ~/.ssh/config in cme syntax (requires Config::Model::OpenSsh)
+  $ cme edit ssh
+  Host:"*" -
+  Host:"*.debian.org"
+    User=dod -
+
+=head1 DESCRIPTION
+
+Dump configuration content on STDOUT with Config::Model syntax.
+
+By default, dump only custom values, i.e. different from application
+built-in values or model default values. You can use the C<-dumptype> option for
+other types of dump:
+
+ -dumptype [ full | preset | custom ]
+
+Choose to dump every values (full), only preset values or only
+customized values (default)
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut

@@ -31,19 +31,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << "EOD"
-
-Checks the content of the configuration file of an application (and show
-warnings if needed), update deprecated parameters (old value are saved
-to new parameters) and save the new configuration.
-
-Example:
-
-  # check dpkg files, update deprecated parameters and save
-  cme migrate dpkg
-
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -58,3 +47,27 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+  # check dpkg files, update deprecated parameters and save
+  cme migrate dpkg
+
+=head1 DESCRIPTION
+
+Checks the content of the configuration file of an application (and show
+warnings if needed), update deprecated parameters (old value are saved
+to new parameters) and save the new configuration. See L<App::Cme::Command::migrate>.
+
+For more details, see L<Config::Model::Value/Upgrade>
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut
