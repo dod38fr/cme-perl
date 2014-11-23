@@ -82,7 +82,7 @@ Some applications will allow to override the default configuration file. For ins
 
 =head1 Common options
 
-See L<App::Cme::Common>.
+See L<cme/"Global Options">.
 
 =head1 options
 

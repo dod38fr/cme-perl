@@ -58,7 +58,7 @@ for details. This is a shortcut for C<cme edit -ui shell>. See L<App::Cme::Comma
 
 =head1 Common options
 
-See L<App::Cme::Common>.
+See L<cme/"Global Options">.
 
 =head1 options
 

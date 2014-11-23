@@ -64,7 +64,7 @@ For more details, see L<Config::Model::Value/Upgrade>
 
 =head1 Common options
 
-See L<App::Cme::Common>.
+See L<cme/"Global Options">.
 
 =head1 SEE ALSO
 
