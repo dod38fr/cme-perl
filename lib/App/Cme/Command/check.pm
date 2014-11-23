@@ -31,19 +31,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << "EOD"
-Checks the content of the configuration file of an application. Prints warnings and errors on STDOUT.
-
-Example:
-
-   cme check fstab
-
-Some applications will allow to override the default configuration file. For instance:
-
-curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
-| cme check dpkg-copyright -";
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -66,3 +55,47 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+ # standard usage
+ cme check popcon
+
+ # read data from arbitrary file (with Config::Model::Dpkg)
+ cme check dpkg-copyright path/to/file
+
+
+=head1 DESCRIPTION
+
+Checks the content of the configuration file of an application. Prints warnings
+and errors on STDOUT.
+
+Example:
+
+ cme check fstab
+
+Some applications will allow to override the default configuration file. For instance:
+
+  curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
+  | cme check dpkg-copyright -
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over
+
+=item -strict
+
+When set, cme will exit 1 if warnings are found during check (of left after fix)
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut
