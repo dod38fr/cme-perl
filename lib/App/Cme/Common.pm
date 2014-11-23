@@ -15,15 +15,16 @@ sub global_options {
   my ( $class, $app ) = @_;
 
   my @global_options = (
-      [ "model-dir=s"  => "Specify an alternate directory to find model files"],
-      [ "try-app-as-model!"      => "try to load a model using directly the application name specified as 3rd parameter on the command line"],
-      [ "dev!"                   => "test a model under development"],
-      [ "force-load!" => "Load file even if error are found in data. Bad data are discarded"],
-      [ "create!"                => "start from scratch."],
-      [ "root-dir=s"    => "Change root directory. Mostly used for test"],
-      [ "backend=s"              => "Specify a read/write backend"],
-      [ "stack-trace|trace!"     => "Provides a full stack trace when exiting on error"],
-      [ "quiet!" => "Suppress progress messages" ],
+      [ "model-dir=s"        => "Specify an alternate directory to find model files"],
+      [ "try-app-as-model!"  => "try to load a model using directly the application name "
+                              . "specified as 3rd parameter on the command line"],
+      [ "dev!"               => "test a model under development"],
+      [ "force-load!"        => "Load file even if error are found in data. Bad data are discarded"],
+      [ "create!"            => "start from scratch."],
+      [ "root-dir=s"         => "Change root directory. Mostly used for test"],
+      [ "backend=s"          => "Specify a read/write backend"],
+      [ "stack-trace|trace!" => "Provides a full stack trace when exiting on error"],
+      [ "quiet!"             => "Suppress progress messages" ],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );
