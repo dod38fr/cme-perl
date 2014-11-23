@@ -94,6 +94,12 @@ When set, cme will exit 1 if warnings are found during check (of left after fix)
 
 =back
 
+=head1 EXIT CODE
+
+cme exits 0 when no errors are found. Exit 1 otherwise.
+
+If C<-strict> option is set, cme will exit 1 when warnings are still present when the program ends.
+
 =head1 SEE ALSO
 
 L<cme>
