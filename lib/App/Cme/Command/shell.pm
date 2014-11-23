@@ -47,3 +47,34 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+  # simple shell like interface
+  cme shell dpkg-copyright
+
+=head1 DESCRIPTION
+
+Edit the configuration with a shell like interface.  See L<Config::Model::TermUI>
+for details. This is a shortcut for C<cme edit -ui shell>. See L<App::Cme::Command::shell>.
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over
+
+=item -open-item
+
+Open a specific item of the configuration when opening the editor
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut

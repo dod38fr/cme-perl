@@ -19,8 +19,6 @@ cme - Check or edit configuration data with Config::Model
   # edit dpkg config with GUI (requires Config::Model::Dpkg)
   cme edit dpkg
 
-  # force usage of simple shell like interface
-  cme shell dpkg-copyright
 
   # read data from arbitrary file
   cme check dpkg-copyright path/to/file
@@ -114,8 +112,7 @@ installed. See L<App::Cme::Command::edit>.
 
 =head2 shell
 
-Edit the configuration with a shell like interface.  See L<Config::Model::TermUI>
-for details. This is a shortcut for C<edit -ui shell>.
+Edit the configuration with a shell like interface.
 
 =head2 check
 
