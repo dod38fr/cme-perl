@@ -33,18 +33,8 @@ sub usage_desc {
 }
 
 sub description {
-    return << "EOD"
-Update a configuration file. The update is done scanning external ressource. For instance,
-the update of dpkg-copyright is done by scanning the headers of source files. (Actually, only
-dpkg-copyright model currently supports updates)
-command)
-
-Example:
-
-   cme update dpkg-copyright
-
-EOD
-
+    my ($self) = @_;
+    return $self->get_documentation;
 }
 
 sub execute {
@@ -56,7 +46,8 @@ sub execute {
     my $hook = sub {
         my ($scanner, $data_ref,$node,@element_list) = @_;
         $node->update() if $node->can('update') ;
-    }
+    };
+
     Config::Model::ObjTreeScanner->new(
         node_content_hook => $hook,
         leaf_cb => sub { }
@@ -69,3 +60,39 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+   cme update dpkg-copyright
+
+=head1 DESCRIPTION
+
+Update a configuration file. The update is done scanning external ressource. For instance,
+the update of dpkg-copyright is done by scanning the headers of source files. (Actually, only
+dpkg-copyright model currently supports updates)
+
+Example:
+
+   cme update dpkg-copyright
+
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over
+
+=item -open-item
+
+Open a specific item of the configuration when opening the editor
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut
