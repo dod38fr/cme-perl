@@ -16,17 +16,16 @@ cme - Check or edit configuration data with Config::Model
   # general synopsis
   cme [ global_options ] command application [ options ] [ file ] [ ~~ ] [ modification_instructions ]
 
-  # edit dpkg config with GUI (requires Config::Model::Dpkg)
+  # edit dpkg config with GUI (and Config::Model::Dpkg)
   cme edit dpkg
-
 
   # read data from arbitrary file
   cme check dpkg-copyright path/to/file
 
-  # edit /etc/sshd_config (requires Config::Model::OpenSsh)
+  # edit /etc/sshd_config (with Config::Model::OpenSsh)
   sudo cme edit sshd
 
-  # edit ~/.ssh/config (requires Config::Model::OpenSsh)
+  # edit ~/.ssh/config (with Config::Model::OpenSsh)
   cme edit ssh
 
   # just check the validity of a file
@@ -112,85 +111,36 @@ installed. See L<App::Cme::Command::edit>.
 
 =head2 shell
 
-Edit the configuration with a shell like interface.
+Edit the configuration with a shell like interface. See L<App::Cme::Command::shell>.
 
 =head2 check
 
-Checks the content of the configuration file of an application. Prints warnings
-and errors on STDOUT.
+Checks the content of the configuration file of an application. See L<App::Cme::Command::check>.
 
-Example:
+=head2 migrate
 
- cme check fstab
-
-Some applications will allow to override the default configuration file. For instance:
-
-  curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
-  | cme check dpkg-copyright -
+Update deprecated parameters (old value are saved to new parameters)
+and save the new configuration. See L<App::Cme::Command::migrate>.
 
 =head2 fix
 
+Migrate data and fix warnings.  See L<App::Cme::Command::fix>.
+
 =head2 modify
 
-Modify a configuration file with the values passed on the command line.
-These command must follow the syntax defined in L<Config::Model::Loader>
-(which is similar to the output of L<cme dump|"/dump"> command)
+Modify a configuration file with the values passed on the command
+line.  See L<App::Cme::Command::modify>.
 
-Example:
+=head2 search
 
-   cme modify dpkg source format="(3.0) quilt"
-   cme modify multistrap my_mstrap.conf sections:base source="http://ftp.fr.debian.org"
-
-Some application like dpkg-copyright allows you to override the
-configuration file name. The problem is to make the difference between
-the overridden file name and the modification instruction you want to
-apply.
-
-Either you specify both overridden file name modifications:
-
-   cme modify dpkg-copyright ubuntu/copyright 'Comment="Silly example"
-
-Or you use C<~~> to use the default file name:
-
-    cme modify dpkg-copyright ~~ 'Comment="Another silly example"
-
-Another example which restores the default value of the text of all GPL like licenses :
-
-   cme modify dpkg-copyright ~~ 'License=~/GPL/ text~'
-
-Or update the copyright years of the package maintainer's file:
-
-   cme modify dpkg-copyright ~~ 'File=debian/* Copyright=~s/2013/2014/'
+Search configuration data for a specific string. See L<App::Cme::Command::search>.
 
 =head2 fusefs
 
 Map the configuration file content to a FUSE virtual file system on a
-directory specified with option C<-fuse-dir>. To stop (and write the
-configuration data back to the configuration file), run C<< fusermount
--u <mounted_fuse_dir> >>.
-
-Options:
-
-=over
-
-=item -quiet
-
-Suppress progress messages.
-
-=item -fuse-dir
-
-Mandatory. Directory where the virtual file system will be mounted.
-
-=item -dfuse
-
-Use this option to debug fuse problems.
-
-=item -dir-char
-
-Fuse will fail if an element name or key name contains '/'. You can specify a
-subsitution string to replace '/' in the fused dir. Default is C<< <slash> >>.
-
-=back
+directory specified with option C<-fuse-dir>. Modifications done in
+the fuse file system are saved to the configuration file when the
+C<fusermount -u> is run.
 
 =head1 Global options
 
