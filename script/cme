@@ -96,7 +96,11 @@ read from STDIN. The resulting file may be written on STDOUT. I.e.
 
 will output a fixed control file on STDOUT.
 
-=head1 Commands
+=head1 Main commands
+
+This section describes the main commands shipped with cme. Other
+Config::Model extensions can bring more command. Run C<cme help> to
+get the list of available commands on your system.
 
 =head2 list
 
@@ -106,26 +110,7 @@ installed Config::Model modules.
 =head2 edit
 
 Edit a configuration. By default, a Tk GUI will be opened If L<Config::Model::TkUI> is
-installed. You can choose another user interface with the C<-ui> option:
-
-=over
-
-=item *
-
-C<tk>: provides a Tk graphical interface (If L<Config::Model::TkUI> is
-installed).
-
-=item *
-
-C<curses>: provides a curses user interface (If
-L<Config::Model::CursesUI> is installed).
-
-=item *
-
-C<shell>: provides a shell like interface.  See L<Config::Model::TermUI>
-for details.
-
-=back
+installed. See L<App::Cme::Command::edit>.
 
 =head2 shell
 
@@ -384,8 +369,6 @@ More categories will come.
 =head1 EXIT CODE
 
 cme exits 0 when no errors are found. Exit 1 otherwise.
-
-If C<-strict> option is set, cme will exit 1 when warnings are still present when the program ends.
 
 =head1 BUGS
 

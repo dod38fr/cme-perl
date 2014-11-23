@@ -147,3 +147,65 @@ sub execute {
 
 1;
 
+__END__
+
+=head1 SYNOPSIS
+
+  # edit dpkg config with GUI (requires Config::Model::Dpkg)
+  cme edit dpkg 
+
+  # force usage of simple shell like interface
+  cme edit dpkg-copyright --ui shell
+
+  # edit /etc/sshd_config (requires Config::Model::OpenSsh)
+  sudo cme edit sshd
+
+  # edit ~/.ssh/config (requires Config::Model::OpenSsh)
+  cme edit ssh
+
+  # edit a file (file name specification is mandatory here)
+  cme edit multistrap my.conf
+
+=head1 DESCRIPTION
+
+Edit a configuration. By default, a Tk GUI will be opened If L<Config::Model::TkUI> is
+installed. You can choose another user interface with the C<-ui> option:
+
+=over
+
+=item *
+
+C<tk>: provides a Tk graphical interface (If L<Config::Model::TkUI> is
+installed).
+
+=item *
+
+C<curses>: provides a curses user interface (If
+L<Config::Model::CursesUI> is installed).
+
+=item *
+
+C<shell>: provides a shell like interface.  See L<Config::Model::TermUI>
+for details.
+
+=back
+
+=head1 Common options
+
+See L<App::Cme::Common>.
+
+=head1 options
+
+=over
+
+=item -open-item
+
+Open a specific item of the configuration when opening the editor
+
+=back
+
+=head1 SEE ALSO
+
+L<cme>
+
+=cut
