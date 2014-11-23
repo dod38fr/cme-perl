@@ -143,11 +143,11 @@ sub get_documentation {
         || die $parser->error();
 
     my $sections = $pom->head1();
-    my $ret;
+    my @ret ;
     foreach my $s (@$sections) {
-        $ret = $s if $s->title() eq 'DESCRIPTION';
+        push (@ret ,$s) if $s->title() =~ /DESCRIPTION|EXIT/;
     }
-    return $ret->content() . "Options:\n";;
+    return join ("", map { $_->content()} @ret) . "Options:\n";;
 }
 
 1;
