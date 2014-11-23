@@ -6,6 +6,8 @@ use 5.10.1;
 
 use Config::Model;
 use Config::Model::Lister;
+use Pod::POM;
+use Scalar::Util qw/blessed/;
 
 sub global_options {
   my ( $class, $app ) = @_;
@@ -131,5 +133,21 @@ sub run_shell_ui ($$) {
     $shell_ui->run_loop;
 }
 
+sub get_documentation {
+    my ($self) = @_;
+
+    my $parser = Pod::POM->new();
+    my $pkg = blessed ($self);
+    $pkg =~ s!::!/!g;
+    my $pom = $parser->parse_file($INC{$pkg.'.pm'})
+        || die $parser->error();
+
+    my $sections = $pom->head1();
+    my $ret;
+    foreach my $s (@$sections) {
+        $ret = $s if $s->title() eq 'DESCRIPTION';
+    }
+    return $ret->content() . "Options:\n";;
+}
 
 1;
