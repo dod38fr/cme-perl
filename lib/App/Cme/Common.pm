@@ -104,7 +104,6 @@ sub init_cme {
         backend         => $opt->{backend},
         backup          => $opt->{backup},
         config_file     => $opt->{_config_file},
-        quiet           => $opt->{quiet},
     );
 
     # model and inst are deleted if not kept in a scope
