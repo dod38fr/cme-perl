@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model;
+use Config::Model 2.062;
 use Config::Model::Lister;
 use Pod::POM;
 use Scalar::Util qw/blessed/;
