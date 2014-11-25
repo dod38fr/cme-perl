@@ -1,5 +1,7 @@
 {{$NEXT}}
 
+0.001 2014-11-25
+
     First release of App::Cme.
 
     These are the changes done to cme compared to the old cme shipped
