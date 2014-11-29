@@ -24,7 +24,9 @@ _cme_appli()
 
 _cme_commands()
 {
-    COMPREPLY=( $( compgen -W 'list check migrate fix modify search edit shell dump fusefs' -- $cur ) )
+	# could use perl -MApp::Cme -e'print join("\n", grep {not /-/} App::Cme->new->command_names);'
+	# to list commands, but it's too slow (~ 200ms)
+    COMPREPLY=( $( compgen -W 'help version commands list check migrate update fix modify search edit shell dump fusefs' -- $cur ) )
 }
 
 _cme_handle_app_arg()
