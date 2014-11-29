@@ -43,17 +43,24 @@ sub execute {
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
     say "update data" unless $opt->{quiet};
+    my @msg ;
     my $hook = sub {
         my ($scanner, $data_ref,$node,@element_list) = @_;
-        $node->update() if $node->can('update') ;
+        push (@msg, $node->update()) if $node->can('update') ;
     };
 
     Config::Model::ObjTreeScanner->new(
         node_content_hook => $hook,
         leaf_cb => sub { }
-    )->scan_node( undef, $root );
+    )->scan_node( \@msg, $root );
 
-    say "update done" unless $opt->{quiet};
+    if (@msg and not $opt->{quiet}) {
+        say "update done";
+        say join("\n", grep {defined $_} @msg );
+    }
+    elsif (not $opt->{quiet}) {
+        say "command done, but model has no provision for update";
+    }
 
     $self->save($inst,$opt) ;
 }
