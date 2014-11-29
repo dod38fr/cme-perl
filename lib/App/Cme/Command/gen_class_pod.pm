@@ -9,6 +9,11 @@ use 5.10.1;
 use App::Cme -command ;
 use Config::Model::Utils::GenClassPod;
 
+sub command_names {
+    my $self = shift ;
+    return ( 'gen-class-pod' , $self->SUPER::command_names );
+}
+
 sub description {
     return << "EOD"
 Generate pod documentation from configuration models found in ./lib directory
