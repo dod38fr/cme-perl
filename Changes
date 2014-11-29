@@ -1,16 +1,25 @@
 {{$NEXT}}
 
+1.001 2014-11-29
+
+    * require Config::Model 2.063 (to avoid bash_completion clash)
+    * improved messages printed by update command
+    * added 'gen-class-pod' alias for gen_class_pod
+    * bash_completion:
+      + added help version commands update in hard-coded list of commands
+      * fixed syntax error
+
 0.001 2014-11-25
 
     First release of App::Cme.
 
     These are the changes done to cme compared to the old cme shipped
-	with Config::Model 2.061:
-	
-	* Cme has been re-written with App::Cmd
+    with Config::Model 2.061:
+
+    * Cme has been re-written with App::Cmd
     - old mechanism for cme extension is removed. Extensions support
-	  is provided by App::Cmd
-	+ added gen_class_pod and update commands
+      is provided by App::Cmd
+    + added gen_class_pod and update commands
     + added -quiet option to suppress progress messages
     * fix mistached options wrt available commands in bash_completion
     * added -root-dir option (used for tests)
