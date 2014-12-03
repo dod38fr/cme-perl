@@ -75,7 +75,7 @@ __END__
 
 =head1 DESCRIPTION
 
-Update a configuration file. The update is done scanning external ressource. For instance,
+Update a configuration file. The update is done scanning external resource. For instance,
 the update of dpkg-copyright is done by scanning the headers of source files. (Actually, only
 dpkg-copyright model currently supports updates)
 
