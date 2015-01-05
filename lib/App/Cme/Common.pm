@@ -133,6 +133,33 @@ sub save {
 
 }
 
+sub run_tk_ui {
+    my ($self, $root, $opt) = @_;
+
+    require Config::Model::TkUI;
+    require Tk;
+    require Tk::ErrorDialog;
+    Tk->import;
+
+    no warnings 'once';
+    my $mw = MainWindow->new;
+    $mw->withdraw;
+
+    # Thanks to Jerome Quelin for the tip
+    $mw->optionAdd( '*BorderWidth' => 1 );
+
+    my $cmu = $mw->ConfigModelUI(
+        -root       => $root,
+    );
+
+    if ($opt->{open_item}) {
+        my $obj = $root->grab($opt->{open_item});
+        $cmu->force_element_display($obj);
+    }
+
+    &MainLoop;    # Tk's
+}
+
 sub run_shell_ui ($$) {
     my ($self, $root, $root_model) = @_;
 
