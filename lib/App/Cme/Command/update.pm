@@ -20,6 +20,7 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
+        [ "edit!"     => "Run editor after update is done" ],
         [ "save!"     => "Force a save even if no change was done" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         $class->global_options,
@@ -40,14 +41,20 @@ sub description {
 sub execute {
     my ($self, $opt, $args) = @_;
 
-    my ($model, $inst, $root) = $self->init_cme($opt,$args);
+    my ( $inst) = $self->instance($opt,$args);
 
-    say "update data" unless $opt->{quiet};
+    say "updating data" unless $opt->{quiet};
     my @msg ;
     my $hook = sub {
         my ($scanner, $data_ref,$node,@element_list) = @_;
-        push (@msg, $node->update()) if $node->can('update') ;
+        if ($node->can('update')) {
+            say "Calling update on ",$node->name, ' ',$node->config_class_name, " $node"
+                unless $opt->{quiet};
+            push (@msg, $node->update())
+        } ;
     };
+
+    my $root = $inst->config_root ;
 
     Config::Model::ObjTreeScanner->new(
         node_content_hook => $hook,
@@ -62,6 +69,9 @@ sub execute {
         say "command done, but model has no provision for update";
     }
 
+    if ($opt->{edit}) {
+        $self ->run_tk_ui ( $root, $opt);
+    }
     $self->save($inst,$opt) ;
 }
 
