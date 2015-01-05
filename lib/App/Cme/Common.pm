@@ -88,26 +88,38 @@ sub process_args {
     $opt->{_root_model}  = $root_model;
 }
 
-sub init_cme {
+
+sub model {
     my ($self, $opt, $args) = @_;
 
-    my $model = Config::Model->new( model_dir => $opt->{model_dir} );
+    return $self->{_model}
+        ||= Config::Model->new( model_dir => $opt->{model_dir} );
+}
 
-    my $inst = $model->instance(
-        root_class_name => $opt->{_root_model},
-        instance_name   => $opt->{_application},
-        application     => $opt->{_application},
-        root_dir        => $opt->{root_dir},
-        check           => $opt->{force_load} ? 'no' : 'yes',
-        auto_create     => $opt->{create},
-        skip_read       => $opt->{load} ? 1 : 0,
-        backend         => $opt->{backend},
-        backup          => $opt->{backup},
-        config_file     => $opt->{_config_file},
-    );
+sub instance {
+    my ($self, $opt, $args) = @_;
 
+    return
+        $self->{_instance}
+        ||= $self->model->instance(
+            root_class_name => $opt->{_root_model},
+            instance_name   => $opt->{_application},
+            application     => $opt->{_application},
+            root_dir        => $opt->{root_dir},
+            check           => $opt->{force_load} ? 'no' : 'yes',
+            auto_create     => $opt->{create},
+            skip_read       => $opt->{load} ? 1 : 0,
+            backend         => $opt->{backend},
+            backup          => $opt->{backup},
+            config_file     => $opt->{_config_file},
+        );
+
+}
+
+sub init_cme {
+    my ($self, $opt, $args) = @_;
     # model and inst are deleted if not kept in a scope
-    return ( $model , $inst, $inst->config_root );
+    return ( $self->model , $self->instance, $self->instance->config_root );
 }
 
 sub save {
