@@ -117,9 +117,9 @@ sub instance {
 }
 
 sub init_cme {
-    my ($self, $opt, $args) = @_;
+    my $self = shift;
     # model and inst are deleted if not kept in a scope
-    return ( $self->model , $self->instance, $self->instance->config_root );
+    return ( $self->model(@_) , $self->instance(@_), $self->instance->config_root );
 }
 
 sub save {
