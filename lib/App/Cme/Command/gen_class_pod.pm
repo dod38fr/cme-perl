@@ -31,13 +31,17 @@ sub execute {
 
 =head1 SYNOPSIS
 
- cme gen-class-pod
+ cme gen-class-pod [ Foo ... ]
 
 =head1 DESCRIPTION
 
-This command scans C<./lib/Config/Model/models>
-and generate a pod documentation for each C<.pl> found there using
+This command scans C<./lib/Config/Model/models/*.d>
+and generate pod documentation for each file found there using
 L<Config::Model::generate_doc|Config::Model/"generate_doc ( top_class_name , [ directory ] )">
+
+You can also pass one or more class names. C<gen_class_pod> will write
+the documentation for each passed class and all other classes used by
+the passed classes.
 
 =head1 SEE ALSO
 
