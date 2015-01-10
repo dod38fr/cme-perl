@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+1.002 2015-01-10
+
+    * gen-class-pod:
+	  * fix doc and missing command arguments
+    * update:
+	  + added -edit option to run editor after an update
+      * fix typo in pod doc
+    * dist.ini: updated © to 2015
+
 1.001 2014-11-29
 
     * require Config::Model 2.063 (to avoid bash_completion clash)
