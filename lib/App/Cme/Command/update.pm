@@ -12,6 +12,8 @@ use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
 
+use Config::Model 2.068; # for call to Instance->update
+
 sub validate_args {
     my ($self, $opt, $args) = @_;
     $self->process_args($opt,$args);
@@ -44,34 +46,21 @@ sub execute {
     my ( $inst) = $self->instance($opt,$args);
 
     say "updating data" unless $opt->{quiet};
-    my @msg ;
-    my $hook = sub {
-        my ($scanner, $data_ref,$node,@element_list) = @_;
-        if ($node->can('update')) {
-            say "Calling update on ",$node->name, ' ',$node->config_class_name, " $node"
-                unless $opt->{quiet};
-            push (@msg, $node->update())
-        } ;
-    };
 
-    my $root = $inst->config_root ;
+    my @msgs = $inst->update(quiet => $opt->{quiet});
 
-    Config::Model::ObjTreeScanner->new(
-        node_content_hook => $hook,
-        leaf_cb => sub { }
-    )->scan_node( \@msg, $root );
-
-    if (@msg and not $opt->{quiet}) {
+    if (@msgs and not $opt->{quiet}) {
         say "update done";
-        say join("\n", grep {defined $_} @msg );
+        say join("\n", grep {defined $_} @msgs );
     }
     elsif (not $opt->{quiet}) {
         say "command done, but model has no provision for update";
     }
 
     if ($opt->{edit}) {
-        $self ->run_tk_ui ( $root, $opt);
+        $self->run_tk_ui ( $inst->config_root, $opt);
     }
+
     $self->save($inst,$opt) ;
 }
 
