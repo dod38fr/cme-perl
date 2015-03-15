@@ -47,7 +47,7 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    my $dump_string = $root->dump_tree( mode => YYY $opt->{dumptype} );
+    my $dump_string = $root->dump_tree( mode => $opt->{dumptype} );
     print $dump_string ;
 
 }
