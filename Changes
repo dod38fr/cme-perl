@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+1.003 2015-04-26
+
+  Bug fix release:
+
+    * Common: pass cme messages through on_message_cb
+    * update: call C::M::Instance->update
+      (require Config::Model 2.068)
+    * dump: remove debug call to YYY
+
 1.002 2015-01-10
 
     * gen-class-pod:
