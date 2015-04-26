@@ -152,6 +152,8 @@ sub run_tk_ui {
         -root       => $root,
     );
 
+    $root->instance->on_message_cb(sub{$cmu->show_message(@_);});
+
     if ($opt->{open_item}) {
         my $obj = $root->grab($opt->{open_item});
         $cmu->force_element_display($obj);
