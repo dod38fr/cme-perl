@@ -23,8 +23,7 @@ sub opt_spec {
             "dumptype=s" => "Dump all values (full) or only preset values or customized values",
             {
                 regex => qr/^(?:full|custom|preset)$/,
-                required => 1,
-                #default => 'custom'
+                default => 'custom'
             }
         ],
         $class->global_options,
