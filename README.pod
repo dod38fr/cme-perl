@@ -39,7 +39,7 @@ To fix the warnings of the configuration file.
 To launch cme interactive editor. This editor contains documentation
 and sanity checks to help user configure correctly their application.
 
-=end
+=back
 
 L<cme> user interface can be:
 
