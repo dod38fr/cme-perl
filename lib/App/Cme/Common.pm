@@ -83,7 +83,7 @@ sub process_args {
     if ($config_file and not -e $config_file) {
         $warn_msg = "Warning: file '$config_file' does not exists.";
     }
-    if ($appli_info->{$application}{allow_config_file_override}) {
+    if ($warn_msg and $appli_info->{$application}{allow_config_file_override}) {
         $warn_msg .=" You may need to write this command with '~~' argument. I.e. try "
             ."something like 'cme $command $application ~~ $config_file'";
     }
