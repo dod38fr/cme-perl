@@ -33,7 +33,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom|preset ]";
+  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom|preset ] [ path ]";
 }
 
 sub description {
@@ -46,7 +46,9 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    my $dump_string = $root->dump_tree( mode => $opt->{dumptype} );
+    my $target_node = $root->grab(step => "@$args", type => 'node');
+
+    my $dump_string = $target_node->dump_tree( mode => $opt->{dumptype} );
     print $dump_string ;
 
 }
@@ -57,8 +59,16 @@ __END__
 
 =head1 SYNOPSIS
 
-  # dump ~/.ssh/config in cme syntax (requires Config::Model::OpenSsh)
-  $ cme edit ssh
+  # dump ~/.ssh/config in cme syntax
+  # (this example requires Config::Model::OpenSsh)
+  $ cme dump ssh
+  Host:"*" -
+  Host:"*.debian.org"
+    User=dod -
+
+  # dump part of debian copyright file in cme syntax
+  # (this example requires Config::Model::OpenSsh)
+  $ cme dump ssh
   Host:"*" -
   Host:"*.debian.org"
     User=dod -
