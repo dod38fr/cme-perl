@@ -10,6 +10,7 @@ use Config::Model 2.063;
 use Config::Model::Lister;
 use Pod::POM;
 use Scalar::Util qw/blessed/;
+use Path::Tiny;
 
 sub global_options {
   my ( $class, $app ) = @_;
@@ -61,10 +62,11 @@ sub process_args {
         }
     }
 
+    my $command = (split('::', ref($self)))[-1] ;
+
     # @ARGV should be [ $config_file ] [ ~~ ] [ modification_instructions ]
     my $config_file;
     if ( $appli_info->{$application}{require_config_file} ) {
-        my $command = (split('::', ref($self)))[-1] ;
         $config_file = shift @$args;
         $self->usage_error(
             "no config file specified. Command should be 'cme $command $application configuration_file'",
@@ -77,6 +79,17 @@ sub process_args {
         }
 
     # else cannot distinguish between bogus config_file and modification_instructions
+    my $warn_msg;
+    if ($config_file and not -e $config_file) {
+        $warn_msg = "Warning: file '$config_file' does not exists.";
+    }
+    if ($appli_info->{$application}{allow_config_file_override}) {
+        $warn_msg .=" You may need to write this command with '~~' argument. I.e. try "
+            ."something like 'cme $command $application ~~ $config_file'";
+    }
+    if ($warn_msg) {
+        warn $warn_msg."\n";
+    }
 
     # slurp any '~~'
     if ( $args->[0] and $args->[0] eq '~~' ) {
