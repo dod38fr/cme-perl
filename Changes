@@ -1,5 +1,23 @@
 {{$NEXT}}
 
+1.004 2015-05-25
+
+    Mostly a bug fix release.
+    Please use now github to report issues on cme
+    ( https://github.com/dod38fr/cme-perl/issues )
+
+    * metadata:
+      * switched bugtracker to github's
+      * fixed repo and website urls (Tx xtaran)
+    * all: add a warning if conf file is not found (may mean a
+      missing ~~ argument). (I'd welcome ideas on how to replace this
+      iffy ~~ argument)
+    * dump command:
+      + added possibility to select a node to dump
+      * fixed -dumptype which is not mandatory
+    * test can run with local cme or system cme to fix debian continuous
+      integrations tests
+
 1.003 2015-04-26
 
   Bug fix release:
