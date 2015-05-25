@@ -46,7 +46,7 @@ sub execute {
 
     foreach my $path (@fix_from) {
         my $node_to_fix = $inst->config_root->grab($path);
-        my $msg = "Fixing ".$inst->name." configuration";
+        my $msg = "cme: running fix on ".$inst->name." configuration";
         $msg .= "from node", $node_to_fix->name if $path;
         say $msg. "..." unless $opt->{quiet};
         $node_to_fix->apply_fixes($opt->{fix_filter});
