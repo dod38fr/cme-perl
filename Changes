@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+1.005 2015-05-25
+
+   * all: fixed confusing unwarranted warning message (about ~~ argument)
+
 1.004 2015-05-25
 
     Mostly a bug fix release.
