@@ -75,7 +75,12 @@ Example:
 
  cme check fstab
 
-Some applications will allow to override the default configuration file. For instance:
+Some applications allows one to override the default configuration file.
+For instance, with Debian copyright model, you can run cme on a different file:
+
+  cme check dpkg-copyright foobar
+
+or directly check copyright data on STDIN:
 
   curl http://metadata.ftp-master.debian.org/changelogs/main/f/frozen-bubble/unstable_copyright \
   | cme check dpkg-copyright -
