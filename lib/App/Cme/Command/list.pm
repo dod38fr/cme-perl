@@ -12,19 +12,28 @@ use Config::Model::Lister;
 sub description {
     return << "EOD"
 Show a list all applications where a model is available. This list depends on
-installed Config::Model modules.
+installed Config::Model modules. Applications are divided in 3 categories:
+- system: for system wide applications (e.g. daemon like sshd)
+- user: for user applications (e.g. ssh configuration)
+- application: misc application like multistrap or Debian packaging
 EOD
 
 }
+
+my %help = (
+    system => "system configuration files. Use sudo to run cme",
+    user => "user configuration files",
+    application => "miscellaneous application configuration",
+);
 
 sub execute {
     my ($self, $opt, $args) = @_;
 
     my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
-    foreach my $cat ( keys %$categories ) {
+    foreach my $cat ( qw/system user application/ ) {
         my $names = $categories->{$cat} || [];
         next unless @$names;
-        print "$cat:\n  ", join( "\n  ", @$names ), "\n";
+        print $cat,"( ",$help{$cat}," ):\n  ", join( "\n  ", @$names ), "\n";
     }
 }
 
