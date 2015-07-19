@@ -130,14 +130,14 @@ __END__
 
 =head1 DESCRIPTION
 
-Edit a configuration. By default, a Tk GUI will be opened If L<Config::Model::TkUI> is
+Edit a configuration. By default, a Tk GUI will be opened if C<Config::Model::TkUI> is
 installed. You can choose another user interface with the C<-ui> option:
 
 =over
 
 =item *
 
-C<tk>: provides a Tk graphical interface (If L<Config::Model::TkUI> is
+C<tk>: provides a Tk graphical interface (If C<Config::Model::TkUI> is
 installed).
 
 =item *
