@@ -9,6 +9,7 @@ use 5.10.1;
 use Config::Model 2.063;
 use Config::Model::Lister;
 use Pod::POM;
+use Pod::POM::View::Text;
 use Scalar::Util qw/blessed/;
 use Path::Tiny;
 
@@ -203,7 +204,7 @@ sub get_documentation {
     foreach my $s (@$sections) {
         push (@ret ,$s) if $s->title() =~ /DESCRIPTION|EXIT/;
     }
-    return join ("", map { $_->content()} @ret) . "Options:\n";;
+    return join ("", map { Pod::POM::View::Text->print($_)} @ret) . "Options:\n";;
 }
 
 1;
