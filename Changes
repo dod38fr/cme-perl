@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+1.006 2015-07-19
+
+    Doc fix release:
+    * cme edit doc: don't abuse L<> tag which are change in "the xxx manpage"
+    * cme list: improve help shown to user
+    * cme help: transform pod to text to avoid showing pod markup
+    * cme fix: corrected small mistakes in doc
+    * cme check: added another example in pod doc
+
 1.005 2015-05-25
 
    * all: fixed confusing unwarranted warning message (about ~~ argument)
