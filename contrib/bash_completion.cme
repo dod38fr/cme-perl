@@ -78,6 +78,9 @@ _cme()
                 migrate)
                    COMPREPLY=( $( compgen -W "$global_options" -- $cur ) )
                 ;;
+                update)
+                   COMPREPLY=( $( compgen -W "$global_options" -- $cur ) )
+                ;;
                 # modify completion could be much more elaborate...
                 modify)
                    COMPREPLY=( $( compgen -W "$global_options -save -backup" -- $cur ) )
