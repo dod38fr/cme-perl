@@ -13,7 +13,7 @@ use Pod::POM::View::Text;
 use Scalar::Util qw/blessed/;
 use Path::Tiny;
 
-sub global_options {
+sub cme_global_options {
   my ( $class, $app ) = @_;
 
   my @global_options = (

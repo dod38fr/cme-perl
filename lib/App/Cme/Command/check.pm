@@ -20,7 +20,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "strict!" => "cme will exit 1 if warnings are found during check" ],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 

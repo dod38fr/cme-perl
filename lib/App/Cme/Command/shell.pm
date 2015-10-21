@@ -19,7 +19,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "open-item=s" => "open a specific item of the configuration" ],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 

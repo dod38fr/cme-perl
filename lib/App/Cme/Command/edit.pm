@@ -22,7 +22,7 @@ sub opt_spec {
     return (
         [ "ui|if=s" => "user interface type. Either tk, curses, shell" ],
         [ "open-item=s" => "open a specific item of the configuration" ],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 

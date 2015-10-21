@@ -36,7 +36,7 @@ sub opt_spec {
         ],
         [ "dfuse!" => "debug fuse problems" ],
         [ "dir-char=s" => "string to replace '/' in configuration parameter names"],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 

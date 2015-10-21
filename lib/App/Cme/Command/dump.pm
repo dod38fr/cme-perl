@@ -26,7 +26,7 @@ sub opt_spec {
                 default => 'custom'
             }
         ],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 

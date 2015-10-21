@@ -27,7 +27,7 @@ sub opt_spec {
             "narrow-search=s" => "narrows down the search to element, value, key, summary, description or help",
             { regex => qr/^(?:element|value|key|summary|description|help|all)$/, default => 'all' }
         ],
-        $class->global_options,
+        $class->cme_global_options,
     );
 }
 
