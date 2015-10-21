@@ -134,6 +134,12 @@ Migrate data and fix warnings.  See L<App::Cme::Command::fix>.
 Modify a configuration file with the values passed on the command
 line.  See L<App::Cme::Command::modify>.
 
+=head2 update
+
+Update the content of the configuration file from external data.
+Currently, only dpkg-copyright model support update sub command.
+See L<App::Cme::Command::update>.
+
 =head2 search
 
 Search configuration data for a specific string. See L<App::Cme::Command::search>.
