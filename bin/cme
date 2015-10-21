@@ -12,13 +12,13 @@ __END__
 =head1 SYNOPSIS
 
   # general synopsis
-  cme [ global_options ] command application [ options ] [ file | ~~ | - ] modification_instructions ]
+  cme [ global_options ] command application [ options ] [ file ] [ modification_instructions ]
 
   # edit dpkg config with GUI (and Config::Model::Dpkg)
   cme edit dpkg
 
-  # read data from arbitrary file
-  cme check dpkg-copyright path/to/file
+  # read data from arbitrary file (for model read from alternate file)
+  cme check dpkg-copyright -file path/to/file
 
   # edit /etc/sshd_config (with Config::Model::OpenSsh)
   sudo cme edit sshd
@@ -26,8 +26,9 @@ __END__
   # edit ~/.ssh/config (with Config::Model::OpenSsh)
   cme edit ssh
 
-  # just check the validity of a file
+  # just check the validity of a file. Both commands are equivalent
   cme check multistrap file.conf
+  cme check multistrap -file file.conf
 
   # check dpkg files, update deprecated parameters and save
   cme migrate dpkg
@@ -39,7 +40,7 @@ __END__
   cme modify dpkg source 'format="(3.0) quilt"'
 
   # likewise with an application that accepts file override
-  cme modify dpkg-copyright ~~ 'Comment="Modified with cme"'
+  cme modify dpkg-copyright 'Comment="Modified with cme"'
 
   # edit a file (file name specification is mandatory here)
   cme edit multistrap my.conf
@@ -72,6 +73,10 @@ configuration file name:
 
   cme check multistrap raspbian.conf
 
+or
+
+  cme check multistrap -file raspbian.conf
+
 =head1 Configuration file specification
 
 The configuration of an application can take different forms. Either
@@ -87,7 +92,7 @@ the application allows configuration file override.
 When the overridden file is C<-> (a single dash), the configuration is
 read from STDIN. The resulting file may be written on STDOUT. I.e.
 
-  cat debian/confrol | cme migrate dpkg-control -save -
+  cat debian/confrol | cme migrate dpkg-control -save -file -
 
 will output a fixed control file on STDOUT.
 
@@ -152,6 +157,19 @@ Perform the operation even if the configuration file is missing. This
 may be used to create a minimal configuration file. This option is
 disabled by default as a missing configuration file often indicates an
 error during the installation of the application.
+
+=item -file
+
+For model that support it, specify an alternate file to read and write the
+configuration. Use "C<->" to read from STDIN.
+
+You can use this option for model that require the target file to be
+specified (e.g. multitrap model), but file can in this case be also
+specified with the 4th command argument. E.g. these 2 commands habe
+the same effect:
+
+  cme check multistrap foo.conf
+  cme check multistrap -file foo.conf
 
 =item -force-load
 

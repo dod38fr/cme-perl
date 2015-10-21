@@ -24,6 +24,7 @@ sub cme_global_options {
       [ "force-load!"        => "Load file even if error are found in data. Bad data are discarded"],
       [ "create!"            => "start from scratch."],
       [ "root-dir=s"         => "Change root directory. Mostly used for test"],
+      [ "file=s"             => "Specify a target file"],
       [ "backend=s"          => "Specify a read/write backend"],
       [ "stack-trace|trace!" => "Provides a full stack trace when exiting on error"],
       [ "quiet!"             => "Suppress progress messages" ],
@@ -65,36 +66,29 @@ sub process_args {
 
     my $command = (split('::', ref($self)))[-1] ;
 
-    # @ARGV should be [ $config_file ] [ ~~ ] [ modification_instructions ]
+    # @ARGV should be [ $config_file ] [ modification_instructions ]
     my $config_file;
     if ( $appli_info->{$application}{require_config_file} ) {
-        $config_file = shift @$args;
+        $config_file = $opt->{file} || shift @$args ;
         $self->usage_error(
             "no config file specified. Command should be 'cme $command $application configuration_file'",
         ) unless $config_file;
     }
-    elsif ( $appli_info->{$application}{allow_config_file_override} 
-            and $args->[0] and $args->[0] ne '~~' )
-        {
-            $config_file = shift @$args;
-        }
+    elsif ( $appli_info->{$application}{allow_config_file_override}) {
+        $config_file = $opt->{file};
+    }
+
+    # remove legacy '~~'
+    if ($args->[0] and $args->[0] eq '~~') {
+        warn "Argument '~~' was a bad idea and is now ignored. Use -file option to "
+            ."specify a target file or just forget about '~~' argument\n";
+        shift @$args;
+    }
 
     # else cannot distinguish between bogus config_file and modification_instructions
     my $warn_msg;
     if ($config_file and not -e $config_file) {
-        $warn_msg = "Warning: file '$config_file' does not exists.";
-    }
-    if ($warn_msg and $appli_info->{$application}{allow_config_file_override}) {
-        $warn_msg .=" You may need to write this command with '~~' argument. I.e. try "
-            ."something like 'cme $command $application ~~ $config_file'";
-    }
-    if ($warn_msg) {
-        warn $warn_msg."\n";
-    }
-
-    # slurp any '~~'
-    if ( $args->[0] and $args->[0] eq '~~' ) {
-        shift @$args;
+        warn "Warning: file '$config_file' does not exists.\n";
     }
 
     $opt->{_application} = $application ;
