@@ -1,5 +1,14 @@
 {{$NEXT}}
 
+1.007 2015-10-25
+
+  Usability improvements:
+    * cme: added -file option to replace '~~' argument
+    * bash_completion: added update sub command
+  Doc fixes:
+    * cme: fixed synopsis
+    * cme: added update doc
+
 1.006 2015-07-19
 
     Doc fix release:
