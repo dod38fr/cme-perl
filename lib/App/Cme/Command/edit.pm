@@ -29,7 +29,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application] [file | ~~ ] [ -ui tk|curses|shell ] [ -open-item xxx ] ";
+  return "$desc [application] [ file ] [ -ui tk|curses|shell ] [ -open-item xxx ] ";
 }
 
 sub description {
