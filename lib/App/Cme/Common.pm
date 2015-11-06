@@ -44,7 +44,7 @@ sub process_args {
     my $application = shift @$args;
 
     my $root_model = $appli_map->{$application};
-    $root_model ||= $application if $opt->{try_application_as_model};
+    $root_model ||= $application if $opt->{try_app_as_model};
     say "cme: using $root_model model" unless $opt->{quiet};
 
     Config::Model::Exception::Any->Trace(1) if $opt->{trace};
