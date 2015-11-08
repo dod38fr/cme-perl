@@ -16,7 +16,7 @@ sub validate_args {
     my ($self, $opt, $args) = @_;
     $self->process_args($opt,$args);
     $self->usage_error("No modification instructions given on command line")
-        unless @$args;
+        unless @$args or $opt->{save};
 }
 
 sub opt_spec {
@@ -42,6 +42,9 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
+
+    # needed to create write_back subs
+    $root->dump_tree() if $opt->{save} and not @$args;
 
     $root->load("@$args");
 
