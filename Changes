@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+1.008 2015-11-14
+
+  Bug fix release:
+    * fix -save option with modify command
+    * fix -try-app-as-model option
+
 1.007 2015-10-25
 
   Usability improvements:
