@@ -8,10 +8,7 @@ use Test::Command 0.08;
 use Test::More;
 use Test::File::Contents;
 
-if ( $^O =~ /linux|bsd|solaris|sunos/ ) {
-    plan tests => 10;
-}
-else {
+if ( $^O !~ /linux|bsd|solaris|sunos/ ) {
     plan skip_all => "Test with system() in build systems don't work well on this OS ($^O)";
 }
 
@@ -51,15 +48,25 @@ open( CONF, "> $conf_file" ) || die "can't open $conf_file: $!";
 print CONF @orig;
 close CONF;
 
+# test minimal modif (re-order)
+my $ok = Test::Command->new(
+    cmd => "$cme_cmd modify popcon -save -root-dir $wr_dir"
+);
+exit_is_num( $ok, 0, 'all went well' );
+
+file_contents_like $conf_file,   qr/cme/,       "updated header";
+file_contents_like $conf_file,   qr/yes"\nMY/, "reordered file";
+file_contents_unlike $conf_file, qr/removed/,   "double comment is removed";
+
 $oops = Test::Command->new(
     cmd => "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes"
 );
 exit_cmp_ok( $oops, '>', 0, 'wrong parameter detected' );
 stderr_like( $oops, qr/unknown element/, 'check unknown element' );
 
-# use -force-load to force a file save to update file header
-my $ok = Test::Command->new(
-    cmd => "$cme_cmd modify popcon -force-load -root-dir $wr_dir PARTICIPATE=yes"
+# use -save to force a file save to update file header
+$ok = Test::Command->new(
+    cmd => "$cme_cmd modify popcon -save -root-dir $wr_dir PARTICIPATE=yes"
 );
 exit_is_num( $ok, 0, 'all went well' );
 
@@ -72,6 +79,8 @@ my $search = Test::Command->new(
 exit_is_num( $search, 0, 'search went well' );
 stdout_like( $search, qr/PARTICIPATE/, "got PARTICIPATE" );
 stdout_like( $search, qr/USEHTTP/,     "got USEHTTP" );
+
+done_testing;
 
 __END__
 # Config file for Debian's popularity-contest package.
