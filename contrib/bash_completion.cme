@@ -24,14 +24,19 @@ _cme_appli()
 
 _cme_commands()
 {
-	# could use perl -MApp::Cme -e'print join("\n", grep {not /-/} App::Cme->new->command_names);'
-	# to list commands, but it's too slow (~ 200ms)
-    COMPREPLY=( $( compgen -W 'help version commands list check migrate update fix modify search edit shell dump fusefs' -- $cur ) )
+    # use perl so that plugged in subcommand (like meta) are listed
+    SUBCMDS=$(perl -MApp::Cme -e'print join("\n", grep {not /-/} App::Cme->new->command_names);')
+    COMPREPLY=( $( compgen -W "$SUBCMDS" -- $cur ) )
 }
 
 _cme_handle_app_arg()
 {
 	[[ $COMP_CWORD -eq 3 ]] && _cme_${COMP_WORDS[2]} 2> /dev/null ;
+}
+
+_cme_handle_cmd_arg()
+{
+	[[ $COMP_CWORD -ge 2 ]] && _cme_cmd_${COMP_WORDS[1]} 2> /dev/null ;
 }
 
 _cme()
@@ -45,6 +50,8 @@ _cme()
 
     if [[ $COMP_CWORD -eq 1 ]] ; then
         _cme_commands
+    elif _cme_handle_cmd_arg; then
+        TRASH=1; # bash does not support empty then/elif
     elif [[ $COMP_CWORD -eq 2 ]] ; then
         _cme_appli
     elif ! _cme_handle_app_arg; then
