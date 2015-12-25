@@ -29,7 +29,7 @@ my %help = (
 sub execute {
     my ($self, $opt, $args) = @_;
 
-    my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
+    my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models($opt->dev());
     foreach my $cat ( qw/system user application/ ) {
         my $names = $categories->{$cat} || [];
         next unless @$names;
