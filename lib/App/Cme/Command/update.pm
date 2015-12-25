@@ -51,17 +51,21 @@ sub execute {
 
     if (@msgs and not $opt->{quiet}) {
         say "update done";
-        say join("\n", grep {defined $_} @msgs );
     }
     elsif (not $opt->{quiet}) {
-        say "command done, but model has no provision for update";
+        say "command done, but ".$opt->{_application}
+            . " model has no provision for update";
     }
 
     if ($opt->{edit}) {
+        say join("\n", grep {defined $_} @msgs );
         $self->run_tk_ui ( $inst->config_root, $opt);
     }
+    else {
+        $self->save($inst,$opt) ;
+        say join("\n", grep {defined $_} @msgs );
+    }
 
-    $self->save($inst,$opt) ;
 }
 
 1;
