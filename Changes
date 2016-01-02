@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+1.009 2016-01-02
+
+  Bug fix release:
+  * remove warning about missing config file. It's better to
+    let the read/write backend handle bogus config file
+  * update command: improved messages shown to user
+  * list command: now work with -dev option
+
 1.008 2015-11-14
 
   Bug fix release:
