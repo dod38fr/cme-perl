@@ -85,12 +85,6 @@ sub process_args {
         shift @$args;
     }
 
-    # else cannot distinguish between bogus config_file and modification_instructions
-    my $warn_msg;
-    if ($config_file and not -e $config_file) {
-        warn "Warning: file '$config_file' does not exists.\n";
-    }
-
     $opt->{_application} = $application ;
     $opt->{_config_file} = $config_file;
     $opt->{_root_model}  = $root_model;
