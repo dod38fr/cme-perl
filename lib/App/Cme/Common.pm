@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model 2.063;
+use Config::Model 2.077;
 use Config::Model::Lister;
 use Pod::POM;
 use Pod::POM::View::Text;
@@ -85,6 +85,9 @@ sub process_args {
         shift @$args;
     }
 
+    # override (or specify) configuration dir
+    $opt->{_config_dir} = $appli_info->{$application}{config_dir};
+
     $opt->{_application} = $application ;
     $opt->{_config_file} = $config_file;
     $opt->{_root_model}  = $root_model;
@@ -114,6 +117,7 @@ sub instance {
             backend         => $opt->{backend},
             backup          => $opt->{backup},
             config_file     => $opt->{_config_file},
+            config_dir      => $opt->{_config_dir},
         );
 
 }
