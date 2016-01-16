@@ -20,6 +20,13 @@ EOD
 
 }
 
+sub opt_spec {
+    my ( $class, $app ) = @_;
+    return (
+        [ "dev!"               => "list includes a model under development"],
+    );
+}
+
 my %help = (
     system => "system configuration files. Use sudo to run cme",
     user => "user configuration files",
