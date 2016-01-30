@@ -1,5 +1,17 @@
 {{$NEXT}}
 
+1.010 2016-01-30
+
+  New functionality:
+  * Can read configuration directory from application
+    file, e.g. user.d/ssh. This will help reuse Model
+    from betweens applications (e.g. systemd and
+    systemd --user).
+    This requires Config::Model 2.077
+
+  Bug fix:
+  * cme list: fix -dev option option (Debian #813188)
+
 1.009 2016-01-02
 
   Bug fix release:
