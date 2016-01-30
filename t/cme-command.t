@@ -32,6 +32,12 @@ my $perl_cmd = $path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->perl_i
 my $cme_cmd = -e 'bin/cme' ? "$perl_cmd bin/cme" : 'cme' ;
 note("cme is invoked with: '$cme_cmd'" );
 
+# test minimal modif (re-order)
+my $list_ok = Test::Command->new(
+    cmd => "$cme_cmd list"
+);
+exit_is_num( $list_ok, 0, 'list command went well' );
+
 my $oops = Test::Command->new(
     cmd => "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes"
 );
