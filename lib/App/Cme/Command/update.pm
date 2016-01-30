@@ -12,7 +12,7 @@ use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
 
-use Config::Model 2.068; # for call to Instance->update
+use Config::Model;
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
