@@ -11,6 +11,9 @@ use App::Cme -command ;
 use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
+use YAML;
+use JSON;
+use Data::Dumper;
 
 sub validate_args {
     shift->process_args(@_);
@@ -25,6 +28,13 @@ sub opt_spec {
                 regex => qr/^(?:full|custom|preset)$/,
                 default => 'custom'
             }
+        ],
+        [
+            "format=s" => "dump using specified format",
+            {
+                regex => qr/^(?:json|yaml|perl|cml)$/,
+                default => 'yaml'
+            },
         ],
         $class->cme_global_options,
     );
@@ -48,7 +58,17 @@ sub execute {
 
     my $target_node = $root->grab(step => "@$args", type => 'node');
 
-    my $dump_string = $target_node->dump_tree( mode => $opt->{dumptype} );
+    my $dump_string;
+    my $format = $opt->{format};
+    if ($format eq 'cml') {
+        $dump_string = $target_node->dump_tree( mode => $opt->{dumptype} );
+    }
+    else {
+        my $perl_data = $target_node->dump_as_data( ordered_hash_as_list => 0);
+        $dump_string = $format eq 'yaml' ? Dump($perl_data)
+            : $format eq 'JSON' ? encode_json($perl_data)
+            :                     Dumper($perl_data) ;
+    }
     print $dump_string ;
 
 }
@@ -61,21 +81,15 @@ __END__
 
   # dump ~/.ssh/config in cme syntax
   # (this example requires Config::Model::OpenSsh)
-  $ cme dump ssh
+  $ cme dump -format cml ssh
   Host:"*" -
   Host:"*.debian.org"
     User=dod -
 
-  # dump part of debian copyright file in cme syntax
-  # (this example requires Config::Model::OpenSsh)
-  $ cme dump ssh
-  Host:"*" -
-  Host:"*.debian.org"
-    User=dod -
 
 =head1 DESCRIPTION
 
-Dump configuration content on STDOUT with Config::Model syntax.
+Dump configuration content on STDOUT with YAML format.
 
 By default, dump only custom values, i.e. different from application
 built-in values or model default values. You can use the C<-dumptype> option for
@@ -85,6 +99,9 @@ other types of dump:
 
 Choose to dump every values (full), only preset values or only
 customized values (default)
+
+By default, dump in yaml format. This can be changed in C<JSON>,
+C<Perl>, C<cml> (aka L<Config::Model::Loader> format).
 
 =head1 Common options
 
