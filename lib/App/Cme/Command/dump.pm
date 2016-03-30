@@ -23,9 +23,9 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [
-            "dumptype=s" => "Dump all values (full) or only preset values or customized values",
+            "dumptype=s" => "Dump all values (full) or only customized values",
             {
-                regex => qr/^(?:full|custom|preset)$/,
+                regex => qr/^(?:full|custom)$/,
                 default => 'custom'
             }
         ],
@@ -43,7 +43,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom|preset ] [ path ]";
+  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom ] [ path ]";
 }
 
 sub description {
@@ -60,17 +60,21 @@ sub execute {
 
     my $dump_string;
     my $format = $opt->{format};
+    my $mode = $opt->{dumptype} eq 'full' ? 'non_upstream_default' : 'custom';
+
     if ($format eq 'cml') {
-        $dump_string = $target_node->dump_tree( mode => $opt->{dumptype} );
+        $dump_string = $target_node->dump_tree( mode => $mode );
     }
     else {
-        my $perl_data = $target_node->dump_as_data( ordered_hash_as_list => 0);
+        my $perl_data = $target_node->dump_as_data(
+            ordered_hash_as_list => 0,
+            mode => $mode
+        );
         $dump_string = $format eq 'yaml' ? Dump($perl_data)
             : $format eq 'JSON' ? encode_json($perl_data)
             :                     Dumper($perl_data) ;
     }
     print $dump_string ;
-
 }
 
 1;
@@ -95,10 +99,9 @@ By default, dump only custom values, i.e. different from application
 built-in values or model default values. You can use the C<-dumptype> option for
 other types of dump:
 
- -dumptype [ full | preset | custom ]
+ -dumptype [ full | custom ]
 
-Choose to dump every values (full), only preset values or only
-customized values (default)
+Choose to dump every values (full) or only customized values (default)
 
 By default, dump in yaml format. This can be changed in C<JSON>,
 C<Perl>, C<cml> (aka L<Config::Model::Loader> format).
