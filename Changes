@@ -1,11 +1,17 @@
 {{$NEXT}}
 
+1.011 2016-04-21
+
+  New functionality:
+    * dump command can dump any config file(s) in YAML, JSON
+      or Perl format.
+
 1.010 2016-01-30
 
   New functionality:
   * Can read configuration directory from application
     file, e.g. user.d/ssh. This will help reuse Model
-    from betweens applications (e.g. systemd and
+    between applications (e.g. systemd and
     systemd --user).
     This requires Config::Model 2.077
 
