@@ -45,13 +45,14 @@ sub process_args {
 
     my $root_model = $appli_map->{$application};
     $root_model ||= $application if $opt->{try_app_as_model};
-    say "cme: using $root_model model" unless $opt->{quiet};
 
     Config::Model::Exception::Any->Trace(1) if $opt->{trace};
 
     if ( not defined $root_model ) {
         die "Unknown application: $application. Run 'cme list' to list available applications\n";
     }
+
+    say "cme: using $root_model model" unless $opt->{quiet};
 
     if ($opt->{dev}) {
         # ignore $dev if run as root
