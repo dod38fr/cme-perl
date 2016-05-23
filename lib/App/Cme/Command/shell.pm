@@ -39,7 +39,18 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    $self->run_shell_ui($root, $inst->application) ;
+    eval { require Term::ReadLine; };
+    my $has_term_readline = $@ ? 0 : 1;
+
+    if ($has_term_readline) {
+        require Config::Model::TermUI;
+        $self->run_shell_ui('Config::Model::TermUI', $inst) ;
+    }
+    else {
+        warn "You should install Term::ReadLine for a more friendly user interface\n";
+        require Config::Model::SimpleUI;
+        $self->run_shell_ui('Config::Model::SimpleUI', $inst) ;
+    }
 }
 
 1;

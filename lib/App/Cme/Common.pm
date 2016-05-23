@@ -168,13 +168,12 @@ sub run_tk_ui {
     &MainLoop;    # Tk's
 }
 
-sub run_shell_ui ($$) {
-    my ($self, $root, $root_model) = @_;
+sub run_shell_ui ($$$) {
+    my ($self, $term_class, $inst) = @_;
 
-    require Config::Model::TermUI;
-    my $shell_ui = Config::Model::TermUI->new(
-        root   => $root,
-        title  => $root_model . ' configuration',
+    my $shell_ui = $term_class->new (
+        root   => $inst->config_root,
+        title  => $inst->application . ' configuration',
         prompt => ' >',
     );
 
