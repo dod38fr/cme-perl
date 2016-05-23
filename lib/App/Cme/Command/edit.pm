@@ -47,6 +47,9 @@ sub execute {
     eval { require Config::Model::CursesUI; };
     my $has_curses = $@ ? 0 : 1;
 
+    eval { require Term::ReadLine; };
+    my $has_term_readline = $@ ? 0 : 1;
+
     my $ui_type = $opt->{ui};
 
     if ( not defined $ui_type ) {
@@ -57,31 +60,33 @@ sub execute {
             warn "You should install Config::Model::TkUI for a ", "more friendly user interface\n";
             $ui_type = 'curses';
         }
-        else {
+        elsif ($has_term_readline) {
             warn "You should install Config::Model::TkUI or ",
                 "Config::Model::CursesUI ",
                 "for a more friendly user interface\n";
             $ui_type = 'shell';
         }
+        else {
+            warn "You should install Config::Model::TkUI or ",
+                "Config::Model::CursesUI or Term::ReadLine",
+                "for a more friendly user interface\n";
+            $ui_type = 'simple';
+        }
     }
 
     if ( $ui_type eq 'simple' ) {
-
         require Config::Model::SimpleUI;
-        my $shell_ui = Config::Model::SimpleUI->new(
-            root   => $root,
-            title  => $inst->application . ' configuration',
-            prompt => ' >',
-        );
-
-        # engage in user interaction
-        $shell_ui->run_loop;
+        $self->run_shell_ui('Config::Model::SimpleUI', $inst) ;
     }
     elsif ( $ui_type eq 'shell' ) {
-        $self->run_shell_ui($root, $inst->application) ;
+        die "cannot run shell interface: ", "Term::ReadLine is not installed. Please use simple ui\n"
+            unless $has_term_readline;
+        require Config::Model::TermUI;
+        $self->run_shell_ui('Config::Model::TermUI', $inst) ;
     }
     elsif ( $ui_type eq 'curses' ) {
-        die "cannot run curses interface: ", "Config::Model::CursesUI is not installed\n"
+        die "cannot run curses interface: ",
+            "Config::Model::CursesUI is not installed, please use shell or simple UI\n"
             unless $has_curses;
         my $err_file = '/tmp/cme-error.log';
 
@@ -98,7 +103,7 @@ sub execute {
         close FH;
     }
     elsif ( $ui_type eq 'tk' ) {
-        die "cannot run Tk interface: Config::Model::TkUI is not installed\n"
+        die "cannot run Tk interface: Config::Model::TkUI is not installed, please use curses or shell or simple ui\n"
             unless $has_tk;
         $self ->run_tk_ui ( $root, $opt);
     }
