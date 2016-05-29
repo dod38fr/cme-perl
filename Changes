@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+1.012 2016-05-29
+
+  Bug fix:
+    * edit command degrades gracefully when recommended packages
+      are not isntalled
+    * shell command degrades gracefully without Term::ReadLine
+
 1.011 2016-04-21
 
   New functionality:
