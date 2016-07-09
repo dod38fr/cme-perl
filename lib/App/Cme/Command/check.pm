@@ -48,8 +48,10 @@ sub execute {
 
     my $ouch = $inst->has_warning;
 
-    if ( $opt->{strict} and $ouch ) {
-        die "Found $ouch warnings in strict mode\n";
+    if ( $ouch ) {
+        my $app = $inst->application;
+        warn "you can try 'cme fix $app' to fix the warnings shown above\n";
+        die "Found $ouch warnings in strict mode\n" if $opt->{strict};
     }
 }
 
