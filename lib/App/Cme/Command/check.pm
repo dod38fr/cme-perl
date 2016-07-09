@@ -97,7 +97,7 @@ See L<cme/"Global Options">.
 
 =item -strict
 
-When set, cme will exit 1 if warnings are found during check (of left after fix)
+When set, cme will exit 1 if warnings are found during check (or left after fix)
 
 =back
 
