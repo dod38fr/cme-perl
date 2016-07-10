@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+1.013 2016-07-10
+
+  Usability improvements:
+    * clarify doc of -strict option (check cmd)
+    * fix typo in pod doc (tx Thomas Schmitt)
+    * suggest 'cme fix' when 'cme check' finds warnings
+    * add CONTRIBUTE.md
+
 1.012 2016-05-29
 
   Bug fix:
