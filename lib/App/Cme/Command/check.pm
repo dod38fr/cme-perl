@@ -97,7 +97,8 @@ See L<cme/"Global Options">.
 
 =item -strict
 
-When set, cme will exit 1 if warnings are found during check (or left after fix)
+When set, cme exits 1 if warnings are found. By default, C<cme> exits
+0 when warnings are found.
 
 =back
 
@@ -105,7 +106,7 @@ When set, cme will exit 1 if warnings are found during check (or left after fix)
 
 cme exits 0 when no errors are found. Exit 1 otherwise.
 
-If C<-strict> option is set, cme will exit 1 when warnings are still present when the program ends.
+If C<-strict> option is set, cme exits 1 when warnings are found.
 
 =head1 SEE ALSO
 
