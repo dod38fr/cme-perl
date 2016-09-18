@@ -26,7 +26,7 @@ sub cme_global_options {
       [ "root-dir=s"         => "Change root directory. Mostly used for test"],
       [ "file=s"             => "Specify a target file"],
       [ "backend=s"          => "Specify a read/write backend"],
-      [ "stack-trace|trace!" => "Provides a full stack trace when exiting on error"],
+      [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
       [ "quiet!"             => "Suppress progress messages" ],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
