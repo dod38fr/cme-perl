@@ -49,7 +49,10 @@ sub process_args {
     Config::Model::Exception::Any->Trace(1) if $opt->{trace};
 
     if ( not defined $root_model ) {
-        die "Unknown application: $application. Run 'cme list' to list available applications\n";
+        die "Can't locate model for application '$application'.\n"
+            . "Run 'cme list' for the list of models available on your system.\n"
+            . "You may need to install another Config::Model Perl module.\n"
+            . "See the available models there: https://github.com/dod38fr/config-model/wiki/Available-models-and-backends\n";
     }
 
     say "cme: using $root_model model" unless $opt->{quiet};
