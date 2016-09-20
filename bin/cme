@@ -326,7 +326,7 @@ Trace change notification through configuration tree and instance.
 
 =item Warper
 
-=item Wizard::Helper
+=item Iterator
 
 =item Model
 
