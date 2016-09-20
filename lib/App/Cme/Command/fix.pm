@@ -61,7 +61,7 @@ __END__
 
 =head1 SYNOPSIS
 
-  # fix dpkg (requires Config::Model::Dpkg)
+  # fix dpkg (this example requires Config::Model::Dpkg)
   cme fix dpkg
 
 =head1 DESCRIPTION
