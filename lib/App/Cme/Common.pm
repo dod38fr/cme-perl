@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model 2.077;
+use Config::Model 2.089;
 use Config::Model::Lister;
 use Pod::POM;
 use Pod::POM::View::Text;

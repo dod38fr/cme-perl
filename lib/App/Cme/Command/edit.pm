@@ -74,6 +74,8 @@ sub execute {
         }
     }
 
+    $root->deep_check;
+
     if ( $ui_type eq 'simple' ) {
         require Config::Model::SimpleUI;
         $self->run_shell_ui('Config::Model::SimpleUI', $inst) ;

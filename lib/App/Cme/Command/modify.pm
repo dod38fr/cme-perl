@@ -48,6 +48,8 @@ sub execute {
 
     $root->load("@$args");
 
+    $root->deep_check; # consistency check
+
     $self->save($inst,$opt) ;
 }
 

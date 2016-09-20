@@ -43,7 +43,8 @@ sub execute {
     say "loading data" unless $opt->{quiet};
     Config::Model::ObjTreeScanner->new( leaf_cb => sub { } )->scan_node( undef, $root );
     say "checking data" unless $opt->{quiet};
-    $root->dump_tree( mode => 'full' );
+    $root->dump_tree( mode => 'full' ); # light check (value per value)
+    $root->deep_check; # consistency check
     say "check done" unless $opt->{quiet};
 
     my $ouch = $inst->has_warning;

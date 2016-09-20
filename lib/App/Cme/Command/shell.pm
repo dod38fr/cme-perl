@@ -42,6 +42,8 @@ sub execute {
     eval { require Term::ReadLine; };
     my $has_term_readline = $@ ? 0 : 1;
 
+    $root->deep_check;
+
     if ($has_term_readline) {
         require Config::Model::TermUI;
         $self->run_shell_ui('Config::Model::TermUI', $inst) ;
