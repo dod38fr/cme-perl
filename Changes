@@ -1,5 +1,15 @@
 {{$NEXT}}
 
+1.014 2016-09-24
+
+  Improvements:
+    * run deep_check when running commands check, edit, modify, shell
+      (requires Config::Model 2.089)
+    * improved error msg for unknown app (Closes Debian #836794)
+
+  Bug fix:
+    * cme: fix -strack-trace option
+
 1.013 2016-07-10
 
   Usability improvements:
