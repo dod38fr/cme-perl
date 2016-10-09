@@ -61,6 +61,10 @@ based on curses if L<Config::Model::CursesUI> is installed.
 
 By default, C<cme edit> will try to launch a GUI.
 
+=head2 Installation
+
+See L<Readme.install|https://github.com/dod38fr/cme-perl/blob/master/README.install.pod>
+
 
 =head2 What does "cme" means ?
 
