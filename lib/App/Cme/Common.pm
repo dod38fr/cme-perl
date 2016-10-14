@@ -12,6 +12,7 @@ use Pod::POM;
 use Pod::POM::View::Text;
 use Scalar::Util qw/blessed/;
 use Path::Tiny;
+use Encode qw(decode_utf8);
 
 sub cme_global_options {
   my ( $class, $app ) = @_;
@@ -37,8 +38,12 @@ sub cme_global_options {
   );
 }
 
+# modifies $args in place
 sub process_args {
     my ($self, $opt, $args) = @_;
+
+    # see Debian #839593 and perlunicook(1) section X 13
+    @$args = map { decode_utf8($_, 1) } @$args;
 
     my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
     my $application = shift @$args;
