@@ -1,6 +1,9 @@
 # -*- cperl -*-
 use strict;
 use warnings;
+use utf8;
+use open ':std', ':encoding(utf8)';
+
 use File::Path;
 use Probe::Perl;
 
@@ -94,6 +97,17 @@ subtest "search" => sub {
     exit_is_num( $search, 0, 'search went well' );
     stdout_like( $search, qr/PARTICIPATE/, "got PARTICIPATE" );
     stdout_like( $search, qr/USEHTTP/,     "got USEHTTP" );
+};
+
+subtest "modification with utf8 parameter" => sub {
+    my $utf8_name = "héhôßœ";
+    my $ok = Test::Command->new(
+        cmd => qq!$cme_cmd modify popcon -root-dir $wr_dir MY_HOSTID="$utf8_name"!
+    );
+    exit_is_num( $ok, 0, 'all went well' );
+
+    file_contents_like $conf_file,   qr/$utf8_name/,
+        "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
 done_testing;
