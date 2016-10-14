@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+1.015 2016-10-14
+
+  Bug fix:
+   * cme: support utf8 in command args (Debian #839593)
+
 1.014 2016-09-24
 
   Improvements:
