@@ -20,6 +20,7 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return (
+        [ "quiet!" => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

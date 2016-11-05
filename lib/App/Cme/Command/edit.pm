@@ -20,8 +20,9 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return (
-        [ "ui|if=s" => "user interface type. Either tk, curses, shell" ],
+        [ "ui|if=s"     => "user interface type. Either tk, curses, shell" ],
         [ "open-item=s" => "open a specific item of the configuration" ],
+        [ "quiet!"      => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

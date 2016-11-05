@@ -28,7 +28,6 @@ sub cme_global_options {
       [ "file=s"             => "Specify a target file"],
       [ "backend=s"          => "Specify a read/write backend"],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
-      [ "quiet!"             => "Suppress progress messages" ],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );

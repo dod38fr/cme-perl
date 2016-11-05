@@ -16,12 +16,14 @@ use JSON;
 use Data::Dumper;
 
 sub validate_args {
-    shift->process_args(@_);
+    my ($self, $opt, $args) = @_;
+    $opt->{quiet} = 1; # don't want to mess up yaml output
+    $self->process_args($opt,$args);
 }
 
 sub opt_spec {
     my ( $class, $app ) = @_;
-    return ( 
+    return (
         [
             "dumptype=s" => "Dump all values (full) or only customized values",
             {
@@ -36,6 +38,7 @@ sub opt_spec {
                 default => 'yaml'
             },
         ],
+        [ "quiet!"             => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

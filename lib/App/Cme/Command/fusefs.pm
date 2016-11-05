@@ -34,8 +34,9 @@ sub opt_spec {
             "fuse-dir=s" =>  "Directory where the virtual file system will be mounted",
             {required => 1}
         ],
-        [ "dfuse!" => "debug fuse problems" ],
+        [ "dfuse!"     => "debug fuse problems" ],
         [ "dir-char=s" => "string to replace '/' in configuration parameter names"],
+        [ "quiet!"     => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

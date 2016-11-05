@@ -22,6 +22,7 @@ sub opt_spec {
     return ( 
         [ "from=s@"  => "fix only a subset of a configuration tree" ],
         [ "filter=s" => "pattern to select the element name to be fixed"],
+        [ "quiet!"   => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }
