@@ -40,9 +40,14 @@ sub execute {
     my ($self, $opt, $args) = @_;
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
-
+    my $check =  $opt->{force_load} ? 'no' : 'yes' ;
     say "loading data" unless $opt->{quiet};
-    Config::Model::ObjTreeScanner->new( leaf_cb => sub { } )->scan_node( undef, $root );
+
+    Config::Model::ObjTreeScanner->new(
+        leaf_cb => sub { },
+        check => $check,
+    )->scan_node( undef, $root );
+
     say "checking data" unless $opt->{quiet};
     $root->dump_tree( mode => 'full' ); # light check (value per value)
     $root->deep_check; # consistency check
