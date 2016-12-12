@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+1.016 2016-12-12
+
+  Bug fix:
+   * check command: propagate -force option to skip load check
+   * dump command must always be in quiet mode
+
 1.015 2016-10-14
 
   Bug fix:
