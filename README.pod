@@ -63,7 +63,9 @@ By default, C<cme edit> will try to launch a GUI.
 
 =head2 Installation
 
-See L<Readme.install|https://github.com/dod38fr/cme-perl/blob/master/README.install.pod>
+See L<Readme.install|https://github.com/dod38fr/cme-perl/blob/master/README.install.pod>.
+
+Perl developers can also L<build App::Cme from git|build-from-git.md>
 
 
 =head2 What does "cme" means ?

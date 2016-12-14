@@ -1,56 +1,57 @@
-cme from git is built with Dist::Zilla.
+# How to build App::Cme from git repository
 
-You must make sure that the following modules are installed:
-Dist::Zilla::Plugin::MetaResources
-Dist::Zilla::Plugin::ModuleBuild::Custom
-Dist::Zilla::Plugin::Test::PodSpelling
-Dist::Zilla::Plugin::PodVersion
-Dist::Zilla::Plugin::Prepender
-Dist::Zilla::Plugin::Prereqs
-Dist::Zilla::Plugin::Run::BeforeBuild
-Dist::Zilla::PluginBundle::Filter
-Dist::Zilla::Plugin::Git::NextVersion
+`App::Cme` is build with [Dist::Zilla](http://dzil.org/). This
+pages details how to install the tools and dependencies required to
+build this module.
 
-On debian or ubuntu, do:
+## Install tools and dependencies
 
-sudo aptitude install \
-     libdist-zilla-plugin-prepender-perl \
-     libdist-zilla-plugin-run-perl \
-     libdist-zilla-plugins-cjm-perl \
-     libdist-zilla-perl \
-     libdist-zilla-plugin-podspellingtests-perl \
-     libdist-zilla-plugin-git-perl
+### Debian, Ubuntu and derivatives
 
-On other systems, run:
+Run
 
-$ sudo perl -MCPAN -e shell
-> install App::cpanminus
-> quit
-$ sudo cpamn install Dist::Zilla::Plugin::MetaResources
-$ sudo cpamn install Dist::Zilla::Plugin::ModuleBuild::Custom
-$ sudo cpamn install Dist::Zilla::Plugin::Test::PodSpelling
-$ sudo cpamn install Dist::Zilla::Plugin::PodVersion
-$ sudo cpamn install Dist::Zilla::Plugin::Prepender
-$ sudo cpamn install Dist::Zilla::Plugin::Prereqs
-$ sudo cpamn install Dist::Zilla::Plugin::Run::BeforeBuild
-$ sudo cpamn install Dist::Zilla::PluginBundle::Filter
-$ sudo cpamn install Dist::Zilla::Plugin::Git::NextVersion
+    $ sudo apt install libdist-zilla-perl libdist-zilla-app-command-authordebs-perl
+    $ dzil authordebs --install
+    $ sudo apt build-dep cme
 
-Then run:
+The [libdist-zilla-app-command-authordebs-perl package](https://tracker.debian.org/pkg/libdist-zilla-app-command-authordebs-perl) is quite recent (uploaded on Dec 2016 in Debian/unstable) 
+and may not be available yet on your favorite distribution.
 
-dzil build 
+### Other systems
+
+Run 
+
+    $ cpamn Dist::Zilla
+    $ dzil authordeps -missing | cpanm --notest
+    $ dzil listdeps --missing | cpanm --notest
+
+NB: The author would welcome pull requests that explains how to
+install these tools and dependencies using native package of other
+distributions.
+
+## Build App::Cme
+
+Run
+
+    dzil build 
 
 or 
 
-dzil test
+    dzil test
 
-If dzil complains about missing EmailNotify or Twitter plugin, edit dist.ini and comment out
-the last 2 sections. They are useful only to the author.
+`dzil` may complain about missing `EmailNotify` or `Twitter`
+plugin. You may ignore this or edit [dist.ini](dist.ini) to comment
+out the last 2 sections. These are useful only to the author when
+releasing a new version.
 
-If dzil returns an error like "Cannot determine local time zone", you should
-specify explicitely your timezone in TZ environement variable. E.g.
 
- TZ="Europe/Paris" dzil test
+`dzil` may also return an error like `Cannot determine local time
+zone`. In this case, you should specify explicitely your timezone in
+a `TZ` environement variable. E.g run `dzil` this way:
 
-The list of timezones is provided by DateTime::TimeZone::Catalog documentation.
+    TZ="Europe/Paris" dzil test
+
+The list of possible timezones is provided by
+[DateTime::TimeZone::Catalog](https://metacpan.org/pod/DateTime::TimeZone::Catalog)
+documentation.
 
