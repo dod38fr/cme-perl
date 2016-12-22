@@ -1,5 +1,13 @@
 =head1 cme - Check or edit configuration data
 
+=begin html
+
+<a href="https://travis-ci.org/dod38fr/config-model">
+   <img src="https://travis-ci.org/dod38fr/config-model.svg?branch=master">
+</a>>
+
+=end html
+
 L<cme> provides a command to check or edit configuration data with
 L<config-model|https://github.com/dod38fr/config-model/wiki>.
 
