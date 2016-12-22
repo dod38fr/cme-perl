@@ -15,8 +15,8 @@ L<cme> and L<Config::Model> are quite modular: the configuration data
 that you can edit depend on the other C<Config::Model> distributions
 installed on your system.
 
-For instance, to configure L<ssh|http://man.cx/ssh_config> or
-L<C</etc/ssh/sshd_config>|http://man.cx/sshd_config>, you need to
+For instance, to configure L<ssh client|http://man.cx/ssh_config> or
+L<sshd server|http://man.cx/sshd_config>, you need to
 install L<Config::Model::OpenSsh>.
 
 Then you can check your ssh configuration with this command:
