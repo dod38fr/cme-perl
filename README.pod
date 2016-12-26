@@ -1,7 +1,7 @@
 =begin html
 
-<a href="https://travis-ci.org/dod38fr/config-model">
-   <img src="https://travis-ci.org/dod38fr/config-model.svg?branch=master">
+<a href="https://travis-ci.org/dod38fr/cme-perl">
+   <img src="https://travis-ci.org/dod38fr/cme-perl.svg?branch=master">
 </a>
 
 =end html
