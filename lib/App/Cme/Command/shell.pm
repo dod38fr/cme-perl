@@ -20,6 +20,7 @@ sub opt_spec {
     return ( 
         [ "open-item=s" => "open a specific item of the configuration" ],
         [ "quiet!"      => "Suppress progress messages" ],
+        [ "bare!"       => "run bare terminal UI"],
         $class->cme_global_options,
     );
 }
@@ -40,19 +41,15 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    eval { require Term::ReadLine; };
-    my $has_term_readline = $@ ? 0 : 1;
-
     $root->deep_check;
 
-    if ($has_term_readline) {
-        require Config::Model::TermUI;
-        $self->run_shell_ui('Config::Model::TermUI', $inst) ;
-    }
-    else {
-        warn "You should install Term::ReadLine for a more friendly user interface\n";
+    if ($opt->{bare})  {
         require Config::Model::SimpleUI;
         $self->run_shell_ui('Config::Model::SimpleUI', $inst) ;
+    }
+    else {
+        require Config::Model::TermUI;
+        $self->run_shell_ui('Config::Model::TermUI', $inst) ;
     }
 }
 
@@ -81,6 +78,14 @@ See L<cme/"Global Options">.
 =item -open-item
 
 Open a specific item of the configuration when opening the editor
+
+=item -quiet
+
+Suppress porgress message
+
+=item -bare
+
+Use Term UI without auto-completion or font enhancements.
 
 =back
 

@@ -48,9 +48,6 @@ sub execute {
     eval { require Config::Model::CursesUI; };
     my $has_curses = $@ ? 0 : 1;
 
-    eval { require Term::ReadLine; };
-    my $has_term_readline = $@ ? 0 : 1;
-
     my $ui_type = $opt->{ui};
 
     if ( not defined $ui_type ) {
@@ -61,29 +58,17 @@ sub execute {
             warn "You should install Config::Model::TkUI for a ", "more friendly user interface\n";
             $ui_type = 'curses';
         }
-        elsif ($has_term_readline) {
+        else {
             warn "You should install Config::Model::TkUI or ",
                 "Config::Model::CursesUI ",
                 "for a more friendly user interface\n";
             $ui_type = 'shell';
         }
-        else {
-            warn "You should install Config::Model::TkUI or ",
-                "Config::Model::CursesUI or Term::ReadLine",
-                "for a more friendly user interface\n";
-            $ui_type = 'simple';
-        }
     }
 
     $root->deep_check;
 
-    if ( $ui_type eq 'simple' ) {
-        require Config::Model::SimpleUI;
-        $self->run_shell_ui('Config::Model::SimpleUI', $inst) ;
-    }
-    elsif ( $ui_type eq 'shell' ) {
-        die "cannot run shell interface: ", "Term::ReadLine is not installed. Please use simple ui\n"
-            unless $has_term_readline;
+    if ( $ui_type eq 'shell' ) {
         require Config::Model::TermUI;
         $self->run_shell_ui('Config::Model::TermUI', $inst) ;
     }
@@ -156,7 +141,7 @@ L<Config::Model::CursesUI> is installed).
 =item *
 
 C<shell>: provides a shell like interface.  See L<Config::Model::TermUI>
-for details.
+for details. This is equivalent to running C<cme shell> command.
 
 =back
 
@@ -171,6 +156,11 @@ See L<cme/"Global Options">.
 =item -open-item
 
 Open a specific item of the configuration when opening the editor
+
+=item -quiet
+
+Suppress porgress message
+
 
 =back
 
