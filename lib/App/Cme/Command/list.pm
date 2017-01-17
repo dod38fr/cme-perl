@@ -40,7 +40,7 @@ sub execute {
     foreach my $cat ( qw/system user application/ ) {
         my $names = $categories->{$cat} || [];
         next unless @$names;
-        print $cat,"( ",$help{$cat}," ):\n  ", join( "\n  ", @$names ), "\n";
+        print $cat," ( ",$help{$cat}," ):\n  ", join( "\n  ", @$names ), "\n";
     }
 }
 
