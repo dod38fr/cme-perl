@@ -4,7 +4,7 @@ use warnings;
 use utf8;
 use open ':std', ':encoding(utf8)';
 
-use File::Path;
+use Path::Tiny;
 use Probe::Perl;
 
 use Test::Command 0.08;
@@ -18,18 +18,22 @@ if ( $^O !~ /linux|bsd|solaris|sunos/ ) {
 ## testing exit status
 
 # pseudo root where config files are written by config-model
-my $wr_root = 'wr_root';
+my $wr_root = path('wr_root');
 
 # cleanup before tests
-rmtree($wr_root);
+$wr_root -> remove_tree;
 
 my $test1     = 'popcon1';
-my $wr_dir    = $wr_root . '/' . $test1;
-my $conf_file = "$wr_dir/etc/popularity-contest.conf";
+my $wr_dir    = $wr_root->child($test1);
 
-my $path = Probe::Perl->find_perl_interpreter();
+my $conf_dir = $wr_dir->child('/etc');
+$conf_dir->mkpath;
 
-my $perl_cmd = $path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->perl_inc() );
+my $conf_file = $conf_dir->child("popularity-contest.conf");
+
+my $perl_path = Probe::Perl->find_perl_interpreter();
+
+my $perl_cmd = $perl_path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->perl_inc() );
 
 # debian continuous integ tests run tests out of source. Must use system cme
 my $cme_cmd = -e 'bin/cme' ? "$perl_cmd bin/cme" : 'cme' ;
@@ -52,11 +56,7 @@ subtest "modification without config file" => sub {
 # put popcon data in place
 my @orig = <DATA>;
 
-mkpath( $wr_dir . '/etc', { mode => 0755 } )
-    || die "can't mkpath: $!";
-open( CONF, "> $conf_file" ) || die "can't open $conf_file: $!";
-print CONF @orig;
-close CONF;
+$conf_file->spew_utf8(@orig);
 
 subtest "minimal modification" => sub {
     # test minimal modif (re-order)
@@ -65,9 +65,9 @@ subtest "minimal modification" => sub {
     );
     exit_is_num( $ok, 0, 'all went well' );
 
-    file_contents_like $conf_file,   qr/cme/,       "updated header";
-    file_contents_like $conf_file,   qr/yes"\nMY/, "reordered file";
-    file_contents_unlike $conf_file, qr/removed/,   "double comment is removed";
+    file_contents_like $conf_file->stringify,   qr/cme/,       "updated header";
+    file_contents_like $conf_file->stringify,   qr/yes"\nMY/, "reordered file";
+    file_contents_unlike $conf_file->stringify, qr/removed/,   "double comment is removed";
 };
 
 subtest "modification with wrong parameter" => sub {
@@ -86,8 +86,8 @@ subtest "modification with good parameter" => sub {
     );
     exit_is_num( $ok, 0, 'all went well' );
 
-    file_contents_like $conf_file,   qr/cme/,      "updated header";
-    file_contents_unlike $conf_file, qr/removed`/, "double comment is removed";
+    file_contents_like $conf_file->stringify,   qr/cme/,      "updated header";
+    file_contents_unlike $conf_file->stringify, qr/removed`/, "double comment is removed";
 };
 
 subtest "search" => sub {
@@ -106,7 +106,7 @@ subtest "modification with utf8 parameter" => sub {
     );
     exit_is_num( $ok, 0, 'all went well' );
 
-    file_contents_like $conf_file,   qr/$utf8_name/,
+    file_contents_like $conf_file->stringify,   qr/$utf8_name/,
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
