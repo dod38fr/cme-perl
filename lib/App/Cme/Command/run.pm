@@ -10,7 +10,6 @@ use Path::Tiny;
 
 use Git::Repository;
 use Text::Template;
-use Regexp::Common qw/comment/;
 
 use Encode qw(decode_utf8);
 
@@ -87,12 +86,13 @@ sub execute {
     # check content, store app
     foreach my $line ( split /\n/,$content ) {
         $line_nb++;
-        $line =~ s/$RE{comment}{Perl}//;
+        $line =~ s/#.*//; # remove comments
         $line =~ s/^\s+//;
         $line =~ s/\s+$//;
         my ($key,$value) = split /[\s:]+/, $line, 2;
 
         next unless $key ; # empty line
+
         if ($key =~ /^app/) {
             unshift @$args, $value;
         }
