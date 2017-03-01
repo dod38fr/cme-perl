@@ -8,8 +8,6 @@ use 5.10.1;
 use File::HomeDir;
 use Path::Tiny;
 
-use Git::Repository;
-
 use Encode qw(decode_utf8);
 
 use App::Cme -command ;
@@ -106,7 +104,7 @@ sub execute {
 
     # check if workspace and index are clean
     if ($commit_msg) {
-        my $r = Git::Repository->run(qw/status --porcelain/);
+        my $r = `git status --porcelain`;
         die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r"
             if $r;
     }
@@ -119,7 +117,7 @@ sub execute {
 
     # commit if needed
     if ($commit_msg) {
-        say Git::Repository->run(qw/commit -a --porcelain -m/, $commit_msg);
+        system(qw/git commit -a --porcelain -m/, $commit_msg);
     }
 
 }
