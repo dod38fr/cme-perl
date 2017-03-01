@@ -9,7 +9,6 @@ use File::HomeDir;
 use Path::Tiny;
 
 use Git::Repository;
-use Text::Template;
 
 use Encode qw(decode_utf8);
 
@@ -69,15 +68,11 @@ sub execute {
         }
     }
 
-    my $template = Text::Template->new(
-        TYPE => 'STRING',
-        SOURCE => $script->slurp_utf8,
-        DELIMITERS => ['{{','}}'],
-    );
+    my $content = $script->slurp_utf8;
 
     # tweak variables
     my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
-    my $content = $template->fill_in( HASH => \%fill_h );
+    $content =~ s!\{\{\s*\$(\w+)\s*\}\}! $fill_h{$1} // '$'.$1 !e;
 
     my @load;
     my $commit_msg ;
