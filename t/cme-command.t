@@ -110,6 +110,24 @@ subtest "modification with utf8 parameter" => sub {
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
+subtest "modification with a script" => sub {
+    my $script = $wr_dir->child('my-script.cme');
+    $script->spew_utf8(
+        "app:  popcon\n",
+        "# load stuff\n",
+        'load ! MY_HOSTID={{$name}}'."\n",
+    );
+
+    my $new_name="foobar";
+    my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir --arg name=$new_name!;
+    note("cme command: $cmd");
+    my $ok = Test::Command->new(cmd => $cmd);
+    exit_is_num( $ok, 0, "all went well" );
+
+    file_contents_like $conf_file->stringify,   qr/$new_name/,
+        "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
+};
+
 done_testing;
 
 __END__
