@@ -225,6 +225,26 @@ Arguments for the cme scripts which are used to substiture variables.
 
 See L<cme/"Global Options">.
 
+=head1 Examples
+
+=head2 update copyright years in C<debian/copyright>
+
+ $ cat ~/.cme/scripts/update-copyright
+ app: dpkg-copyright
+ load: Files:~ Copyright=~"s/2016,?\s+$name/2017, $name/g"
+ commit: updated copyright year of $name
+ $ cme run update-copyright --arg "name=Dominique Dumont"
+ cme: using Dpkg::Copyright model
+ Changes applied to dpkg-copyright configuration:
+ - Files:"*" Copyright: '2005-2016, Dominique Dumont <dod@debian.org>' -> '2005-2017, Dominique Dumont <dod@debian.org>'
+ - Files:"lib/Dpkg/Copyright/Scanner.pm" Copyright:
+ @@ -1,2 +1,2 @@
+ -2014-2016, Dominique Dumont <dod@debian.org>
+ +2014-2017, Dominique Dumont <dod@debian.org>
+   2005-2012, Jonas Smedegaard <dr@jones.dk>
+
+ [master ac2e6410] updated copyright year of Dominique Dumont
+  1 file changed, 2 insertions(+), 2 deletions(-)
 
 =head1 SEE ALSO
 
