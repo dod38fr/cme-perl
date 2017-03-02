@@ -29,6 +29,12 @@ _cme_commands()
     COMPREPLY=( $( compgen -W "$SUBCMDS" -- $cur ) )
 }
 
+_cme_cmd_run()
+{
+    scripts=$(find ~/.cme/scripts/ /etc/cme/scripts -type f ! -name '*~' -printf '%f\n' 2>/dev/null)
+    COMPREPLY=( $( compgen -W "$scripts" -- $cur ) )
+}
+
 _cme_handle_app_arg()
 {
 	[[ $COMP_CWORD -eq 3 ]] && _cme_${COMP_WORDS[2]} 2> /dev/null ;
