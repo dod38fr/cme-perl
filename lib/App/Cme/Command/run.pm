@@ -118,7 +118,7 @@ sub execute {
 
     # commit if needed
     if ($commit_msg) {
-        system(qw/git commit -a --porcelain -m/, $commit_msg);
+        system(qw/git commit -a -m/, $commit_msg);
     }
 
 }
