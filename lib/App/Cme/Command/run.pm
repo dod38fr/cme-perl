@@ -70,7 +70,8 @@ sub execute {
 
     # tweak variables
     my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
-    $content =~ s!\{\{\s*\$(\w+)\s*\}\}! $fill_h{$1} // '$'.$1 !e;
+    $content =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // '$'.$1 ~xeg;
+    $content =~ s!\\\$!\$!g;
 
     my @load;
     my $commit_msg ;
@@ -132,9 +133,9 @@ __END__
  # declare app to configure
  app: dpkg
  # specify one or more instructions
- load: ! control source Uploaders:-~/{{ $mia }}$/
+ load: ! control source Uploaders:-~/$mia$/
  # commit the modifications with a message (git only)
- commit: remove MIA dev {{ $mia }}
+ commit: remove MIA dev $mia
 
  $ cme run remove-mia --arg mia=longgone@d3bian.org
 
@@ -199,16 +200,16 @@ non-clean workspace. This option works only with L<git>.
 
 =back
 
-All instructions can use variables like C<{{ $stuff }}> and specify
+All instructions can use variables like C<$stuff> and specify
 the value with C<cme> options
 
 For instance:
 
   cme run --arg var1=foo --arg var2=bar
 
-transforms the instrcution:
+transforms the instruction:
 
-  load: ! a={{ $var1 }} b={{ $var2 }}
+  load: ! a=$var1 b=$var2
 
 in
 
@@ -216,7 +217,9 @@ in
 
 =head1 Options
 
+=head2 arg
 
+Arguments for the cme scripts which are used to substiture variables.
 
 =head1 Common options
 

@@ -115,7 +115,7 @@ subtest "modification with a script" => sub {
     $script->spew_utf8(
         "app:  popcon\n",
         "# load stuff\n",
-        'load ! MY_HOSTID={{$name}}'."\n",
+        'load ! MY_HOSTID=\$name$name'."\n",
     );
 
     my $new_name="foobar";
@@ -124,7 +124,7 @@ subtest "modification with a script" => sub {
     my $ok = Test::Command->new(cmd => $cmd);
     exit_is_num( $ok, 0, "all went well" );
 
-    file_contents_like $conf_file->stringify,   qr/$new_name/,
+    file_contents_like $conf_file->stringify,   qr/"\$name$new_name"/,
         "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
 };
 
