@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+1.017 2017-03-05
+
+  This release bring a new cme sub-command to let you create
+  small configuration scripts: cme run
+
+  Misc:
+    * update © years
+
 1.016 2016-12-12
 
   Bug fix:
