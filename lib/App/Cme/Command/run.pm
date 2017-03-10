@@ -141,7 +141,7 @@ __END__
 
 =head1 DESCRIPTION
 
-Run a script using cme DSL (Design specfic language).
+Run a script using cme DSL (Design specific language).
 
 When run, this script:
 
@@ -194,7 +194,7 @@ L<Config::Model::Loader>
 
 =item commit
 
-Specify that the change must be commited with the passed commit
+Specify that the change must be committed with the passed commit
 message. When this option is used, C<cme> raises an error if used on a
 non-clean workspace. This option works only with L<git>.
 
