@@ -23,7 +23,6 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "edit!"     => "Run editor after update is done" ],
-        [ "save!"     => "Force a save even if no change was done" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "quiet!"    => "Suppress progress messages" ],
         $class->cme_global_options,

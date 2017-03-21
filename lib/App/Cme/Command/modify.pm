@@ -22,7 +22,6 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
-        [ "save!"     => "Force a save even if no change was done" ],
         [ "quiet!"    => "Suppress progress messages" ],
         $class->cme_global_options,
     );
