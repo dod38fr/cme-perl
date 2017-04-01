@@ -141,7 +141,14 @@ __END__
 
 =head1 DESCRIPTION
 
-Run a script using cme DSL (Design specific language).
+Run a script written with cme DSL (Design specific language).
+
+A script passed by name is searched in C<~/.cme/scripts> and in
+C</etc/cme/scripts>. E.g. with C<cme run foo>, C<cme> loads either
+C<~/.cme/scripts/foo> or C</etc/cme/scripts/foo>
+
+No search is done if the script is passed with a path
+(e.g. C<cme run ./foo>)
 
 When run, this script:
 
@@ -165,11 +172,7 @@ Commit the result if C<commit> is specified.
 
 =back
 
-A script passed by name is searched in C<~/.cme/scripts> and in
-C</etc/cme/scripts>. (e.g C<cme run foo>)
-
-No search is done if the script is passed with a path 
-(e.g. C<cme run ./foo>)
+See L<App::Cme::Command::run> for details.
 
 =head1 Syntax
 
@@ -177,7 +180,7 @@ The script accepts instructions in the form:
 
  key: value
 
-The script accept 3 instructions:
+The script accepts 3 instructions:
 
 =over
 
