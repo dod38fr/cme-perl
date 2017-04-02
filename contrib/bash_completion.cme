@@ -31,8 +31,17 @@ _cme_commands()
 
 _cme_cmd_run()
 {
-    scripts=$(find ~/.cme/scripts/ /etc/cme/scripts -type f ! -name '*~' -printf '%f\n' 2>/dev/null)
-    COMPREPLY=( $( compgen -W "$scripts" -- $cur ) )
+    vendor_scripts=$(perl -MConfig::Model::Lister -E 'my $p = $INC{"Config/Model/Lister.pm"}; $p =~ s/Lister.pm/scripts/; say $p')
+    if [[ $COMP_CWORD -eq 2 ]] ; then
+        scripts=$(find ~/.cme/scripts/ /etc/cme/scripts $vendor_scripts -type f ! -name '*~' -printf '%f\n' 2>/dev/null)
+        COMPREPLY=( $( compgen -W "$scripts" -- $cur ) )
+    elif [[ $prev == '-arg' ]]; then
+        script=$(find  ~/.cme/scripts/ /etc/cme/scripts $vendor_scripts -type f -name ${COMP_WORDS[2]})
+        var=$( perl -E 'my @v; while(<>) { push  @v, /\$(\w+)/g }; my %map = map { ($_ => 1)} @v; print map { "$_= " } sort keys %map;' $script);
+        COMPREPLY=( $( compgen -W "$var" -- $cur ) )
+    else
+        COMPREPLY=( $( compgen -W "-arg -info" -- $cur ) )
+    fi
 }
 
 _cme_handle_app_arg()
