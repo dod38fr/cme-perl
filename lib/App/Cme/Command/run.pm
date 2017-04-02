@@ -70,9 +70,23 @@ sub execute {
 
     my $content = $script->slurp_utf8;
 
-    # tweak variables
+    # parse variables passed on command line
     my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
+
+    # find if all variables are accounted for
+    my @vars = ( $content =~ m~ (?<!\\) \$(\w+) ~xg );
+    my @missing ;
+    map { push @missing, $_ if $_ and not defined $fill_h{$_} } @vars ;
+
+    if (@missing) {
+        die "Error: Missing variables @missing in command arguments for script $script\n"
+            ."Please use option '--arg ".join(',', map { "$_=xxx"} @missing)."'\n";
+    }
+
+    # tweak variables
+    # change $var but not \$var
     $content =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // '$'.$1 ~xeg;
+    # now change \$var in $var
     $content =~ s!\\\$!\$!g;
 
     my @load;
