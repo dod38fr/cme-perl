@@ -32,6 +32,7 @@ sub opt_spec {
     return ( 
         [ "arg=s@"  => "fix only a subset of a configuration tree" ],
         [ "quiet!"   => "Suppress progress messages" ],
+        [ "doc!"   => "show documention of script" ],
         $class->cme_global_options,
     );
 }
@@ -89,12 +90,14 @@ sub execute {
     # now change \$var in $var
     $content =~ s!\\\$!\$!g;
 
+    my @lines =  split /\n/,$content;
     my @load;
+    my @doc;
     my $commit_msg ;
     my $line_nb = 0;
 
     # check content, store app
-    foreach my $line ( split /\n/,$content ) {
+    foreach my $line ( @lines ) {
         $line_nb++;
         $line =~ s/#.*//; # remove comments
         $line =~ s/^\s+//;
@@ -106,6 +109,9 @@ sub execute {
         if ($key =~ /^app/) {
             unshift @$args, $value;
         }
+        elsif ($key eq 'doc') {
+            push @doc, $value;
+        }
         elsif ($key eq 'load') {
             push @load, $value;
         }
@@ -115,6 +121,11 @@ sub execute {
         else {
             die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
         }
+    }
+
+    if ($opt->doc) {
+        say join "\n", @doc;
+        return;
     }
 
     $self->process_args($opt, $args);
@@ -136,7 +147,6 @@ sub execute {
     if ($commit_msg) {
         system(qw/git commit -a -m/, $commit_msg);
     }
-
 }
 
 1;
@@ -146,6 +156,7 @@ __END__
 =head1 SYNOPSIS
 
  $ cat ~/.cme/scripts/remove-mia
+ doc: remove mia from Uploders. Require mia parameter
  # declare app to configure
  app: dpkg
  # specify one or more instructions
@@ -154,6 +165,10 @@ __END__
  commit: remove MIA dev $mia
 
  $ cme run remove-mia --arg mia=longgone@d3bian.org
+
+ # show the script documentation
+ $ cme run remove-mia --doc
+ remove mia from Uploders. require mia parameter
 
 =head1 DESCRIPTION
 
@@ -241,6 +256,11 @@ in
 =head2 arg
 
 Arguments for the cme scripts which are used to substiture variables.
+
+=head2 doc
+
+Show the script documentation. (Note that C<--help> options show the
+documentation of C<cme run> command)
 
 =head1 Common options
 
