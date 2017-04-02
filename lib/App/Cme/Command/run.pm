@@ -7,6 +7,7 @@ use warnings;
 use 5.10.1;
 use File::HomeDir;
 use Path::Tiny;
+use Config::Model;
 
 use Encode qw(decode_utf8);
 
@@ -19,10 +20,12 @@ sub _set_test_home { $__test_home = shift; }
 
 my $home = $__test_home || File::HomeDir->my_home;
 
-my @script_locs = (
+my @script_paths = map {path($_)} (
     "$home/.cme/scripts",
     "/etc/cme/scripts/",
 );
+
+push @script_paths, path($INC{"Config/Model.pm"})->parent->child("Model/scripts") ;
 
 sub opt_spec {
     my ( $class, $app ) = @_;
@@ -58,8 +61,7 @@ sub execute {
     }
     else {
         # check script in known locations
-        foreach my $loc ( @script_locs ) {
-            my $path = path($loc);
+        foreach my $path ( @script_paths ) {
             next unless $path->is_dir;
             $script = $path->child($script_name);
             last if $script->is_file;
@@ -143,9 +145,11 @@ __END__
 
 Run a script written with cme DSL (Design specific language).
 
-A script passed by name is searched in C<~/.cme/scripts> and in
-C</etc/cme/scripts>. E.g. with C<cme run foo>, C<cme> loads either
-C<~/.cme/scripts/foo> or C</etc/cme/scripts/foo>
+A script passed by name is searched in C<~/.cme/scripts>,
+C</etc/cme/scripts> or C</usr/share/perl5/Config/Model/scripts>.
+E.g. with C<cme run foo>, C<cme> loads either C<~/.cme/scripts/foo>,
+C</etc/cme/scripts/foo> or
+C</usr/share/perl5/Config/Model/scripts/foo>
 
 No search is done if the script is passed with a path
 (e.g. C<cme run ./foo>)
