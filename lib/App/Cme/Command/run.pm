@@ -79,10 +79,6 @@ sub execute {
     my @missing ;
     map { push @missing, $_ if $_ and not defined $fill_h{$_} } @vars ;
 
-    if (@missing) {
-        die "Error: Missing variables @missing in command arguments for script $script\n"
-            ."Please use option '--arg ".join(',', map { "$_=xxx"} @missing)."'\n";
-    }
 
     # tweak variables
     # change $var but not \$var
@@ -126,6 +122,11 @@ sub execute {
     if ($opt->doc) {
         say join "\n", @doc;
         return;
+    }
+
+    if (@missing) {
+        die "Error: Missing variables @missing in command arguments for script $script\n"
+            ."Please use option '--arg ".join(',', map { "$_=xxx"} @missing)."'\n";
     }
 
     $self->process_args($opt, $args);
