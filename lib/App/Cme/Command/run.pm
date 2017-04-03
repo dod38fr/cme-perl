@@ -77,12 +77,12 @@ sub execute {
     # find if all variables are accounted for
     my @vars = ( $content =~ m~ (?<!\\) \$(\w+) ~xg );
     my @missing ;
-    map { push @missing, $_ if $_ and not defined $fill_h{$_} } @vars ;
+    map { push @missing, $_ if $_ and not defined $fill_h{$_} and not defined $ENV{$_} } @vars ;
 
 
     # tweak variables
     # change $var but not \$var
-    $content =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // '$'.$1 ~xeg;
+    $content =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // $ENV{$1} ~xeg;
     # now change \$var in $var
     $content =~ s!\\\$!\$!g;
 
@@ -167,6 +167,18 @@ __END__
 
  $ cme run remove-mia --arg mia=longgone@d3bian.org
 
+ # cme run can also use environment variables
+ $ cat ~/.cme/scripts/add-me-to-uploaders
+ app: dpkg-control
+ load: source Uploaders:.push("$DEBFULLNAME <$DEBEMAIL>")
+
+ $ cme run add-me-to-uploaders
+ Reading package lists... Done
+ Building dependency tree
+ Reading state information... Done
+ Changes applied to dpkg-control configuration:
+ - source Uploaders:3: '<undef>' -> 'Dominique Dumont <dod@debian.org>'
+
  # show the script documentation
  $ cme run remove-mia --doc
  remove mia from Uploders. require mia parameter
@@ -237,8 +249,8 @@ non-clean workspace. This option works only with L<git>.
 
 =back
 
-All instructions can use variables like C<$stuff> and specify
-the value with C<cme> options
+All instructions can use variables like C<$stuff> whose value can be
+specified with C<-arg> options or with an environment variable:
 
 For instance:
 
