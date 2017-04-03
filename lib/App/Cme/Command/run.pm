@@ -40,7 +40,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [ script ] [ --args foo=12 [ --args bar=13 ]";
+  return "$desc [ script ] [ -args foo=12 [ -args bar=13 ]";
 }
 
 sub description {
@@ -126,7 +126,7 @@ sub execute {
 
     if (@missing) {
         die "Error: Missing variables @missing in command arguments for script $script\n"
-            ."Please use option '--arg ".join(',', map { "$_=xxx"} @missing)."'\n";
+            ."Please use option '-arg ".join(',', map { "$_=xxx"} @missing)."'\n";
     }
 
     $self->process_args($opt, $args);
@@ -165,7 +165,7 @@ __END__
  # commit the modifications with a message (git only)
  commit: remove MIA dev $mia
 
- $ cme run remove-mia --arg mia=longgone@d3bian.org
+ $ cme run remove-mia -arg mia=longgone@d3bian.org
 
  # cme run can also use environment variables
  $ cat ~/.cme/scripts/add-me-to-uploaders
@@ -180,7 +180,7 @@ __END__
  - source Uploaders:3: '<undef>' -> 'Dominique Dumont <dod@debian.org>'
 
  # show the script documentation
- $ cme run remove-mia --doc
+ $ cme run remove-mia -doc
  remove mia from Uploders. require mia parameter
 
 =head1 DESCRIPTION
@@ -254,7 +254,7 @@ specified with C<-arg> options or with an environment variable:
 
 For instance:
 
-  cme run --arg var1=foo --arg var2=bar
+  cme run -arg var1=foo -arg var2=bar
 
 transforms the instruction:
 
@@ -287,7 +287,7 @@ See L<cme/"Global Options">.
  app: dpkg-copyright
  load: Files:~ Copyright=~"s/2016,?\s+$name/2017, $name/g"
  commit: updated copyright year of $name
- $ cme run update-copyright --arg "name=Dominique Dumont"
+ $ cme run update-copyright -arg "name=Dominique Dumont"
  cme: using Dpkg::Copyright model
  Changes applied to dpkg-copyright configuration:
  - Files:"*" Copyright: '2005-2016, Dominique Dumont <dod@debian.org>' -> '2005-2017, Dominique Dumont <dod@debian.org>'
