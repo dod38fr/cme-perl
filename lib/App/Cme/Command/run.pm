@@ -74,17 +74,22 @@ sub execute {
     # parse variables passed on command line
     my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
 
+    my %var;
+
     # find if all variables are accounted for
-    my @vars = ( $content =~ m~ (?<!\\) \$(\w+) ~xg );
     my @missing ;
-    map { push @missing, $_ if $_ and not defined $fill_h{$_} and not defined $ENV{$_} } @vars ;
 
+    # replace variables with command arguments or eval'ed variables or env variables
+    my $replace_var = sub {
+        # change $var but not \$var
+        $_[0] =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // $var{$1} // $ENV{$1} // '$'.$1~xeg;
 
-    # tweak variables
-    # change $var but not \$var
-    $content =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // $ENV{$1} ~xeg;
-    # now change \$var in $var
-    $content =~ s!\\\$!\$!g;
+        # register vars without replacements
+        push @missing, ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
+
+        # now change \$var in $var
+        $_[0] =~ s!\\\$!\$!g;
+    };
 
     my @lines =  split /\n/,$content;
     my @load;
@@ -102,8 +107,14 @@ sub execute {
 
         next unless $key ; # empty line
 
+        $replace_var->($value) unless $key eq 'var';
+
         if ($key =~ /^app/) {
             unshift @$args, $value;
+        }
+        elsif ($key eq 'var') {
+            eval ($value) ;
+            die "Error in var specification line $line_nb: $@\n" if $@;
         }
         elsif ($key eq 'doc') {
             push @doc, $value;
@@ -236,6 +247,13 @@ Specify the target application. Must be one of the application listed
 by C<cme list> command. Mandatory. Only one C<app> instruction is
 allowed.
 
+=item var
+
+Use Perl code to specify variables usable in this script. The Perl
+code must store data in C<%var> hash. For instance:
+
+    perl: my @l = localtime; $var{year} =  $l[5]+1900;
+
 =item load
 
 Specify the modifications to apply using a string as specified in
@@ -250,7 +268,8 @@ non-clean workspace. This option works only with L<git>.
 =back
 
 All instructions can use variables like C<$stuff> whose value can be
-specified with C<-arg> options or with an environment variable:
+specified with C<-arg> options, with a Perl variable (from C<var:>
+section explained above) or with an environment variable:
 
 For instance:
 
