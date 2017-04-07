@@ -74,6 +74,13 @@ sub execute {
     # parse variables passed on command line
     my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
 
+    if ($content =~ m/^#!/ or $content =~ /^use/m) {
+        splice @ARGV, 0,2; # remove 'run script' arguments
+        eval $script->slurp_utf8;
+        die "Error in script $script_name: $@\n" if $@;
+        return;
+    }
+
     my %var;
 
     # find if all variables are accounted for
