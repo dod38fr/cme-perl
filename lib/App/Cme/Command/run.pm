@@ -31,8 +31,9 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "arg=s@"  => "fix only a subset of a configuration tree" ],
-        [ "quiet!"   => "Suppress progress messages" ],
-        [ "doc!"   => "show documention of script" ],
+        [ "quiet!"  => "Suppress progress messages" ],
+        [ "doc!"    => "show documention of script" ],
+        [ "list!"   => "list available scripts" ],
         $class->cme_global_options,
     );
 }
@@ -53,6 +54,17 @@ sub execute {
 
     # see Debian #839593 and perlunicook(1) section X 13
     @$args = map { decode_utf8($_, 1) } @$args;
+
+    if ($opt->{list}) {
+        my @scripts;
+        foreach my $path ( @script_paths ) {
+            next unless $path->is_dir;
+            push @scripts, grep { ! /~$/ } $path->children();
+        }
+        say "Available scripts:";
+        say map {"- ".$_->basename."\n"} @scripts ;
+        return;
+    }
 
     my $script_name = shift @$args;
     my $script;
@@ -201,6 +213,12 @@ __END__
  $ cme run remove-mia -doc
  remove mia from Uploders. require mia parameter
 
+ # list scripts
+ $ cme run -list
+ Available scripts:
+ - update-copyright
+ - add-me-to-uploaders
+
 =head1 DESCRIPTION
 
 Run a script written with cme DSL (Design specific language) or in
@@ -296,6 +314,10 @@ in
   load: ! a=foo b=bar
 
 =head1 Options
+
+=head2 list
+
+List available scripts and exits.
 
 =head2 arg
 
