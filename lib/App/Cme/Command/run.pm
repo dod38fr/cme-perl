@@ -203,7 +203,8 @@ __END__
 
 =head1 DESCRIPTION
 
-Run a script written with cme DSL (Design specific language).
+Run a script written with cme DSL (Design specific language) or in
+plain Perl.
 
 A script passed by name is searched in C<~/.cme/scripts>,
 C</etc/cme/scripts> or C</usr/share/perl5/Config/Model/scripts>.
@@ -214,25 +215,29 @@ C</usr/share/perl5/Config/Model/scripts/foo>
 No search is done if the script is passed with a path
 (e.g. C<cme run ./foo>)
 
+C<cme run> can also run plain Perl script. This is syntactic sugar to
+avoid polluting global namespace, i.e. there's no need to store a
+script using L<cme function|Config::Model/cme> in C</usr/local/bin/>.
+
 When run, this script:
 
 =over
 
 =item *
 
-Open the configuration file of C<app>
+opens the configuration file of C<app>
 
 =item *
 
-Apply the modifications specified with C<load> instructions
+applies the modifications specified with C<load> instructions
 
 =item *
 
-Save the configuration files.
+save the configuration files
 
 =item *
 
-Commit the result if C<commit> is specified.
+commits the result if C<commit> is specified.
 
 =back
 
@@ -244,7 +249,7 @@ The script accepts instructions in the form:
 
  key: value
 
-The script accepts 3 instructions:
+The script accepts the following instructions:
 
 =over
 
@@ -294,7 +299,7 @@ in
 
 =head2 arg
 
-Arguments for the cme scripts which are used to substiture variables.
+Arguments for the cme scripts which are used to substitute variables.
 
 =head2 doc
 
