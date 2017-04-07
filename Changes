@@ -1,5 +1,20 @@
 {{$NEXT}}
 
+1.018 2017-04-07
+
+  This release improve 'cme run' command to make it more useful:  
+    * add -list option
+    * can compute script variables (var: section)
+    * can use environment variables 
+    * add possibility for scritps to provide their own doc
+      displayed with 'cme run xxx -doc'
+    * die when if a script variable is not defined
+    * look for system scripts in /usr/share/
+    * add bash completion for cme run command
+
+  Other changes:
+    * save option can now be used with all subcommand
+
 1.017 2017-03-05
 
   This release bring a new cme sub-command to let you create
