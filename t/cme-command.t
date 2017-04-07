@@ -117,6 +117,12 @@ my @script_tests = (
         args => qq!--arg name=foobar!,
         test => qr/"\$namefoobar"/
     },
+    {
+        label => "modification with a script and var section",
+        script => [ "app:  popcon", 'var: $var{name}="foobar2"','load ! MY_HOSTID=\$name$name'],
+        args => '',
+        test => qr/"\$namefoobar2"/
+    },
 );
 
 foreach my $test ( @script_tests) {
