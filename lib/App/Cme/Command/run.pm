@@ -81,6 +81,8 @@ sub execute {
         }
     }
 
+    die "Error: cannot find script $script_name\n" unless $script->is_file;
+
     my $content = $script->slurp_utf8;
 
     # parse variables passed on command line
