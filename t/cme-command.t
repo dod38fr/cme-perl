@@ -123,6 +123,16 @@ my @script_tests = (
         args => '',
         test => qr/"\$namefoobar2"/
     },
+    {
+        label => "modification with a Perl script run by cme run with args",
+        script => [
+            "use Config::Model qw(cme);",
+            'my ($opt,$val,$name) = @ARGV;',
+            'cme(application => "popcon", root_dir => $val)->modify("! MY_HOSTID=\$name$name");'
+        ],
+        args => 'foobar3',
+        test => qr/"\$namefoobar3"/
+    },
 );
 
 foreach my $test ( @script_tests) {
