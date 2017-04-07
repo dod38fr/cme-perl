@@ -110,23 +110,32 @@ subtest "modification with utf8 parameter" => sub {
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
-subtest "modification with a script" => sub {
-    my $script = $wr_dir->child('my-script.cme');
-    $script->spew_utf8(
-        "app:  popcon\n",
-        "# load stuff\n",
-        'load ! MY_HOSTID=\$name$name'."\n",
-    );
+my @script_tests = (
+    {
+        label => "modification with a script and args",
+        script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
+        args => qq!--arg name=foobar!,
+        test => qr/"\$namefoobar"/
+    },
+);
 
-    my $new_name="foobar";
-    my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir --arg name=$new_name!;
-    note("cme command: $cmd");
-    my $ok = Test::Command->new(cmd => $cmd);
-    exit_is_num( $ok, 0, "all went well" );
+foreach my $test ( @script_tests) {
+    subtest $test->{label} => sub {
+        my $script = $wr_dir->child('my-script.cme');
+        $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
-    file_contents_like $conf_file->stringify,   qr/"\$name$new_name"/,
-        "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
-};
+        my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir !. $test->{args};
+        note("cme command: $cmd");
+        my $ok = Test::Command->new(cmd => $cmd);
+        exit_is_num( $ok, 0, "all went well" );
+
+        file_contents_like $conf_file->stringify, $test->{test},
+            "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
+    };
+}
+
+# test cme run real script with arguments
+
 
 done_testing;
 
