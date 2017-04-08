@@ -1,4 +1,4 @@
-# ABSTRACT: Fix the configuration of an application
+# ABSTRACT: Run a cme script
 
 package App::Cme::Command::run ;
 
