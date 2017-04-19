@@ -40,14 +40,14 @@ my $cme_cmd = -e 'bin/cme' ? "$perl_cmd bin/cme" : 'cme' ;
 note("cme is invoked with: '$cme_cmd'" );
 
 subtest "modification without config file" => sub {
-    my $list_ok = Test::Command->new(
-        cmd => "$cme_cmd list"
-    );
-    exit_is_num( $list_ok, 0, 'list command went well' );
+    my $test_cmd = "$cme_cmd list";
+    my $list_ok = Test::Command->new( cmd => $test_cmd );
+    exit_is_num( $list_ok, 0, 'list command went well' ) or diag("Failed command: $test_cmd");
 
+    $test_cmd = "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes";
     my $oops = Test::Command->new(
-        cmd => "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes"
-    );
+        cmd => $test_cmd
+    ) or diag("Failed command: $test_cmd");
 
     exit_cmp_ok( $oops, '>', 0, 'missing config file detected' );
     stderr_like( $oops, qr/cannot find configuration file/, 'check auto_read_error' );
@@ -60,10 +60,9 @@ $conf_file->spew_utf8(@orig);
 
 subtest "minimal modification" => sub {
     # test minimal modif (re-order)
-    my $ok = Test::Command->new(
-        cmd => "$cme_cmd modify popcon -save -root-dir $wr_dir"
-    );
-    exit_is_num( $ok, 0, 'all went well' );
+    my $test_cmd = "$cme_cmd modify popcon -save -root-dir $wr_dir";
+    my $ok = Test::Command->new( cmd => $test_cmd );
+    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
 
     file_contents_like $conf_file->stringify,   qr/cme/,       "updated header";
     file_contents_like $conf_file->stringify,   qr/yes"\nMY/, "reordered file";
@@ -71,9 +70,8 @@ subtest "minimal modification" => sub {
 };
 
 subtest "modification with wrong parameter" => sub {
-    my $oops = Test::Command->new(
-        cmd => "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes"
-    );
+    my $test_cmd = "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes";
+    my $oops = Test::Command->new( cmd => $test_cmd );
     exit_cmp_ok( $oops, '>', 0, 'wrong parameter detected' );
     stderr_like( $oops, qr/unknown element/, 'check unknown element' );
 
@@ -81,30 +79,27 @@ subtest "modification with wrong parameter" => sub {
 
 subtest "modification with good parameter" => sub {
     # use -save to force a file save to update file header
-    my $ok = Test::Command->new(
-        cmd => "$cme_cmd modify popcon -save -root-dir $wr_dir PARTICIPATE=yes"
-    );
-    exit_is_num( $ok, 0, 'all went well' );
+    my $test_cmd = "$cme_cmd modify popcon -save -root-dir $wr_dir PARTICIPATE=yes";
+    my $ok = Test::Command->new( cmd => $test_cmd );
+    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
 
     file_contents_like $conf_file->stringify,   qr/cme/,      "updated header";
     file_contents_unlike $conf_file->stringify, qr/removed`/, "double comment is removed";
 };
 
 subtest "search" => sub {
-    my $search = Test::Command->new(
-        cmd => "$cme_cmd search popcon -root-dir $wr_dir -search y -narrow value"
-    );
-    exit_is_num( $search, 0, 'search went well' );
+my $test_cmd = "$cme_cmd search popcon -root-dir $wr_dir -search y -narrow value";
+    my $search = Test::Command->new( cmd => $test_cmd );
+    exit_is_num( $search, 0, 'search went well' ) or diag("Failed command $test_cmd");
     stdout_like( $search, qr/PARTICIPATE/, "got PARTICIPATE" );
     stdout_like( $search, qr/USEHTTP/,     "got USEHTTP" );
 };
 
 subtest "modification with utf8 parameter" => sub {
     my $utf8_name = "héhôßœ";
-    my $ok = Test::Command->new(
-        cmd => qq!$cme_cmd modify popcon -root-dir $wr_dir MY_HOSTID="$utf8_name"!
-    );
-    exit_is_num( $ok, 0, 'all went well' );
+    my $test_cmd = qq!$cme_cmd modify popcon -root-dir $wr_dir MY_HOSTID="$utf8_name"!;
+    my $ok = Test::Command->new( cmd => $test_cmd );
+    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
 
     file_contents_like $conf_file->stringify,   qr/$utf8_name/,
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
@@ -143,7 +138,7 @@ foreach my $test ( @script_tests) {
         my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir !. $test->{args};
         note("cme command: $cmd");
         my $ok = Test::Command->new(cmd => $cmd);
-        exit_is_num( $ok, 0, "all went well" );
+        exit_is_num( $ok, 0, "all went well" ) or diag("Failed command: $cmd");
 
         file_contents_like $conf_file->stringify, $test->{test},
             "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
