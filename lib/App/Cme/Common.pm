@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model 2.089;
+use Config::Model 2.101;
 use Config::Model::Lister;
 use Pod::POM;
 use Pod::POM::View::Text;
@@ -29,6 +29,7 @@ sub cme_global_options {
       [ "file=s"             => "Specify a target file"],
       [ "backend=s"          => "Specify a read/write backend"],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
+      [ "verbose=s"         => "Verbosity level (1, 2, 3  or info, debug, trace)"],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );
@@ -106,8 +107,28 @@ sub process_args {
 sub model {
     my ($self, $opt, $args) = @_;
 
-    return $self->{_model}
-        ||= Config::Model->new( model_dir => $opt->{model_dir} );
+    my @levels = qw/WARN INFO DEBUG TRACE/;
+    my $optv = $opt->{verbose} ;
+
+    my $log_level;
+    if (defined $optv) {
+        if ($optv =~ /^\d$/) {
+            $log_level =  $levels[$opt->{verbose}];
+        }
+        else {
+            ($log_level) = grep { /^$optv/i } @levels;
+        }
+        if (not $log_level) {
+            die "unknown log level $optv. Must be 1 ,2, 3 or warn, info, debug, trace.\n" ;
+        }
+    }
+
+
+    my %cm_args;
+    $cm_args{model_dir} = $opt->{model_dir} if $opt->{model_dir};
+    $cm_args{log_level} = $log_level if $log_level;
+
+    return $self->{_model} ||= Config::Model->new( %cm_args );
 }
 
 sub instance {
