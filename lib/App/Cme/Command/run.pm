@@ -50,10 +50,10 @@ sub description {
 }
 
 sub execute {
-    my ($self, $opt, $args) = @_;
+    my ($self, $opt, $app_args) = @_;
 
     # see Debian #839593 and perlunicook(1) section X 13
-    @$args = map { decode_utf8($_, 1) } @$args;
+    @$app_args = map { decode_utf8($_, 1) } @$app_args;
 
     if ($opt->{list}) {
         my @scripts;
@@ -66,7 +66,7 @@ sub execute {
         return;
     }
 
-    my $script_name = shift @$args;
+    my $script_name = shift @$app_args;
     my $script;
 
     if ($script_name =~ m!/!) {
@@ -131,7 +131,7 @@ sub execute {
         $replace_var->($value) unless $key eq 'var';
 
         if ($key =~ /^app/) {
-            unshift @$args, $value;
+            unshift @$app_args, $value;
         }
         elsif ($key eq 'var') {
             eval ($value) ;
@@ -161,7 +161,7 @@ sub execute {
             ."Please use option '".join(' ', map { "-arg $_=xxx"} @missing)."'\n";
     }
 
-    $self->process_args($opt, $args);
+    $self->process_args($opt, $app_args);
 
     # check if workspace and index are clean
     if ($commit_msg) {
@@ -171,7 +171,7 @@ sub execute {
     }
 
     # call loads
-    my ($model, $inst, $root) = $self->init_cme($opt,$args);
+    my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
     map { $root->load($_) } @load;
 
     $self->save($inst,$opt) ;
