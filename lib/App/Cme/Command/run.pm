@@ -98,7 +98,7 @@ sub execute {
     my %var;
 
     # find if all variables are accounted for
-    my @missing ;
+    my %missing ;
 
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
@@ -106,7 +106,7 @@ sub execute {
         $_[0] =~ s~ (?<!\\) \$(\w+) ~ $fill_h{$1} // $var{$1} // $ENV{$1} // '$'.$1~xeg;
 
         # register vars without replacements
-        push @missing, ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
+        map { $missing{$_} = 1 ;} ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
 
         # now change \$var in $var
         $_[0] =~ s!\\\$!\$!g;
@@ -156,9 +156,9 @@ sub execute {
         return;
     }
 
-    if (@missing) {
-        die "Error: Missing variables @missing in command arguments for script $script\n"
-            ."Please use option '-arg ".join(',', map { "$_=xxx"} @missing)."'\n";
+    if (my @missing = sort keys %missing) {
+        die "Error: Missing variables '". join("', '",@missing)."' in command arguments for script $script\n"
+            ."Please use option '".join(' ', map { "-arg $_=xxx"} @missing)."'\n";
     }
 
     $self->process_args($opt, $args);
