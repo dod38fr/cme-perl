@@ -86,7 +86,7 @@ sub execute {
     my $content = $script->slurp_utf8;
 
     # parse variables passed on command line
-    my %fill_h = map { split '=',$_,2; } @{ $opt->{arg} };
+    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
     if ($content =~ m/^#!/ or $content =~ /^use/m) {
         splice @ARGV, 0,2; # remove 'run script' arguments
@@ -103,7 +103,7 @@ sub execute {
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
         # change $var but not \$var
-        $_[0] =~ s~ (?<!\\) \$(\w+) (?!\s*{) ~ $fill_h{$1} // $var{$1} // $ENV{$1} // '$'.$1~xeg;
+        $_[0] =~ s~ (?<!\\) \$(\w+) (?!\s*{) ~ $user_args{$1} // $var{$1} // $ENV{$1} // '$'.$1~xeg;
 
         # register vars without replacements
         map { $missing{$_} = 1 ;} ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
