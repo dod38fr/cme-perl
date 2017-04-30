@@ -136,6 +136,8 @@ my @script_tests = (
     },
 );
 
+
+# test cme run real script with arguments
 foreach my $test ( @script_tests) {
     subtest $test->{label} => sub {
         my $script = $wr_dir->child('my-script.cme');
@@ -151,8 +153,44 @@ foreach my $test ( @script_tests) {
     };
 }
 
-# test cme run real script with arguments
+# todo: test failure case for run script
 
+my @bad_script_tests = (
+    {
+        label => "modification with a Perl script run by cme run with missing arg",
+        script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
+        args => '',
+        error_regexp => qr/use option '-arg name=xxx'/
+    },
+    {
+        label => "modification with a Perl script run by cme run with 2 missing args",
+        script => [ "app:  popcon", 'load ! MY_HOSTID=$name1$name2'],
+        args => '',
+        error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
+    },
+    {
+        label => "modification with a Perl script run by cme run with  missing args in var line",
+        script => [
+            "app:  popcon",
+            'var: $var{name} = $args{name1}.$args{name2}',
+            'load: ! MY_HOSTID=$name'],
+        args => '',
+        error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
+    },
+);
+foreach my $test ( @bad_script_tests) {
+    subtest $test->{label} => sub {
+        my $script = $wr_dir->child('my-script.cme');
+        $script->spew_utf8( map { "$_\n"} @{$test->{script}});
+
+        my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir !. $test->{args};
+        note("cme command: $cmd");
+        my $oops = Test::Command->new(cmd => $cmd);
+        exit_cmp_ok( $oops, '>', 0, 'wrong command detected' );
+        my $re = $test->{error_regexp};
+        stderr_like( $oops, $re , 'check error message with '.$re );
+    };
+}
 
 done_testing;
 
