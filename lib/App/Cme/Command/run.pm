@@ -100,6 +100,11 @@ sub execute {
     # find if all variables are accounted for
     my %missing ;
 
+    # %args can be used in var ssection of a script. A new entry in
+    # added in %missing if the script tries to read an undefined value
+    tie my %args, 'App::Cme::Run::Var', \%missing;
+    %args = %user_args;
+
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
         # change $var but not \$var
@@ -180,6 +185,18 @@ sub execute {
     if ($commit_msg) {
         system(qw/git commit -a -m/, $commit_msg);
     }
+}
+
+package App::Cme::Run::Var;
+require Tie::Hash;
+
+our @ISA = qw(Tie::ExtraHash);
+
+sub FETCH {
+    my ($self, $key) = @_ ;
+    my ($h,$missing) = @$self;
+    $missing->{$key} = 1 unless defined $h->{$key};
+    return $h->{$key} // '';
 }
 
 1;
@@ -285,6 +302,10 @@ Use Perl code to specify variables usable in this script. The Perl
 code must store data in C<%var> hash. For instance:
 
     perl: my @l = localtime; $var{year} =  $l[5]+1900;
+
+The hash C<%args> contains the variables passed with the C<-arg>
+option. Reading a value from C<%args> which is set by the user
+triggers an error.
 
 =item load
 
