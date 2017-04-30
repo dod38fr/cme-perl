@@ -119,6 +119,12 @@ my @script_tests = (
         test => qr/"\$namefoobar2"/
     },
     {
+        label => "modification with a script and var section which uses args",
+        script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
+        args => '--arg fooname=foo',
+        test => qr/"\$namefoobar2"/
+    },
+    {
         label => "modification with a Perl script run by cme run with args",
         script => [
             "use Config::Model qw(cme);",
