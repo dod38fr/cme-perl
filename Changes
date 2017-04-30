@@ -1,5 +1,15 @@
 {{$NEXT}}
 
+1.019 2017-04-30
+
+  This release brings some improvements:
+    * run: allow to use command args in var: lines
+    * cme: add '-verbose [ info | debug | trace ]' option to
+      get debug logs
+
+  Other bug fixes:
+    * do not replace hash variable in run script
+
 1.018 2017-04-07
 
   This release improve 'cme run' command to make it more useful:  
