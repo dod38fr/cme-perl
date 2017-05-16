@@ -80,6 +80,9 @@ _cme()
            -model-dir|-root-dir|-fuse-dir)
                 _filedir -d
             ;;
+           -file)
+                _filedir
+            ;;
              *)
             case ${COMP_WORDS[1]} in
                 check)
