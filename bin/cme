@@ -221,12 +221,6 @@ Example:
 
 =over
 
-=item -dev
-
-Use this option if you want to test a model under development. This
-option will add C<lib> in C<@INC> and use C<lib/Config/Model/models>
-as model directory. This option is ignored when run as root.
-
 =item -model-dir
 
 Specify an alternate directory to find model files. Mostly useful for

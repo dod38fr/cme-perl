@@ -21,7 +21,6 @@ sub cme_global_options {
       [ "model-dir=s"        => "Specify an alternate directory to find model files"],
       [ "try-app-as-model!"  => "try to load a model using directly the application name "
                               . "specified as 3rd parameter on the command line"],
-      [ "dev!"               => "test a model under development"],
       [ "save!"              => "Force a save even if no change was done" ],
       [ "force-load!"        => "Load file even if error are found in data. Bad data are discarded (imply save)"],
       [ "create!"            => "start from scratch."],
@@ -62,17 +61,6 @@ sub process_args {
     }
 
     say "cme: using $root_model model" unless $opt->{quiet};
-
-    if ($opt->{dev}) {
-        # ignore $dev if run as root
-        if ( $> ) {
-            unshift @INC, 'lib';
-            $opt->{model_dir} = 'lib/Config/Model/models/';
-        }
-        else {
-            warn "-dev option is ignored when run as root\n";
-        }
-    }
 
     my $command = (split('::', ref($self)))[-1] ;
 

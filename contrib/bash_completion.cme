@@ -61,7 +61,7 @@ _cme()
     COMPREPLY=()
     _get_comp_words_by_ref -n : cur prev
 
-    global_options='-dev -force-load -create -backend -trace -quiet -file'
+    global_options='-force-load -create -backend -trace -quiet -file'
 
     if [[ $COMP_CWORD -eq 1 ]] ; then
         _cme_commands
