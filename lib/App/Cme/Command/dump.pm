@@ -27,7 +27,7 @@ sub opt_spec {
         [
             "dumptype=s" => "Dump all values (full) or only customized values",
             {
-                regex => qr/^(?:full|custom)$/,
+                regex => qr/^(?:full|custom|non_upstream_default)$/,
                 default => 'custom'
             }
         ],
@@ -63,7 +63,7 @@ sub execute {
 
     my $dump_string;
     my $format = $opt->{format};
-    my $mode = $opt->{dumptype} eq 'full' ? 'non_upstream_default' : 'custom';
+    my $mode = $opt->{dumptype} || 'custom';
 
     if ($format eq 'cml') {
         $dump_string = $target_node->dump_tree( mode => $mode );
@@ -102,12 +102,15 @@ By default, dump only custom values, i.e. different from application
 built-in values or model default values. You can use the C<-dumptype> option for
 other types of dump:
 
- -dumptype [ full | custom ]
+ -dumptype [ full | custom | non_upstream_default ]
 
-Choose to dump every values (full) or only customized values (default)
+Choose to dump every values (full), or only customized values (default)
+
+C<non_upstream_default> is like C<full> mode, but value identical with
+application default are omitted. But this should seldom happen.
 
 By default, dump in yaml format. This can be changed in C<JSON>,
-C<Perl>, C<cml> (aka L<Config::Model::Loader> format).
+C<Perl>, C<cml> (aka L<Config::Model::Loader> format) with C<-format> option.
 
 =head1 Common options
 
