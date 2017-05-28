@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model 2.101;
+use Config::Model 2.103;
 use Config::Model::Lister;
 use Pod::POM;
 use Pod::POM::View::Text;
@@ -76,6 +76,17 @@ sub process_args {
         $config_file = $opt->{file};
     }
 
+    if ( $appli_info->{$application}{require_backend_argument} ) {
+        # let the backend handle a missing arg and provide a clear error message
+        my $b_arg = $opt->{_backend_arg} = shift @$args ;
+        if (not $b_arg) {
+            my $message = $appli_info->{$application}{backend_argument_info} ;
+            my $insert = $message ? " ( $message )": '';
+            die "application $application requires a 3rd argument$insert. "
+                . "I.e. 'cme $command $application <backend_arg>'";
+        }
+    }
+
     # remove legacy '~~'
     if ($args->[0] and $args->[0] eq '~~') {
         warn "Argument '~~' was a bad idea and is now ignored. Use -file option to "
@@ -132,6 +143,7 @@ sub instance {
             check           => $opt->{force_load} ? 'no' : 'yes',
             auto_create     => $opt->{create},
             backend         => $opt->{backend},
+            backend_arg     => $opt->{_backend_arg},
             backup          => $opt->{backup},
             config_file     => $opt->{_config_file},
             config_dir      => $opt->{_config_dir},
