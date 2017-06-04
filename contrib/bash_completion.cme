@@ -40,7 +40,7 @@ _cme_cmd_run()
         var=$( perl -E 'my @v; while(<>) { push  @v, /\$(\w+)/g }; my %map = map { ($_ => 1)} @v; print map { "$_= " } sort keys %map;' $script);
         COMPREPLY=( $( compgen -W "$var" -- $cur ) )
     elif [[ $prev != '-list' ]]; then
-        COMPREPLY=( $( compgen -W "-arg -info" -- $cur ) )
+        COMPREPLY=( $( compgen -W "-arg -doc" -- $cur ) )
     fi
 }
 
