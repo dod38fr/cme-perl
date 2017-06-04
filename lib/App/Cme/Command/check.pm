@@ -13,7 +13,10 @@ use base qw/App::Cme::Common/;
 use Config::Model::ObjTreeScanner;
 
 sub validate_args {
-    shift->process_args(@_);
+    my ($self, $opt, $args) = @_;
+
+    $self->check_unknown_args($args);
+    $self->process_args($opt,$args);
 }
 
 sub opt_spec {

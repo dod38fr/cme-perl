@@ -14,6 +14,7 @@ use Config::Model::ObjTreeScanner;
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
+    $self->check_unknown_args($args);
     $self->process_args($opt,$args);
     $self->usage_error("No modification instructions given on command line")
         unless @$args or $opt->{save};

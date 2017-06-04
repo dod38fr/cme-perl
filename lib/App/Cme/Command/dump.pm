@@ -17,6 +17,7 @@ use Data::Dumper;
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
+    $self->check_unknown_args($args);
     $opt->{quiet} = 1; # don't want to mess up yaml output
     $self->process_args($opt,$args);
 }

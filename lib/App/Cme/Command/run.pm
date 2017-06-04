@@ -38,6 +38,12 @@ sub opt_spec {
     );
 }
 
+sub validate_args {
+    my ($self, $opt, $args) = @_;
+
+    $self->check_unknown_args($args);
+}
+
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"

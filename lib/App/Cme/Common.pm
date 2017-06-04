@@ -38,6 +38,14 @@ sub cme_global_options {
   );
 }
 
+sub check_unknown_args {
+    my ($self, $args) = @_;
+
+    my @unknown_options = grep { /^-/ } @$args ;
+    # $self->usage_error("Unknown option: @unknown_options") if @unknown_options;
+    warn("Unknown option: @unknown_options. Unknown option will soon be a fatal error.") if @unknown_options;
+}
+
 # modifies $args in place
 sub process_args {
     my ($self, $opt, $args) = @_;

@@ -16,6 +16,7 @@ use Config::Model;
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
+    $self->check_unknown_args($args);
     $self->process_args($opt,$args);
 }
 
