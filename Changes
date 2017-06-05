@@ -4,7 +4,7 @@
 
   Improvements for all commands :
     * allow backend_argument (used by systemd)
-    * unknown options are fatal
+    * unknown options trigger a warning
 
   Bug fixes:
     * all: fix bash completion of -file option
