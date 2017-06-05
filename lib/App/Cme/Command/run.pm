@@ -106,7 +106,7 @@ sub execute {
     # find if all variables are accounted for
     my %missing ;
 
-    # %args can be used in var ssection of a script. A new entry in
+    # %args can be used in var section of a script. A new entry in
     # added in %missing if the script tries to read an undefined value
     tie my %args, 'App::Cme::Run::Var', \%missing;
     %args = %user_args;
