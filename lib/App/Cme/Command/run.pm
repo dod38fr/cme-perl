@@ -8,12 +8,15 @@ use 5.10.1;
 use File::HomeDir;
 use Path::Tiny;
 use Config::Model;
+use Log::Log4perl qw(get_logger :levels);
 
 use Encode qw(decode_utf8);
 
 use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
+
+my $logger = get_logger("Cme::run");
 
 my $__test_home = '';
 sub _set_test_home { $__test_home = shift; }
@@ -89,6 +92,8 @@ sub execute {
 
     die "Error: cannot find script $script_name\n" unless $script->is_file;
 
+    $logger->info("Running script $script");
+
     my $content = $script->slurp_utf8;
 
     # parse variables passed on command line
@@ -96,11 +101,13 @@ sub execute {
 
     if ($content =~ m/^#!/ or $content =~ /^use/m) {
         splice @ARGV, 0,2; # remove 'run script' arguments
+        $logger->info("Running script $script with perl");
         eval $script->slurp_utf8;
         die "Error in script $script_name: $@\n" if $@;
         return;
     }
 
+    $logger->info("Running script $script");
     my %var;
 
     # find if all variables are accounted for
@@ -145,8 +152,10 @@ sub execute {
             unshift @$app_args, $value;
         }
         elsif ($key eq 'var') {
-            eval ($value) ;
+            $logger->trace("Eval var expression: $value");
+            my $res = eval ($value) ;
             die "Error in var specification line $line_nb: $@\n" if $@;
+            $logger->debug("Eval var result: $res");
         }
         elsif ($key eq 'doc') {
             push @doc, $value;
