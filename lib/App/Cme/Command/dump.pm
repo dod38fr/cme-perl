@@ -47,7 +47,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]  [ config_file | ~~ ] [ -dumptype full|custom ] [ path ]";
+  return "$desc [application]  [ config_file ] [ -dumptype full|custom ] [ path ]";
 }
 
 sub description {

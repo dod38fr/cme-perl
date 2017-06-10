@@ -31,7 +31,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application] [file | ~~ ] instructions";
+  return "$desc [application] [file ] instructions";
 }
 
 sub description {
@@ -64,7 +64,7 @@ __END__
   cme modify dpkg source 'format="(3.0) quilt"'
 
   # likewise with an application that accepts file override
-  cme modify dpkg-copyright ~~ 'Comment="Modified with cme"'
+  cme modify dpkg-copyright 'Comment="Modified with cme"'
 
 =head1 DESCRIPTION
 
@@ -78,25 +78,9 @@ Example:
    cme modify multistrap my_mstrap.conf sections:base source="http://ftp.fr.debian.org"
 
 Some application like dpkg-copyright allows you to override the
-configuration file name. The problem is to make the difference between
-the overridden file name and the modification instruction you want to
-apply.
+configuration file name. You must then use C<-file> option:
 
-Either you specify both overridden file name modifications:
-
-   cme modify dpkg-copyright ubuntu/copyright 'Comment="Silly example"
-
-Or you use C<~~> to use the default file name:
-
-   cme modify dpkg-copyright ~~ 'Comment="Another silly example"
-
-Another example which restores the default value of the text of all GPL like licenses :
-
-   cme modify dpkg-copyright ~~ 'License=~/GPL/ text~'
-
-Or update the copyright years of the package maintainer's file:
-
-   cme modify dpkg-copyright ~~ 'File=debian/* Copyright=~s/2013/2014/'
+   cme modify dpkg-copyright -file ubuntu/copyright 'Comment="Silly example"
 
 =head1 Common options
 

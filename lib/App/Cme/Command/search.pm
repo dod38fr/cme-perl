@@ -37,7 +37,7 @@ sub opt_spec {
 sub usage_desc {
   my ($self) = @_;
   my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application]  [ config_file | ~~ ] -search xxx [ -narrow-search ... ] " ;
+  return "$desc [application]  [ config_file ] -search xxx [ -narrow-search ... ] " ;
 }
 
 sub description {
