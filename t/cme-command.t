@@ -5,6 +5,8 @@ use utf8;
 use 5.10.1;
 use open ':std', ':encoding(utf8)';
 
+use Encode;
+
 use Path::Tiny;
 use Probe::Perl;
 
@@ -115,9 +117,11 @@ my @test_cmd = (qw/search popcon -root-dir/, $wr_dir->stringify, qw/-search y -n
 
 subtest "modification with utf8 parameter" => sub {
     my $utf8_name = "héhôßœ";
-    my $test_cmd = qq!$cme_cmd modify popcon -root-dir $wr_dir MY_HOSTID="$utf8_name"!;
-    my $ok = Test::Command->new( cmd => $test_cmd );
-    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
+    my @test_cmd = ((qw/modify popcon -root-dir/, $wr_dir->stringify),
+        encode('UTF-8',qq/MY_HOSTID="$utf8_name"/) );
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is( $ok->error, undef, 'threw no exceptions');
+    is( $ok->exit_code, 0, 'all went well' ) or diag("Failed command @test_cmd");
 
     file_contents_like $conf_file->stringify,   qr/$utf8_name/,
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
