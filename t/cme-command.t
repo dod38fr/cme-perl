@@ -180,8 +180,7 @@ foreach my $test ( @script_tests) {
     };
 }
 
-# todo: test failure case for run script
-
+# test failure case for run script
 my @bad_script_tests = (
     {
         label => "modification with a Perl script run by cme run with missing arg",
@@ -205,6 +204,7 @@ my @bad_script_tests = (
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
     },
 );
+
 foreach my $test ( @bad_script_tests) {
     subtest $test->{label} => sub {
         my $script = $wr_dir->child('my-script.cme');
