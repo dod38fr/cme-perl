@@ -186,13 +186,13 @@ my @bad_script_tests = (
     {
         label => "modification with a Perl script run by cme run with missing arg",
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
-        args => '',
+        args => [],
         error_regexp => qr/use option '-arg name=xxx'/
     },
     {
         label => "modification with a Perl script run by cme run with 2 missing args",
         script => [ "app:  popcon", 'load ! MY_HOSTID=$name1$name2'],
-        args => '',
+        args => [],
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
     },
     {
@@ -201,7 +201,7 @@ my @bad_script_tests = (
             "app:  popcon",
             'var: $var{name} = $args{name1}.$args{name2}',
             'load: ! MY_HOSTID=$name'],
-        args => '',
+        args => [],
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
     },
 );
@@ -210,12 +210,16 @@ foreach my $test ( @bad_script_tests) {
         my $script = $wr_dir->child('my-script.cme');
         $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
-        my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir !. $test->{args};
-        note("cme command: $cmd");
-        my $oops = Test::Command->new(cmd => $cmd);
-        exit_cmp_ok( $oops, '>', 0, 'wrong command detected' );
+        my $cmd = [
+            run => $script,
+            '-root-dir' => $wr_dir->stringify,
+            @{$test->{args}}
+        ];
+        note("cme command: @$cmd");
+        my $oops = test_app('App::Cme' => $cmd);
+        cmp_ok( $oops->exit_code, '<', 0, 'wrong command detected' );
         my $re = $test->{error_regexp};
-        stderr_like( $oops, $re , 'check error message with '.$re );
+        like( $oops->error.'', $re , "check error message of cme command");
     };
 }
 
