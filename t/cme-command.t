@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use utf8;
+use 5.10.1;
 use open ':std', ':encoding(utf8)';
 
 use Path::Tiny;
@@ -11,9 +12,19 @@ use Test::Command 0.08;
 use Test::More;
 use Test::File::Contents;
 
+use App::Cmd::Tester;
+use App::Cme ;
+
 if ( $^O !~ /linux|bsd|solaris|sunos/ ) {
     plan skip_all => "Test with system() in build systems don't work well on this OS ($^O)";
 }
+
+my $arg = shift || '';
+my ( $log, $show ) = (0) x 2;
+
+my $trace = $arg =~ /t/ ? 1 : 0;
+
+Config::Model::Exception::Any->Trace(1) if $arg =~ /e/;
 
 ## testing exit status
 
@@ -39,18 +50,23 @@ my $perl_cmd = $perl_path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->p
 my $cme_cmd = -e 'bin/cme' ? "$perl_cmd bin/cme" : 'cme' ;
 note("cme is invoked with: '$cme_cmd'" );
 
+subtest "list command" => sub {
+    my @test_cmd = qw/list/;
+    my $result = test_app( 'App::Cme' => \@test_cmd );
+    say "-- stdout --\n", $result->stdout,"-----"  if $trace;
+    is($result->error, undef, 'threw no exceptions');
+};
+
 subtest "modification without config file" => sub {
-    my $test_cmd = "$cme_cmd list";
-    my $list_ok = Test::Command->new( cmd => $test_cmd );
-    exit_is_num( $list_ok, 0, 'list command went well' ) or diag("Failed command: $test_cmd");
+    my $test_cmd = [
+        qw/modify popcon/,
+        '-root-dir' => $wr_dir->stringify,
+        "PARTICIPATE=yes"
+    ];
 
-    $test_cmd = "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes";
-    my $oops = Test::Command->new(
-        cmd => $test_cmd
-    ) or diag("Failed command: $test_cmd");
-
-    exit_cmp_ok( $oops, '>', 0, 'missing config file detected' );
-    stderr_like( $oops, qr/cannot find configuration file/, 'check auto_read_error' );
+    my $oops = test_app( 'App::Cme' => $test_cmd );
+    is ($oops->exit_code, 2, 'error detected' );
+    like($oops->error, qr/cannot find configuration file/, 'missing config file detected' );
 };
 
 # put popcon data in place
