@@ -97,10 +97,9 @@ subtest "modification with wrong parameter" => sub {
 
 subtest "modification with good parameter" => sub {
     # use -save to force a file save to update file header
-    my $test_cmd = "$cme_cmd modify popcon -save -root-dir $wr_dir PARTICIPATE=yes";
-    my $ok = Test::Command->new( cmd => $test_cmd );
-    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
-
+    my @test_cmd = (qw/modify popcon -save -root-dir/, $wr_dir->stringify, qq/PARTICIPATE=yes/);
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is( $ok->exit_code, 0, 'all went well' ) or diag("Failed command @test_cmd");
     file_contents_like $conf_file->stringify,   qr/cme/,      "updated header";
     file_contents_unlike $conf_file->stringify, qr/removed`/, "double comment is removed";
 };
