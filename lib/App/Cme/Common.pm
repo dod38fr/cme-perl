@@ -14,6 +14,8 @@ use Scalar::Util qw/blessed/;
 use Path::Tiny;
 use Encode qw(decode_utf8);
 
+my @store;
+
 sub cme_global_options {
   my ( $class, $app ) = @_;
 
@@ -135,7 +137,11 @@ sub model {
     $cm_args{model_dir} = $opt->{model_dir} if $opt->{model_dir};
     $cm_args{log_level} = $log_level if $log_level;
 
-    return $self->{_model} ||= Config::Model->new( %cm_args );
+    if (not $self->{_model}) {
+        my $model = $self->{_model} = Config::Model->new( %cm_args );
+        push @store, $model;
+    }
+    return $self->{_model};
 }
 
 sub instance {
