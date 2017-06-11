@@ -87,10 +87,11 @@ subtest "minimal modification" => sub {
 };
 
 subtest "modification with wrong parameter" => sub {
-    my $test_cmd = "$cme_cmd modify popcon -root-dir $wr_dir PARITICIPATE=yes";
-    my $oops = Test::Command->new( cmd => $test_cmd );
-    exit_cmp_ok( $oops, '>', 0, 'wrong parameter detected' );
-    stderr_like( $oops, qr/unknown element/, 'check unknown element' );
+    my @test_cmd = (qw/modify popcon -root-dir/, $wr_dir->stringify, qq/PARITICIPATE=yes/);
+    my $oops = test_app( 'App::Cme' => \@test_cmd );
+    is ($oops->exit_code, -1, 'error detected' );
+    like($oops->error.'' , qr/object/, 'check unknown element' );
+    is( $oops->exit_code, -1, 'wrong parameter detected' );
 
 };
 
