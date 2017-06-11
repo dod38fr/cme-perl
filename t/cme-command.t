@@ -105,11 +105,12 @@ subtest "modification with good parameter" => sub {
 };
 
 subtest "search" => sub {
-my $test_cmd = "$cme_cmd search popcon -root-dir $wr_dir -search y -narrow value";
-    my $search = Test::Command->new( cmd => $test_cmd );
-    exit_is_num( $search, 0, 'search went well' ) or diag("Failed command $test_cmd");
-    stdout_like( $search, qr/PARTICIPATE/, "got PARTICIPATE" );
-    stdout_like( $search, qr/USEHTTP/,     "got USEHTTP" );
+my @test_cmd = (qw/search popcon -root-dir/, $wr_dir->stringify, qw/-search y -narrow value/);
+    my $search = test_app( 'App::Cme' => \@test_cmd );
+    is( $search->error, undef, 'threw no exceptions');
+    is( $search->exit_code, 0, 'search went well' ) or diag("Failed command @test_cmd");
+    like( $search->stdout, qr/PARTICIPATE/, "got PARTICIPATE" );
+    like( $search->stdout, qr/USEHTTP/,     "got USEHTTP" );
 };
 
 subtest "modification with utf8 parameter" => sub {
