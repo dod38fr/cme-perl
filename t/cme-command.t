@@ -76,9 +76,10 @@ $conf_file->spew_utf8(@orig);
 
 subtest "minimal modification" => sub {
     # test minimal modif (re-order)
-    my $test_cmd = "$cme_cmd modify popcon -save -root-dir $wr_dir";
-    my $ok = Test::Command->new( cmd => $test_cmd );
-    exit_is_num( $ok, 0, 'all went well' ) or diag("Failed command $test_cmd");
+    my @test_cmd = (qw/modify popcon -save -root-dir/, $wr_dir->stringify);
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is ($ok->exit_code, 0, 'all went well' ) or diag("Failed command cme @test_cmd");
+    is($ok->error, undef, 'threw no exceptions');
 
     file_contents_like $conf_file->stringify,   qr/cme/,       "updated header";
     file_contents_like $conf_file->stringify,   qr/yes"\nMY/, "reordered file";
