@@ -131,19 +131,19 @@ my @script_tests = (
     {
         label => "modification with a script and args",
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
-        args => qq!--arg name=foobar!,
+        args => [qw!--arg name=foobar!],
         test => qr/"\$namefoobar"/
     },
     {
         label => "modification with a script and var section",
         script => [ "app:  popcon", 'var: $var{name}="foobar2"','load ! MY_HOSTID=\$name$name'],
-        args => '',
+        args => [],
         test => qr/"\$namefoobar2"/
     },
     {
         label => "modification with a script and var section which uses args",
         script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
-        args => '--arg fooname=foo',
+        args => [qw/--arg fooname=foo/],
         test => qr/"\$namefoobar2"/
     },
     {
@@ -153,7 +153,7 @@ my @script_tests = (
             'my ($opt,$val,$name) = @ARGV;',
             'cme(application => "popcon", root_dir => $val)->modify("! MY_HOSTID=\$name$name");'
         ],
-        args => 'foobar3',
+        args => ['foobar3'],
         test => qr/"\$namefoobar3"/
     },
 );
@@ -165,10 +165,15 @@ foreach my $test ( @script_tests) {
         my $script = $wr_dir->child('my-script.cme');
         $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
-        my $cmd = qq!$cme_cmd run $script -root-dir $wr_dir !. $test->{args};
-        note("cme command: $cmd");
-        my $ok = Test::Command->new(cmd => $cmd);
-        exit_is_num( $ok, 0, "all went well" ) or diag("Failed command: $cmd");
+        my $cmd = [
+            run => $script->stringify,
+            '-root-dir' => $wr_dir->stringify,
+            @{$test->{args}}
+        ];
+        note("cme command: cme @$cmd");
+        my $ok = test_app('App::Cme' => $cmd);
+        is( $ok->error, undef, 'threw no exceptions');
+        is( $ok->exit_code, 0, "all went well" ) or diag("Failed command: @$cmd");
 
         file_contents_like $conf_file->stringify, $test->{test},
             "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
