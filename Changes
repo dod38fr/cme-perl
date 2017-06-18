@@ -1,5 +1,12 @@
 {{$NEXT}}
 
+1.021 2017-06-18
+
+  Bug fixes:
+    * try to smoke test failures: convert cme test
+      to use App::Cmd::Tester
+    * remove deprecated arg '~~' from doc
+
 1.020 2017-06-05
 
   Improvements for all commands :
