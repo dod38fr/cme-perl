@@ -82,9 +82,12 @@ subtest "minimal modification" => sub {
     my $ok = test_app( 'App::Cme' => \@test_cmd );
     is ($ok->exit_code, 0, 'all went well' ) or diag("Failed command cme @test_cmd");
     is($ok->error, undef, 'threw no exceptions');
+    say $ok->stdout;
 
     file_contents_like $conf_file->stringify,   qr/cme/,       "updated header";
-    file_contents_like $conf_file->stringify,   qr/yes"\nMY/, "reordered file";
+    # with perl 5.14 5.16, IO::Handle writes an extra \n with print.
+    my $re = $^V lt 5.18.1 ? qr/yes"\n+MY/ : qr/yes"\nMY/;
+    file_contents_like $conf_file->stringify,   $re, "reordered file";
     file_contents_unlike $conf_file->stringify, qr/removed/,   "double comment is removed";
 };
 
