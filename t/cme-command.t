@@ -94,9 +94,9 @@ subtest "minimal modification" => sub {
 subtest "modification with wrong parameter" => sub {
     my @test_cmd = (qw/modify popcon -root-dir/, $wr_dir->stringify, qq/PARITICIPATE=yes/);
     my $oops = test_app( 'App::Cme' => \@test_cmd );
-    is ($oops->exit_code, -1, 'error detected' );
+    isnt ($oops->exit_code, 0, 'error detected' );
     like($oops->error.'' , qr/object/, 'check unknown element' );
-    is( $oops->exit_code, -1, 'wrong parameter detected' );
+    isnt( $oops->exit_code, 0, 'wrong parameter detected' );
 
 };
 
@@ -220,7 +220,7 @@ foreach my $test ( @bad_script_tests) {
         ];
         note("cme command: @$cmd");
         my $oops = test_app('App::Cme' => $cmd);
-        cmp_ok( $oops->exit_code, '<', 0, 'wrong command detected' );
+        isnt( $oops->exit_code, 0, 'wrong command detected' );
         my $re = $test->{error_regexp};
         like( $oops->error.'', $re , "check error message of cme command");
     };
