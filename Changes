@@ -1,5 +1,11 @@
 {{$NEXT}}
 
+1.022 2017-06-21
+
+  Bug fixes for smoke test failures:
+    * test failure exit code to be != 0
+    * work-around test issue with perl < 5,18
+    
 1.021 2017-06-18
 
   Bug fixes:
