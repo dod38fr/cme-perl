@@ -19,6 +19,9 @@ my @store;
 sub cme_global_options {
   my ( $class, $app ) = @_;
 
+  # TODO: whatever happened to backup option (used by lcdproc upgrade):
+  # Unknown option: -backup. Unknown option will soon be a fatal error. at /usr/share/perl5/App/Cme/Common.pm line 57.
+
   my @global_options = (
       [ "model-dir=s"        => "Specify an alternate directory to find model files"],
       [ "try-app-as-model!"  => "try to load a model using directly the application name "
@@ -28,6 +31,7 @@ sub cme_global_options {
       [ "create!"            => "start from scratch."],
       [ "root-dir=s"         => "Change root directory. Mostly used for test"],
       [ "file=s"             => "Specify a target file"],
+      # to be deprecated
       [ "backend=s"          => "Specify a read/write backend"],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
       [ "verbose=s"         => "Verbosity level (1, 2, 3  or info, debug, trace)"],
@@ -93,7 +97,7 @@ sub process_args {
             my $message = $appli_info->{$application}{backend_argument_info} ;
             my $insert = $message ? " ( $message )": '';
             die "application $application requires a 3rd argument$insert. "
-                . "I.e. 'cme $command $application <backend_arg>'";
+                . "I.e. 'cme $command $application <backend_arg>'\n";
         }
     }
 
