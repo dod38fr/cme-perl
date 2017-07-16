@@ -78,6 +78,11 @@ sub process_args {
 
     my $command = (split('::', ref($self)))[-1] ;
 
+    if ($appli_info->{$application}{require_config_file}
+            and $appli_info->{$application}{require_backend_argument}) {
+        die "Error in $root_model model: cannot have both require_config_file and require_backend_argument.\n";
+    }
+
     # @ARGV should be [ $config_file ] [ modification_instructions ]
     my $config_file;
     if ( $appli_info->{$application}{require_config_file} ) {
