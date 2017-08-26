@@ -19,9 +19,6 @@ my @store;
 sub cme_global_options {
   my ( $class, $app ) = @_;
 
-  # TODO: whatever happened to backup option (used by lcdproc upgrade):
-  # Unknown option: -backup. Unknown option will soon be a fatal error. at /usr/share/perl5/App/Cme/Common.pm line 57.
-
   my @global_options = (
       [ "model-dir=s"        => "Specify an alternate directory to find model files"],
       [ "try-app-as-model!"  => "try to load a model using directly the application name "
