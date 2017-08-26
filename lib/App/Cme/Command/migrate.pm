@@ -21,6 +21,7 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return (
+        [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "quiet!" => "Suppress progress messages" ],
         $class->cme_global_options,
     );

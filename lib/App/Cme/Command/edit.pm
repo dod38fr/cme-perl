@@ -22,6 +22,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return (
         [ "ui|if=s"     => "user interface type. Either tk, curses, shell" ],
+        [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "open-item=s" => "open a specific item of the configuration" ],
         [ "quiet!"      => "Suppress progress messages" ],
         $class->cme_global_options,

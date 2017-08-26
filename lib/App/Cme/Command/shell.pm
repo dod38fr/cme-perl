@@ -20,6 +20,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "open-item=s" => "open a specific item of the configuration" ],
+        [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "quiet!"      => "Suppress progress messages" ],
         [ "bare!"       => "run bare terminal UI"],
         $class->cme_global_options,

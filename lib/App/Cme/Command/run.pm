@@ -34,6 +34,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "arg=s@"  => "fix only a subset of a configuration tree" ],
+        [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
