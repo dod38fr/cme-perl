@@ -33,7 +33,7 @@ push @script_paths, path($INC{"Config/Model.pm"})->parent->child("Model/scripts"
 sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
-        [ "arg=s@"  => "fix only a subset of a configuration tree" ],
+        [ "arg=s@"  => "script argument. run 'cme run $app -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
