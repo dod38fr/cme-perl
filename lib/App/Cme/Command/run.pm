@@ -110,15 +110,19 @@ sub execute {
     # find if all variables are accounted for
     my %missing ;
 
+    # provide default values
+    my %default ;
+
     # %args can be used in var section of a script. A new entry in
     # added in %missing if the script tries to read an undefined value
-    tie my %args, 'App::Cme::Run::Var', \%missing;
+    tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
     %args = %user_args;
 
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
         # change $var but not \$var
-        $_[0] =~ s~ (?<!\\) \$(\w+) (?!\s*{) ~ $user_args{$1} // $var{$1} // $ENV{$1} // '$'.$1~xeg;
+        $_[0] =~ s~ (?<!\\) \$(\w+) (?!\s*{)
+                  ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
 
         # register vars without replacements
         map { $missing{$_} = 1 ;} ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
@@ -151,6 +155,10 @@ sub execute {
         elsif ($key eq 'var') {
             my $res = eval ($value) ;
             die "Error in var specification line $line_nb: $@\n" if $@;
+        }
+        elsif ($key eq 'default') {
+            my ($dk, $dv) = split /[\s:=]+/, $value, 2;
+            $default{$dk} = $dv;
         }
         elsif ($key eq 'doc') {
             push @doc, $value;
@@ -205,9 +213,10 @@ our @ISA = qw(Tie::ExtraHash);
 
 sub FETCH {
     my ($self, $key) = @_ ;
-    my ($h,$missing) = @$self;
-    $missing->{$key} = 1 unless defined $h->{$key};
-    return $h->{$key} // '';
+    my ($h, $missing, $default) = @$self;
+    my $res = $h->{$key} // $default->{$key} ;
+    $missing->{$key} = 1 unless defined $res;
+    return $res // '';
 }
 
 1;
@@ -315,13 +324,20 @@ code must store data in C<%var> hash. For instance:
     var: my @l = localtime; $var{year} =  $l[5]+1900;
 
 The hash C<%args> contains the variables passed with the C<-arg>
-option. Reading a value from C<%args> which is set by the user
-triggers an error.
+option. Reading a value from C<%args> which is not set by user
+triggers a missing option error. Use C<exists> if you need to test if
+a argument was set by user:
+
+    var: $var{foo} = exists $var{bar} ? $var{bar} : 'default' # good
+    var: $var{foo} = $var{bar} || 'default' # triggers a "missing arg" error
 
 =item load
 
 Specify the modifications to apply using a string as specified in
-L<Config::Model::Loader>
+L<Config::Model::Loader>. This string can contain variable
+(e.g. C<$foo>) which are replaced by command argument (e.g. C<-arg
+foo=bar>) or by a variable set in var: line (e.g. C<$var{foo}> as set
+above) or by an environment variable (e.g. C<$ENV{foo}>)
 
 =item commit
 
