@@ -16,8 +16,6 @@ use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
 
-my $logger = get_logger("Cme::run");
-
 my $__test_home = '';
 sub _set_test_home { $__test_home = shift; }
 
@@ -62,6 +60,8 @@ sub description {
 sub execute {
     my ($self, $opt, $app_args) = @_;
 
+    # cannot use logger until Config::Model is initialised
+
     # see Debian #839593 and perlunicook(1) section X 13
     @$app_args = map { decode_utf8($_, 1) } @$app_args;
 
@@ -93,8 +93,6 @@ sub execute {
 
     die "Error: cannot find script $script_name\n" unless $script->is_file;
 
-    $logger->info("Running script $script");
-
     my $content = $script->slurp_utf8;
 
     # parse variables passed on command line
@@ -102,13 +100,11 @@ sub execute {
 
     if ($content =~ m/^#!/ or $content =~ /^use/m) {
         splice @ARGV, 0,2; # remove 'run script' arguments
-        $logger->info("Running script $script with perl");
         eval $script->slurp_utf8;
         die "Error in script $script_name: $@\n" if $@;
         return;
     }
 
-    $logger->info("Running script $script");
     my %var;
 
     # find if all variables are accounted for
@@ -153,10 +149,8 @@ sub execute {
             unshift @$app_args, $value;
         }
         elsif ($key eq 'var') {
-            $logger->trace("Eval var expression: $value");
             my $res = eval ($value) ;
             die "Error in var specification line $line_nb: $@\n" if $@;
-            $logger->debug("Eval var result: $res");
         }
         elsif ($key eq 'doc') {
             push @doc, $value;
