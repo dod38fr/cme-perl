@@ -312,7 +312,7 @@ allowed.
 Use Perl code to specify variables usable in this script. The Perl
 code must store data in C<%var> hash. For instance:
 
-    perl: my @l = localtime; $var{year} =  $l[5]+1900;
+    var: my @l = localtime; $var{year} =  $l[5]+1900;
 
 The hash C<%args> contains the variables passed with the C<-arg>
 option. Reading a value from C<%args> which is set by the user
