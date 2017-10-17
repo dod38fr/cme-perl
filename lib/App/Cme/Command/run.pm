@@ -34,6 +34,7 @@ sub opt_spec {
         [ "arg=s@"  => "script argument. run 'cme run $app -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "commit|c:s" => "commit change with passed message" ],
+        [ "no-commit|nc!" => "skip commit to git" ],
         [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
@@ -205,7 +206,7 @@ sub execute {
     $self->save($inst,$opt) ;
 
     # commit if needed
-    if ($commit_msg) {
+    if ($commit_msg and not $opt->{'no-commit'}) {
         system(qw/git commit -a -m/, $commit_msg);
     }
 }
@@ -387,6 +388,10 @@ documentation of C<cme run> command)
 
 Like the commit instruction in script. Specify that the change must be
 committed with the passed commit message.
+
+=head2 no-commit
+
+Don't commit to git (even if the above option is set)
 
 =head1 Common options
 
