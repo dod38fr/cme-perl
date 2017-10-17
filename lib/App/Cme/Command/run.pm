@@ -33,6 +33,7 @@ sub opt_spec {
     return ( 
         [ "arg=s@"  => "script argument. run 'cme run $app -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
+        [ "commit|c:s" => "commit change with passed message" ],
         [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
@@ -186,6 +187,10 @@ sub execute {
 
     $self->process_args($opt, $app_args);
 
+    # override commit message. may also trigger a commit even if none
+    # is specified in script
+    $commit_msg ||= $opt->{commit};
+
     # check if workspace and index are clean
     if ($commit_msg) {
         my $r = `git status --porcelain`;
@@ -294,7 +299,7 @@ save the configuration files
 
 =item *
 
-commits the result if C<commit> is specified.
+commits the result if C<commit> is specified (either in script or on command line).
 
 =back
 
@@ -377,6 +382,11 @@ Arguments for the cme scripts which are used to substitute variables.
 
 Show the script documentation. (Note that C<--help> options show the
 documentation of C<cme run> command)
+
+=head2 commit
+
+Like the commit instruction in script. Specify that the change must be
+committed with the passed commit message.
 
 =head1 Common options
 
