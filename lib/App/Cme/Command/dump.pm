@@ -35,7 +35,7 @@ sub opt_spec {
         [
             "format=s" => "dump using specified format",
             {
-                regex => qr/^(?:json|yaml|perl|cml|cds)$/i,
+                regex => qr/^(?:json|ya?ml|perl|cml|cds)$/i,
                 default => 'yaml'
             },
         ],
@@ -75,7 +75,7 @@ sub execute {
             mode => $mode
         );
         $dump_string
-            = $format =~ /yaml/i  ? Dump($perl_data)
+            = $format =~ /ya?ml/i ? Dump($perl_data)
             : $format =~ /json/i  ? encode_json($perl_data)
             :                       Dumper($perl_data) ; # Perl data structure
     }
