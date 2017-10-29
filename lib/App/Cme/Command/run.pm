@@ -178,6 +178,7 @@ sub execute {
 
     if ($opt->doc) {
         say join "\n", @doc;
+        say "will commit with message: '$commit_msg'" if $commit_msg;
         return;
     }
 
