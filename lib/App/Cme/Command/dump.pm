@@ -76,7 +76,7 @@ sub execute {
         );
         $dump_string = $format eq 'yaml' ? Dump($perl_data)
             : $format eq 'json' ? encode_json($perl_data)
-            :                     Dumper($perl_data) ;
+            :                     Dumper($perl_data) ; # Perl data structure
     }
     print $dump_string ;
 }
