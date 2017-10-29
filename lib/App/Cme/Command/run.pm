@@ -34,6 +34,7 @@ sub opt_spec {
         [ "arg=s@"  => "script argument. run 'cme run $app -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "commit|c:s" => "commit change with passed message" ],
+        [ "cat" => "Show the script file" ],
         [ "no-commit|nc!" => "skip commit to git" ],
         [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
@@ -96,6 +97,11 @@ sub execute {
     die "Error: cannot find script $script_name\n" unless $script->is_file;
 
     my $content = $script->slurp_utf8;
+
+    if ($opt->{cat}) {
+        print $content;
+        return;
+    }
 
     # parse variables passed on command line
     my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
@@ -384,6 +390,10 @@ Arguments for the cme scripts which are used to substitute variables.
 
 Show the script documentation. (Note that C<--help> options show the
 documentation of C<cme run> command)
+
+=head2 cat
+
+Pop the hood and show the content of the script.
 
 =head2 commit
 
