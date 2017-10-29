@@ -35,7 +35,7 @@ sub opt_spec {
         [
             "format=s" => "dump using specified format",
             {
-                regex => qr/^(?:json|yaml|perl|cml)$/,
+                regex => qr/^(?:json|yaml|perl|cml|cds)$/,
                 default => 'yaml'
             },
         ],
@@ -66,7 +66,7 @@ sub execute {
     my $format = $opt->{format};
     my $mode = $opt->{dumptype} || 'custom';
 
-    if ($format eq 'cml') {
+    if ($format =~ /cml|cds/) {
         $dump_string = $target_node->dump_tree( mode => $mode );
     }
     else {
@@ -110,8 +110,9 @@ Choose to dump every values (full), or only customized values (default)
 C<non_upstream_default> is like C<full> mode, but value identical with
 application default are omitted. But this should seldom happen.
 
-By default, dump in yaml format. This can be changed in C<JSON>,
-C<Perl>, C<cml> (aka L<Config::Model::Loader> format) with C<-format> option.
+By default, dump in yaml format. This can be changed in C<json>,
+C<perl>, C<cml> (aka L<Config::Model::Loader> format, C<cds> is also
+accepted) with C<-format> option.
 
 =head1 Common options
 
