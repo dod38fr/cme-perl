@@ -35,7 +35,7 @@ sub opt_spec {
         [
             "format=s" => "dump using specified format",
             {
-                regex => qr/^(?:json|yaml|perl|cml|cds)$/,
+                regex => qr/^(?:json|yaml|perl|cml|cds)$/i,
                 default => 'yaml'
             },
         ],
@@ -66,7 +66,7 @@ sub execute {
     my $format = $opt->{format};
     my $mode = $opt->{dumptype} || 'custom';
 
-    if ($format =~ /cml|cds/) {
+    if ($format =~ /cml|cds/i) {
         $dump_string = $target_node->dump_tree( mode => $mode );
     }
     else {
@@ -74,9 +74,10 @@ sub execute {
             ordered_hash_as_list => 0,
             mode => $mode
         );
-        $dump_string = $format eq 'yaml' ? Dump($perl_data)
-            : $format eq 'json' ? encode_json($perl_data)
-            :                     Dumper($perl_data) ; # Perl data structure
+        $dump_string
+            = $format =~ /yaml/i  ? Dump($perl_data)
+            : $format =~ /json/i  ? encode_json($perl_data)
+            :                       Dumper($perl_data) ; # Perl data structure
     }
     print $dump_string ;
 }
