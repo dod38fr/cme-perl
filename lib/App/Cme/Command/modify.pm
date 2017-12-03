@@ -64,9 +64,6 @@ __END__
   # modify configuration with command line
   cme modify dpkg source 'format="(3.0) quilt"'
 
-  # likewise with an application that accepts file override
-  cme modify dpkg-copyright 'Comment="Modified with cme"'
-
 =head1 DESCRIPTION
 
 Modify a configuration file with the values passed on the command line.
@@ -75,13 +72,13 @@ These command must follow the syntax defined in L<Config::Model::Loader>
 
 Example:
 
-   cme modify dpkg source format="(3.0) quilt"
-   cme modify multistrap my_mstrap.conf sections:base source="http://ftp.fr.debian.org"
+   cme modify dpkg 'source format="(3.0) quilt"'
+   cme modify multistrap my_mstrap.conf 'sections:base source="http://ftp.fr.debian.org"'
 
 Some application like dpkg-copyright allows you to override the
 configuration file name. You must then use C<-file> option:
 
-   cme modify dpkg-copyright -file ubuntu/copyright 'Comment="Silly example"
+   cme modify dpkg-copyright -file ubuntu/copyright 'Comment="Silly example"'
 
 =head1 Common options
 
