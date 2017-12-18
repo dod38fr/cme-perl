@@ -153,22 +153,22 @@ sub model {
 sub instance {
     my ($self, $opt, $args) = @_;
 
-    return
-        $self->{_instance}
-        ||= $self->model->instance(
+    my %instance_args = (
             root_class_name => $opt->{_root_model},
             instance_name   => $opt->{_application},
             application     => $opt->{_application},
-            root_dir        => $opt->{root_dir},
             check           => $opt->{force_load} ? 'no' : 'yes',
             auto_create     => $opt->{create},
-            backend         => $opt->{backend},
             backend_arg     => $opt->{_backend_arg},
-            backup          => $opt->{backup},
             config_file     => $opt->{_config_file},
             config_dir      => $opt->{_config_dir},
-        );
+    );
 
+    foreach my $param (qw/root_dir backend backup/) {
+        $instance_args{$param} = $opt->{$param} if defined $opt->{$param};
+    }
+
+    return $self->{_instance} ||= $self->model->instance(%instance_args);
 }
 
 sub init_cme {
