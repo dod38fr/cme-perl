@@ -190,6 +190,12 @@ the same effect:
 
 Load file even if error are found in data. Bad data are discarded
 
+=item -canonical
+
+Write config data back using model order. By default, write items back
+using the order found in the configuration file. This feature is
+experimental and not supported by all backends.
+
 =item -backup
 
 Create a backup of configuration files before saving. By default, C<old> will

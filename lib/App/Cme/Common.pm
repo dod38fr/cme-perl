@@ -30,6 +30,7 @@ sub cme_global_options {
       [ "file=s"             => "Specify a target file"],
       # to be deprecated
       [ "backend=s"          => "Specify a read/write backend"],
+      [ "canonical!"         => "write back config data according to canonical order" ],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
       [ "verbose=s"          => "Verbosity level (1, 2, 3  or info, debug, trace)"],
       # no bundling
@@ -164,7 +165,7 @@ sub instance {
             config_dir      => $opt->{_config_dir},
     );
 
-    foreach my $param (qw/root_dir backend backup/) {
+    foreach my $param (qw/root_dir canonical backend backup/) {
         $instance_args{$param} = $opt->{$param} if defined $opt->{$param};
     }
 
