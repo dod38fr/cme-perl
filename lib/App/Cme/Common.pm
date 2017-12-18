@@ -31,7 +31,7 @@ sub cme_global_options {
       # to be deprecated
       [ "backend=s"          => "Specify a read/write backend"],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
-      [ "verbose=s"         => "Verbosity level (1, 2, 3  or info, debug, trace)"],
+      [ "verbose=s"          => "Verbosity level (1, 2, 3  or info, debug, trace)"],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );
