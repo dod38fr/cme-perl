@@ -244,11 +244,6 @@ directory.
 
 Provides a full stack trace when exiting on error.
 
-=item -backend
-
-Specify a read/write backend. The actual backend name depends on the model
-passed to C<-model> option. See L<Config::Model::BackendMgr> for details.
-
 =item -try-app-as-model
 
 When set, try to load a model using directly the application name specified as 3rd parameter
