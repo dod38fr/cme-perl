@@ -68,18 +68,19 @@ sub execute {
     # see Debian #839593 and perlunicook(1) section X 13
     @$app_args = map { decode_utf8($_, 1) } @$app_args;
 
-    if ($opt->{list}) {
+    my $script_name = shift @$app_args;
+
+    if ($opt->{list} or not $script_name) {
         my @scripts;
         foreach my $path ( @script_paths ) {
             next unless $path->is_dir;
             push @scripts, grep { ! /~$/ } $path->children();
         }
-        say "Available scripts:";
+        say $opt->{list} ? "Available scripts:" : "Missing script argument. Choose one of:";
         say map {"- ".$_->basename."\n"} @scripts ;
         return;
     }
 
-    my $script_name = shift @$app_args;
     my $script;
 
     if ($script_name =~ m!/!) {
