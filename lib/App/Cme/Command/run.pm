@@ -338,6 +338,14 @@ The script accepts instructions in the form:
 
  key: value
 
+The key line can be repeated when needed.
+
+Multi line values can also be:
+
+ --- key
+ multi line value
+ ---
+
 The script accepts the following instructions:
 
 =over
@@ -431,10 +439,11 @@ See L<cme/"Global Options">.
 
 =head2 update copyright years in C<debian/copyright>
 
- $ cat ~/.cme/scripts/update-copyright
+ $ cme run update-copyright -cat
  app: dpkg-copyright
  load: Files:~ Copyright=~"s/2016,?\s+$name/2017, $name/g"
  commit: updated copyright year of $name
+
  $ cme run update-copyright -arg "name=Dominique Dumont"
  cme: using Dpkg::Copyright model
  Changes applied to dpkg-copyright configuration:
