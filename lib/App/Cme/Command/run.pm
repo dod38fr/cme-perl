@@ -149,36 +149,52 @@ sub execute {
     my $line_nb = 0;
 
     # check content, store app
-    foreach my $line ( @lines ) {
+    while (@lines) {
+        my $line = shift @lines;
         $line_nb++;
         $line =~ s/#.*//; # remove comments
         $line =~ s/^\s+//;
         $line =~ s/\s+$//;
-        my ($key,$value) = split /[\s:]+/, $line, 2;
+        my ($key,@value);
+
+        if ($line =~ /^---\s*(\w+)$/) {
+            $key = $1;
+            while ($lines[0] !~ /^---/) {
+                $lines[0] =~ s/#.*//; # remove comments
+                push @value,  shift @lines;
+            }
+        }
+        elsif ($line eq '---') {
+            next;
+        }
+        else {
+            ($key,@value) = split /[\s:]+/, $line, 2;
+        }
 
         next unless $key ; # empty line
 
-        $replace_var->($value) unless $key eq 'var';
+        $replace_var->(@value) unless $key eq 'var';
 
         if ($key =~ /^app/) {
-            unshift @$app_args, $value;
+            unshift @$app_args, @value;
         }
         elsif ($key eq 'var') {
-            my $res = eval ($value) ;
+            my $res = eval ("@value") ;
             die "Error in var specification line $line_nb: $@\n" if $@;
         }
         elsif ($key eq 'default') {
-            my ($dk, $dv) = split /[\s:=]+/, $value, 2;
+            # multi-line default value is not supported
+            my ($dk, $dv) = split /[\s:=]+/, $value[0], 2;
             $default{$dk} = $dv;
         }
         elsif ($key eq 'doc') {
-            push @doc, $value;
+            push @doc, @value;
         }
         elsif ($key eq 'load') {
-            push @load, $value;
+            push @load, @value;
         }
         elsif ($key eq 'commit') {
-            $commit_msg = $value;
+            $commit_msg = join "\n",@value;
         }
         else {
             die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
