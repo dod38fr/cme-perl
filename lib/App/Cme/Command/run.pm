@@ -457,6 +457,54 @@ See L<cme/"Global Options">.
  [master ac2e6410] updated copyright year of Dominique Dumont
   1 file changed, 2 insertions(+), 2 deletions(-)
 
+=head2 update VcsGit in debian/control
+
+ $ cme run set-vcs-git  -cat
+ doc: update control Vcs-Browser and Vcs-git from git remote value
+ doc: parameters: remote (default is origin)
+ doc:
+ doc: example:
+ doc:  cme run set-vcs-git
+ doc:  cme run set-vcs-git -arg remote=debian
+ 
+ app: dpkg-control
+ default: remote: origin
+ 
+ var: chomp ( $var{url} = `git remote get-url $args{remote}` ) ;
+ var: $var{url} =~ s!^git@!https://!;
+ var: $var{url} =~ s!(https?://[\w.]+):!$1/!;
+ var: $var{browser} = $var{url};
+ var: $var{browser} =~ s/.git$//;
+ 
+ load: ! source Vcs-Browser="$browser" Vcs-Git="$url"
+ commit: control: update Vcs-Browser and Vcs-Git
+
+This script can also be written using multi line instructions:
+
+ $ cme run set-vcs-git  -cat
+ --- doc
+ update control Vcs-Browser and Vcs-git from git remote value
+ parameters: remote (default is origin)
+ 
+ example:
+  cme run set-vcs-git
+  cme run set-vcs-git -arg remote=debian
+ ---
+ 
+ app: dpkg-control
+ default: remote: origin
+ 
+ --- var
+ chomp ( $var{url} = `git remote get-url $args{remote}` ) ;
+ $var{url} =~ s!^git@!https://!;
+ $var{url} =~ s!(https?://[\w.]+):!$1/!;
+ $var{browser} = $var{url};
+ $var{browser} =~ s/.git$//;
+ ---
+ 
+ load: ! source Vcs-Browser="$browser" Vcs-Git="$url"
+ commit: control: update Vcs-Browser and Vcs-Git
+
 =head1 SEE ALSO
 
 L<cme>
