@@ -370,7 +370,7 @@ cme exits 0 when no errors are found. Exit 1 otherwise.
 
 If a configuration model is not up-to-date, you will get errors complaining about
 unknown parameters. In such a case, please file a bug on
-L<request tracked|http://rt.cpan.org/> or fix the model and send a pull request.
+L<github|https://github.com/dod38fr/cme-perl/issues> or fix the model and send a pull request.
 You can see this
 L<example from OpenSsh|https://github.com/dod38fr/config-model/wiki/New-parameter-for-openssh-example>
 to learn how to fix a model.
