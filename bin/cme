@@ -180,7 +180,7 @@ configuration. Use "C<->" to read from STDIN.
 
 You can use this option for model that require the target file to be
 specified (e.g. multitrap model), but file can in this case be also
-specified with the 4th command argument. E.g. these 2 commands habe
+specified with the 4th command argument. E.g. these 2 commands have
 the same effect:
 
   cme check multistrap foo.conf
