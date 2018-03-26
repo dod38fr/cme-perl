@@ -129,15 +129,17 @@ sub execute {
 
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
-        # change $var but not \$var
-        $_[0] =~ s~ (?<!\\) \$(\w+) (?!\s*{)
-                  ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
+        foreach (@_) {
+            # change $var but not \$var
+            s~ (?<!\\) \$(\w+) (?!\s*{)
+             ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
 
-        # register vars without replacements
-        map { $missing{$_} = 1 ;} ($_[0] =~ m~ (?<!\\) \$(\w+) ~xg);
+            # register vars without replacements
+            map { $missing{$_} = 1 ;} ( m~ (?<!\\) \$(\w+) ~xg);
 
-        # now change \$var in $var
-        $_[0] =~ s!\\\$!\$!g;
+            # now change \$var in $var
+            s!\\\$!\$!g;
+        }
     };
 
     my @lines =  split /\n/,$content;
