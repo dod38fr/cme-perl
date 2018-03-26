@@ -98,13 +98,6 @@ argument, i.e. C<cme command application file_name>. This applies if the
 application requires a configuration file name (like multistrap), or if
 the application allows configuration file override.
 
-When the overridden file is C<-> (a single dash), the configuration is
-read from STDIN. The resulting file may be written on STDOUT. I.e.
-
-  cat debian/confrol | cme migrate dpkg-control -save -file -
-
-will output a fixed control file on STDOUT.
-
 =head1 Main commands
 
 This section describes the main commands shipped with cme. Other
@@ -176,7 +169,7 @@ error during the installation of the application.
 =item -file
 
 For model that support it, specify an alternate file to read and write the
-configuration. Use "C<->" to read from STDIN.
+configuration.
 
 You can use this option for model that require the target file to be
 specified (e.g. multitrap model), but file can in this case be also
