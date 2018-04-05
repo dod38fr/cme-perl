@@ -58,6 +58,12 @@ sub process_args {
 
     my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
     my $application = shift @$args;
+    unless ($application) {
+        $self->usage_error(
+            "Missing application parameter. Run 'cme list' to get the "
+                . "list of installed cme applications\n"
+            );
+    }
 
     my $root_model = $appli_map->{$application};
     $root_model ||= $application if $opt->{try_app_as_model};
