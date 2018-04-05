@@ -127,15 +127,17 @@ sub execute {
     tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
     %args = %user_args;
 
+    my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
+
     # replace variables with command arguments or eval'ed variables or env variables
     my $replace_var = sub {
         foreach (@_) {
-            # change $var but not \$var
-            s~ (?<!\\) \$(\w+) (?!\s*{)
+            # change $var but not \$var, not $var{} and not $1
+            s~ $var_pattern
              ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
 
             # register vars without replacements
-            map { $missing{$_} = 1 ;} ( m~ (?<!\\) \$(\w+) ~xg);
+            map { $missing{$_} = 1 ;} ( m~ $var_pattern ~xg );
 
             # now change \$var in $var
             s!\\\$!\$!g;
