@@ -33,7 +33,7 @@ sub opt_spec {
             }
         ],
         [
-            "format=s" => "dump using specified format",
+            "format=s" => "dump using specified format (yaml json perl cml)",
             {
                 regex => qr/^(?:json|ya?ml|perl|cml|cds)$/i,
                 default => 'yaml'
