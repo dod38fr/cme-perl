@@ -205,14 +205,7 @@ When set, cme will exit 1 if warnings are found during check (of left after fix)
 
 =item -verbose
 
-Set to C<1>, C<2>, C<3> or C<info>, C<debug>, C<trace> to get more
-verbose output. These values can be abbreviated.
-
-Example:
-
- cme check ssh -v 1
- cme check ssh -v i
- cme check ssh -v info
+Show more information about what's going on.
 
 =back
 

@@ -31,7 +31,7 @@ sub cme_global_options {
       # to be deprecated
       [ "canonical!"         => "write back config data according to canonical order" ],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
-      [ "verbose=s"          => "Verbosity level (1, 2, 3  or info, debug, trace)"],
+      [ "verbose!"           => "Show what's going on"],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );
@@ -126,26 +126,8 @@ sub process_args {
 sub model {
     my ($self, $opt, $args) = @_;
 
-    my @levels = qw/WARN INFO DEBUG TRACE/;
-    my $optv = $opt->{verbose} ;
-
-    my $log_level;
-    if (defined $optv) {
-        if ($optv =~ /^\d$/) {
-            $log_level =  $levels[$opt->{verbose}];
-        }
-        else {
-            ($log_level) = grep { /^$optv/i } @levels;
-        }
-        if (not $log_level) {
-            die "unknown log level $optv. Must be 1 ,2, 3 or warn, info, debug, trace.\n" ;
-        }
-    }
-
-
     my %cm_args;
     $cm_args{model_dir} = $opt->{model_dir} if $opt->{model_dir};
-    $cm_args{log_level} = $log_level if $log_level;
 
     if (not $self->{_model}) {
         my $model = $self->{_model} = Config::Model->new( %cm_args );
