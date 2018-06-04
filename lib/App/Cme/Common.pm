@@ -77,8 +77,6 @@ sub process_args {
             . "See the available models there: https://github.com/dod38fr/config-model/wiki/Available-models-and-backends\n";
     }
 
-    say "cme: using $root_model model" unless $opt->{quiet};
-
     my $command = (split('::', ref($self)))[-1] ;
 
     if ($appli_info->{$application}{require_config_file}
