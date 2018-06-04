@@ -79,6 +79,26 @@ configuration file name. You must then use C<-file> option:
 
    cme modify dpkg-copyright -file ubuntu/copyright 'Comment="Silly example"'
 
+Finding the right instructions to perform a modification may be
+difficult when starting from scratch.
+
+To get started, you can run C<cme dump --format cml> command to get
+the content of your configuration in the syntax accepted by C<cme modify>:
+
+ $ cme dump ssh -format cml
+ Host:"*" -
+ Host:"alioth.debian.org"
+   User=dod -
+ Host:"*.debian.org"
+   IdentityFile:="~/.ssh/id_debian"
+   User=dod -
+
+Then you can use this output to create instruction for a modification:
+
+ $  cme modify ssh 'Host:"*" User=dod'
+ Changes applied to ssh configuration:
+ - Host:"*" User has new value: 'dod'
+
 =head1 Common options
 
 See L<cme/"Global Options">.
@@ -90,6 +110,10 @@ See L<cme/"Global Options">.
 =item -save
 
 Force a save even if no change was done. Useful to reformat the configuration file.
+
+=item -verbose
+
+Show effect of the modify instructions.
 
 =back
 
