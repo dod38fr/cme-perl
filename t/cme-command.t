@@ -10,7 +10,6 @@ use Encode;
 use Path::Tiny;
 use Probe::Perl;
 
-use Test::Command 0.08;
 use Test::More;
 use Test::File::Contents;
 
@@ -116,7 +115,7 @@ subtest "modification with good parameter" => sub {
 };
 
 subtest "search" => sub {
-my @test_cmd = (qw/search popcon -root-dir/, $wr_dir->stringify, qw/-search y -narrow value/);
+    my @test_cmd = (qw/search popcon -root-dir/, $wr_dir->stringify, qw/-search y -narrow value/);
     my $search = test_app( 'App::Cme' => \@test_cmd );
     is( $search->error, undef, 'threw no exceptions');
     is( $search->exit_code, 0, 'search went well' ) or diag("Failed command @test_cmd");
