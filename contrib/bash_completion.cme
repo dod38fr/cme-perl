@@ -110,6 +110,9 @@ _cme()
                 modify)
                    COMPREPLY=( $( compgen -W "$global_options -save -backup -format -verbose" -- $cur ) )
                 ;;
+                run)
+                   COMPREPLY=( $( compgen -W "$global_options -doc -cat -nc --no-commit -verbose" -- $cur ) )
+				;;
                 search)
                    COMPREPLY=( $( compgen -W "$global_options -search -narrow-search" -- $cur ) )
 				;;
