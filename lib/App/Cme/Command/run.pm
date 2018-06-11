@@ -38,6 +38,7 @@ sub opt_spec {
         [ "no-commit|nc!" => "skip commit to git" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
+        [ "verbose!" => "show execution of the instructions from the 'run' script" ],
         $class->cme_global_options,
     );
 }
@@ -225,6 +226,8 @@ sub execute {
         die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r"
             if $r;
     }
+
+    $opt->{_verbose} = 'Loader' if $opt->{verbose};
 
     # call loads
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
@@ -431,6 +434,10 @@ committed with the passed commit message.
 =head2 no-commit
 
 Don't commit to git (even if the above option is set)
+
+=head2 verbose
+
+Show effect of the modify instructions.
 
 =head1 Common options
 
