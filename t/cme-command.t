@@ -15,6 +15,7 @@ use Test::File::Contents;
 
 use App::Cmd::Tester;
 use App::Cme ;
+use Config::Model qw/initialize_log4perl/;
 
 if ( $^O !~ /linux|bsd|solaris|sunos/ ) {
     plan skip_all => "Test with system() in build systems don't work well on this OS ($^O)";
@@ -110,8 +111,17 @@ subtest "modification with good parameter" => sub {
     my @test_cmd = (qw/modify popcon -save -root-dir/, $wr_dir->stringify, qq/PARTICIPATE=yes/);
     my $ok = test_app( 'App::Cme' => \@test_cmd );
     is( $ok->exit_code, 0, 'all went well' ) or diag("Failed command @test_cmd");
+    is($ok->stderr.'', '', 'check: no log on stderr' );
     file_contents_like $conf_file->stringify,   qr/cme/,      "updated header";
     file_contents_unlike $conf_file->stringify, qr/removed`/, "double comment is removed";
+};
+
+subtest "modification with verbose option" => sub {
+    my @test_cmd = (qw/modify popcon -verbose -root-dir/, $wr_dir->stringify, qq/PARTICIPATE=yes/);
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is ($ok->exit_code, 0, 'no error detected' ) or diag("Failed command @test_cmd");
+    is($ok->stderr.'', qq!command 'PARTICIPATE=yes': Setting leaf 'PARTICIPATE' boolean to 'yes'.\n!,
+       'check log content' );
 };
 
 subtest "search" => sub {
@@ -183,8 +193,12 @@ my @script_tests = (
             "app:  popcon",
             'load: ! MY_HOSTID=aaaaab MY_HOSTID=~s/(a{$times})/$1x$times/',
         ],
-        args => [qw/--arg times=4/],
-        test => qr/aaaax4ab/
+        args => [qw/--arg times=4 --verbose/],
+        test => qr/aaaax4ab/,
+        stderr => q<command '!': Going from root node to root node
+command 'MY_HOSTID=aaaaab': Setting leaf 'MY_HOSTID' uniline to 'aaaaab'.
+command 'MY_HOSTID=~s/(a{4})/$1x4/': Applying regexp 's/(a{4})/$1x4/' to leaf 'MY_HOSTID' uniline. Result is 'aaaax4ab'.
+>,
     },
 );
 
@@ -207,6 +221,9 @@ foreach my $test ( @script_tests) {
 
         file_contents_like $conf_file->stringify, $test->{test},
             "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
+        if ($test->{stderr}) {
+            is($ok->stderr.'', $test->{stderr}, 'check stderr content' );
+        }
     };
 }
 
