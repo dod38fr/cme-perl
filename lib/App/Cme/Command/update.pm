@@ -45,15 +45,15 @@ sub execute {
 
     my ( $inst) = $self->instance($opt,$args);
 
-    say "updating data" unless $opt->{quiet};
+    say "Updating data..." unless $opt->{quiet};
 
     my @msgs = $inst->update(quiet => $opt->{quiet});
 
     if (@msgs and not $opt->{quiet}) {
-        say "update done";
+        say "Update done";
     }
     elsif (not $opt->{quiet}) {
-        say "command done, but ".$opt->{_application}
+        say "Command done, but ".$opt->{_application}
             . " model has no provision for update";
     }
 
