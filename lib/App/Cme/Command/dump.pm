@@ -39,7 +39,6 @@ sub opt_spec {
                 default => 'yaml'
             },
         ],
-        [ "quiet!"             => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

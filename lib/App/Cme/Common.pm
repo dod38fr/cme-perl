@@ -32,6 +32,7 @@ sub cme_global_options {
       [ "canonical!"         => "write back config data according to canonical order" ],
       [ "trace|stack-trace!" => "Provides a full stack trace when exiting on error"],
       [ "verbose!"           => "Show what's going on"],
+      [ "quiet"              => "Suppress all output except error messages"],
       # no bundling
       { getopt_conf => [ qw/no_bundling/ ] }
   );

@@ -24,7 +24,6 @@ sub opt_spec {
         [ "ui|if=s"     => "user interface type. Either tk, curses, shell" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "open-item=s" => "open a specific item of the configuration" ],
-        [ "quiet!"      => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }
@@ -158,11 +157,6 @@ See L<cme/"Global Options">.
 =item -open-item
 
 Open a specific item of the configuration when opening the editor
-
-=item -quiet
-
-Suppress porgress message
-
 
 =back
 

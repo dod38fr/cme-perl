@@ -25,7 +25,6 @@ sub opt_spec {
     return ( 
         [ "edit!"     => "Run editor after update is done" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
-        [ "quiet!"    => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

@@ -24,7 +24,6 @@ sub opt_spec {
         [ "from=s@"  => "fix only a subset of a configuration tree" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "filter=s" => "pattern to select the element name to be fixed"],
-        [ "quiet!"   => "Suppress progress messages" ],
         $class->cme_global_options,
     );
 }

@@ -36,7 +36,6 @@ sub opt_spec {
         [ "commit|c:s" => "commit change with passed message" ],
         [ "cat" => "Show the script file" ],
         [ "no-commit|nc!" => "skip commit to git" ],
-        [ "quiet!"  => "Suppress progress messages" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
         $class->cme_global_options,

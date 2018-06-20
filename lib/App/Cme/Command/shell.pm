@@ -21,7 +21,6 @@ sub opt_spec {
     return ( 
         [ "open-item=s" => "open a specific item of the configuration" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
-        [ "quiet!"      => "Suppress progress messages" ],
         [ "bare!"       => "run bare terminal UI"],
         $class->cme_global_options,
     );
@@ -80,10 +79,6 @@ See L<cme/"Global Options">.
 =item -open-item
 
 Open a specific item of the configuration when opening the editor
-
-=item -quiet
-
-Suppress porgress message
 
 =item -bare
 

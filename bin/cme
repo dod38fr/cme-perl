@@ -207,6 +207,10 @@ When set, cme will exit 1 if warnings are found during check (of left after fix)
 
 Show more information about what's going on.
 
+=item -quiet
+
+Suppress all output except error messages.
+
 =back
 
 =head1 Advanced options

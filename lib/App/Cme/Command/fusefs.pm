@@ -37,7 +37,6 @@ sub opt_spec {
         ],
         [ "dfuse!"     => "debug fuse problems" ],
         [ "dir-char=s" => "string to replace '/' in configuration parameter names"],
-        [ "quiet!"     => "Suppress progress messages" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         $class->cme_global_options,
     );
@@ -108,10 +107,6 @@ See L<cme/"Global Options">.
 =head1 options
 
 =over
-
-=item -quiet
-
-Suppress progress messages.
 
 =item -fuse-dir
 
