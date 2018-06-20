@@ -108,7 +108,7 @@ _cme()
                 ;;
                 # modify completion could be much more elaborate...
                 modify)
-                   COMPREPLY=( $( compgen -W "$global_options -save -backup" -- $cur ) )
+                   COMPREPLY=( $( compgen -W "$global_options -save -backup -format -verbose" -- $cur ) )
                 ;;
                 search)
                    COMPREPLY=( $( compgen -W "$global_options -search -narrow-search" -- $cur ) )

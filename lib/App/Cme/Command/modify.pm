@@ -11,6 +11,7 @@ use App::Cme -command ;
 use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
+use Config::Model qw/initialize_log4perl/;
 
 sub validate_args {
     my ($self, $opt, $args) = @_;
@@ -24,6 +25,7 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
+        [ "verbose!" => "show execution of the modification instructions" ],
         $class->cme_global_options,
     );
 }
@@ -41,6 +43,8 @@ sub description {
 
 sub execute {
     my ($self, $opt, $args) = @_;
+
+    $opt->{_verbose} = 'Loader' if $opt->{verbose};
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 

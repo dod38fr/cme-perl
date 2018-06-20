@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use 5.10.1;
 
-use Config::Model 2.116;
+use Config::Model 2.124 qw/initialize_log4perl/;
 use Config::Model::Lister;
 use Pod::POM;
 use Pod::POM::View::Text;
@@ -131,6 +131,8 @@ sub model {
     $cm_args{model_dir} = $opt->{model_dir} if $opt->{model_dir};
 
     if (not $self->{_model}) {
+        initialize_log4perl( verbose => $opt->{_verbose} );
+
         my $model = $self->{_model} = Config::Model->new( %cm_args );
         push @store, $model;
     }
