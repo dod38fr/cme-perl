@@ -43,17 +43,17 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
     my $check =  $opt->{force_load} ? 'no' : 'yes' ;
-    say "loading data" unless $opt->{quiet};
+    say "Loading data..." if $opt->{verbose};
 
     Config::Model::ObjTreeScanner->new(
         leaf_cb => sub { },
         check => $check,
     )->scan_node( undef, $root );
 
-    say "checking data" unless $opt->{quiet};
+    say "Checking data.." if $opt->{verbose};
     $root->dump_tree( mode => 'full' ); # light check (value per value)
     $root->deep_check; # consistency check
-    say "check done" unless $opt->{quiet};
+    say "Check done." if $opt->{verbose};
 
     my $ouch = $inst->has_warning;
 
