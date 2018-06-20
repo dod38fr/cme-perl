@@ -50,7 +50,7 @@ sub execute {
         my $node_to_fix = $inst->config_root->grab($path);
         my $msg = "cme: running fix on ".$inst->name." configuration";
         $msg .= "from node", $node_to_fix->name if $path;
-        say $msg. "..." unless $opt->{quiet};
+        say $msg. "..." if $opt->{verbose};
         $node_to_fix->apply_fixes($opt->{fix_filter});
     }
 
