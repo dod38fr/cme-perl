@@ -254,7 +254,7 @@ foreach my $test ( @script_tests) {
 
         file_contents_like $conf_file->stringify, $test->{test},
             "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
-        is($ok->stderr.'', $test->{stderr} || '', 'check "'.$test->{label}.'" stderr content' );
+        is($ok->stderr.'', $test->{stderr} || '', 'run "'.$test->{label}.'" stderr content' );
         is($ok->stdout.'', $test->{stdout} || '', 'run "'.$test->{label}.'": stdout content' );
     };
 }
