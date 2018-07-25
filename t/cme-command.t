@@ -17,6 +17,11 @@ use App::Cmd::Tester;
 use App::Cme ;
 use Config::Model qw/initialize_log4perl/;
 
+# work around a problem in IO::TieCombine (used by App::Cmd::Tester)
+# to avoid messing up output of stderr of tested command (See
+# ACHTUNG!! notes in IO::TieCombine doc)
+$\ = '';
+
 if ( $^O !~ /linux|bsd|solaris|sunos/ ) {
     plan skip_all => "Test with system() in build systems don't work well on this OS ($^O)";
 }
