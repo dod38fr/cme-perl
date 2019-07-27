@@ -231,7 +231,7 @@ sub get_documentation {
     my $sections = $pom->head1();
     my @ret ;
     foreach my $s (@$sections) {
-        push (@ret ,$s) if $s->title() =~ /DESCRIPTION|EXIT/;
+        push (@ret ,$s) if $s->title() =~ /DESCRIPTION|USAGE|OPTIONS|EXIT/;
     }
     return join ("", map { Pod::POM::View::Text->print($_)} @ret) . "Options:\n";;
 }
