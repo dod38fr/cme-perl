@@ -181,7 +181,8 @@ sub execute {
             unshift @$app_args, @value;
         }
         elsif ($key eq 'var') {
-            my $res = eval ("@value") ;
+            # value comes from system file, not from user data
+            my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
             die "Error in var specification line $line_nb: $@\n" if $@;
         }
         elsif ($key eq 'default') {
