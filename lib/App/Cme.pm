@@ -10,6 +10,6 @@ use App::Cmd::Setup -app;
 
 1;
 
-# ABSTRACT: Check or edit configuration data with Config::Model
+# ABSTRACT: Configuration data checker or editor based on Config::Model
 
 
