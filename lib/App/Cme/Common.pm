@@ -178,7 +178,7 @@ sub save {
 }
 
 sub run_tk_ui {
-    my ($self, $root, $opt) = @_;
+    my ($self, $instance, $opt) = @_;
 
     require Config::Model::TkUI;
     require Tk;
@@ -192,14 +192,13 @@ sub run_tk_ui {
     # Thanks to Jerome Quelin for the tip
     $mw->optionAdd( '*BorderWidth' => 1 );
 
-    my $cmu = $mw->ConfigModelUI(
-        -root       => $root,
-    );
+    # -root parameter is deprecated
+    my $cmu = $mw->ConfigModelUI( -instance => $instance );
 
-    $root->instance->on_message_cb(sub{$cmu->show_message(@_);});
+    $instance->on_message_cb(sub{$cmu->show_message(@_);});
 
     if ($opt->{open_item}) {
-        my $obj = $root->grab($opt->{open_item});
+        my $obj = $instance->grab($opt->{open_item});
         $cmu->force_element_display($obj);
     }
 

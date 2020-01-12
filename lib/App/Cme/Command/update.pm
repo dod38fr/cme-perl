@@ -59,7 +59,7 @@ sub execute {
 
     if ($opt->{edit}) {
         say join("\n", grep {defined $_} @msgs );
-        $self->run_tk_ui ( $inst->config_root, $opt);
+        $self->run_tk_ui ( $inst, $opt);
     }
     else {
         $self->save($inst,$opt) ;

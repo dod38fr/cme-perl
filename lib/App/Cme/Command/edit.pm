@@ -94,7 +94,7 @@ sub execute {
     elsif ( $ui_type eq 'tk' ) {
         die "cannot run Tk interface: Config::Model::TkUI is not installed, please use curses or shell or simple ui\n"
             unless $has_tk;
-        $self ->run_tk_ui ( $root, $opt);
+        $self ->run_tk_ui ( $inst, $opt);
     }
     else {
         die "Unsupported user interface: $ui_type";
