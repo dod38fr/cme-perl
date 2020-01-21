@@ -263,7 +263,7 @@ __END__
 =head1 SYNOPSIS
 
  $ cat ~/.cme/scripts/remove-mia
- doc: remove mia from Uploders. Require mia parameter
+ doc: remove mia from Uploaders. Require mia parameter
  # declare app to configure
  app: dpkg
  # specify one or more instructions
@@ -287,7 +287,7 @@ __END__
 
  # show the script documentation
  $ cme run remove-mia -doc
- remove mia from Uploders. require mia parameter
+ remove mia from Uploaders. require mia parameter
 
  # list scripts
  $ cme run -list
