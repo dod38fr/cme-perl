@@ -38,6 +38,7 @@ sub opt_spec {
         [ "dfuse!"     => "debug fuse problems" ],
         [ "dir-char=s" => "string to replace '/' in configuration parameter names"],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
+        [ "verbose!"  => "Show what's going on" ],
         $class->cme_global_options,
     );
 }

@@ -22,7 +22,8 @@ sub validate_args {
 sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
-        [ "strict!" => "cme will exit 1 if warnings are found during check" ],
+        [ "strict!"     => "cme will exit 1 if warnings are found during check" ],
+        [ "verbose!"    => "Show what's going on"],
         $class->cme_global_options,
     );
 }

@@ -24,6 +24,7 @@ sub opt_spec {
         [ "ui|if=s"     => "user interface type. Either tk, curses, shell" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "open-item=s" => "open a specific item of the configuration" ],
+        [ "verbose!"    => "Show what's going on" ],
         $class->cme_global_options,
     );
 }

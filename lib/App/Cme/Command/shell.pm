@@ -22,6 +22,7 @@ sub opt_spec {
         [ "open-item=s" => "open a specific item of the configuration" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "bare!"       => "run bare terminal UI"],
+        [ "verbose!"    => "Show what's going on" ],
         $class->cme_global_options,
     );
 }

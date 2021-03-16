@@ -25,6 +25,7 @@ sub opt_spec {
     return ( 
         [ "edit!"     => "Run editor after update is done" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
+        [ "verbose!"  => "Show what's going on" ],
         $class->cme_global_options,
     );
 }
