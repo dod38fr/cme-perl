@@ -26,7 +26,7 @@ sub cme_global_options {
       [ "try-app-as-model!"  => "try to load a model using directly the application name "
                               . "specified as 3rd parameter on the command line"],
       [ "save!"              => "Force a save even if no change was done" ],
-      [ "force-load!"        => "Load file even if error are found in data. Bad data are discarded (imply save)"],
+      [ "force-load!"        => "Load file even if error are found in data. Errors must be fixed before saving."],
       [ "create!"            => "start from scratch."],
       [ "root-dir=s"         => "Change root directory. Mostly used for test"],
       [ "file=s"             => "Specify a target file"],
