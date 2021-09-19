@@ -17,7 +17,7 @@ use App::Cme -command ;
 use base qw/App::Cme::Common/;
 
 my $__test_home = '';
-sub _set_test_home { $__test_home = shift; }
+sub _set_test_home { $__test_home = shift; return;}
 
 my $home = $__test_home || File::HomeDir->my_home;
 
@@ -46,6 +46,7 @@ sub validate_args {
     my ($self, $opt, $args) = @_;
 
     $self->check_unknown_args($args);
+    return;
 }
 
 sub usage_desc {
@@ -241,9 +242,11 @@ sub execute {
     if ($commit_msg and not $opt->{'no-commit'}) {
         system(qw/git commit -a -m/, $commit_msg);
     }
+
+    return;
 }
 
-package App::Cme::Run::Var;
+package App::Cme::Run::Var; ## no critic (Modules::ProhibitMultiplePackages)
 
 require Tie::Hash;
 

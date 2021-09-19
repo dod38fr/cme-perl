@@ -20,6 +20,7 @@ sub validate_args {
     $self->check_unknown_args($args);
     $opt->{quiet} = 1; # don't want to mess up yaml output
     $self->process_args($opt,$args);
+    return;
 }
 
 sub opt_spec {
@@ -79,6 +80,7 @@ sub execute {
             :                       Dumper($perl_data) ; # Perl data structure
     }
     print $dump_string ;
+    return;
 }
 
 1;

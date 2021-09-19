@@ -19,6 +19,7 @@ sub validate_args {
     $self->process_args($opt,$args);
     $self->usage_error("No modification instructions given on command line")
         unless @$args or $opt->{save};
+    return;
 }
 
 sub opt_spec {
@@ -30,9 +31,9 @@ sub opt_spec {
 }
 
 sub usage_desc {
-  my ($self) = @_;
-  my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
-  return "$desc [application] [file ] instructions";
+    my ($self) = @_;
+    my $desc = $self->SUPER::usage_desc; # "%c COMMAND %o"
+    return "$desc [application] [file ] instructions";
 }
 
 sub description {
@@ -55,6 +56,8 @@ sub execute {
     $root->deep_check; # consistency check
 
     $self->save($inst,$opt) ;
+
+    return;
 }
 
 1;
@@ -110,7 +113,8 @@ See L<cme/"Global Options">.
 
 =over
 
-=item -save
+=item -savek
+
 
 Force a save even if no change was done. Useful to reformat the configuration file.
 

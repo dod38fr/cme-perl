@@ -22,8 +22,9 @@ EOD
 }
 
 sub execute {
-   my ($self, $opt, $args) = @_;
-   gen_class_pod(@$args);
+    my ($self, $opt, $args) = @_;
+    gen_class_pod(@$args);
+    return;
 }
 
 1;

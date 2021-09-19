@@ -17,7 +17,6 @@ installed Config::Model modules. Applications are divided in 3 categories:
 - user: for user applications (e.g. ssh configuration)
 - application: misc application like multistrap or Debian packaging
 EOD
-
 }
 
 sub opt_spec {
@@ -42,6 +41,7 @@ sub execute {
         next unless @$names;
         print $cat," ( ",$help{$cat}," ):\n  ", join( "\n  ", @$names ), "\n";
     }
+    return;
 }
 
 1;

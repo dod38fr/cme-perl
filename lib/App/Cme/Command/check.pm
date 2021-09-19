@@ -17,6 +17,7 @@ sub validate_args {
 
     $self->check_unknown_args($args);
     $self->process_args($opt,$args);
+    return;
 }
 
 sub opt_spec {
@@ -62,6 +63,8 @@ sub execute {
         warn "you can try 'cme fix $app' to fix the warnings shown above\n";
         die "Found $ouch warnings in strict mode\n" if $opt->{strict};
     }
+
+    return;
 }
 
 1;

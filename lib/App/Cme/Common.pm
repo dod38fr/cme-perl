@@ -50,6 +50,7 @@ sub check_unknown_args {
     my @unknown_options = grep { /^-/ } @$args ;
     # $self->usage_error("Unknown option: @unknown_options") if @unknown_options;
     warn("Unknown option: @unknown_options. Unknown option will soon be a fatal error.") if @unknown_options;
+    return;
 }
 
 # modifies $args in place
@@ -123,8 +124,9 @@ sub process_args {
     $opt->{_application} = $application ;
     $opt->{_config_file} = $config_file;
     $opt->{_root_model}  = $root_model;
-}
 
+    return;
+}
 
 sub model {
     my ($self, $opt, $args) = @_;
@@ -163,9 +165,9 @@ sub instance {
 }
 
 sub init_cme {
-    my $self = shift;
+    my ($self, @args) = @_;
     # model and inst are deleted if not kept in a scope
-    return ( $self->model(@_) , $self->instance(@_), $self->instance->config_root );
+    return ( $self->model(@args) , $self->instance(@args), $self->instance->config_root );
 }
 
 sub save {
@@ -177,6 +179,7 @@ sub save {
     # at semantic level, i.e. removed unnecessary stuff)
     $inst->write_back( force => $opt->{force_load} || $opt->{save} );
 
+    return;
 }
 
 sub run_tk_ui {
@@ -187,7 +190,7 @@ sub run_tk_ui {
     require Tk::ErrorDialog;
     Tk->import;
 
-    no warnings 'once';
+    no warnings 'once'; ## no critic TestingAndDebugging::ProhibitNoWarnings
     my $mw = MainWindow->new;
     $mw->withdraw;
 
@@ -205,6 +208,8 @@ sub run_tk_ui {
     }
 
     &MainLoop;    # Tk's
+
+    return;
 }
 
 sub run_shell_ui ($$$) {
@@ -218,6 +223,8 @@ sub run_shell_ui ($$$) {
 
     # engage in user interaction
     $shell_ui->run_loop;
+
+    return;
 }
 
 sub get_documentation {

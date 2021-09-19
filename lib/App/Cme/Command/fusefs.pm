@@ -26,6 +26,7 @@ sub validate_args {
     my $fd = $opt->{fuse_dir};
     die "Directory $fd does not exists\n" unless -d $fd;
 
+    return;
 }
 
 sub opt_spec {
@@ -84,6 +85,7 @@ sub execute {
     }
 
     # parent process simply exits
+    return;
 }
 
 1;
