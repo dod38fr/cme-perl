@@ -38,7 +38,6 @@ sub opt_spec {
         [ "no-commit|nc!" => "skip commit to git" ],
         [ "doc!"    => "show documention of script" ],
         [ "list!"   => "list available scripts" ],
-        [ "verbose!" => "show execution of the instructions from the 'run' script" ],
         $class->cme_global_options,
     );
 }

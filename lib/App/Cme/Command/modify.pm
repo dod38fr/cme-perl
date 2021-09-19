@@ -25,7 +25,6 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
-        [ "verbose!" => "show execution of the modification instructions" ],
         $class->cme_global_options,
     );
 }
