@@ -8,7 +8,6 @@ use open ':std', ':encoding(utf8)';
 use Encode;
 
 use Path::Tiny;
-use Probe::Perl;
 use Term::ANSIColor 2.01 qw(colorstrip);
 
 use Test::More;
