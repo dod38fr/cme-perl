@@ -219,7 +219,9 @@ sub execute {
 
     # override commit message. may also trigger a commit even if none
     # is specified in script
-    $commit_msg ||= $opt->{commit};
+    if ($opt->{commit}) {
+        $commit_msg = $opt->{commit};
+    }
 
     # check if workspace and index are clean
     if ($commit_msg) {
