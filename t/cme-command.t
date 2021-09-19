@@ -52,14 +52,6 @@ my $conf_file = $conf_dir->child("popularity-contest.conf");
 # created with -backup option
 my $backup_file = $conf_dir->child("popularity-contest.conf.old");
 
-my $perl_path = Probe::Perl->find_perl_interpreter();
-
-my $perl_cmd = $perl_path . ' -Ilib ' . join( ' ', map { "-I$_" } Probe::Perl->perl_inc() );
-
-# debian continuous integ tests run tests out of source. Must use system cme
-my $cme_cmd = -e 'bin/cme' ? "$perl_cmd bin/cme" : 'cme' ;
-note("cme is invoked with: '$cme_cmd'" );
-
 subtest "list command" => sub {
     my @test_cmd = qw/list/;
     my $result = test_app( 'App::Cme' => \@test_cmd );
