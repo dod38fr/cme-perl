@@ -121,7 +121,7 @@ Use this option to debug fuse problems.
 =item -dir-char
 
 Fuse will fail if an element name or key name contains '/'. You can specify a
-subsitution string to replace '/' in the fused dir. Default is C<< <slash> >>.
+substitution string to replace '/' in the fused dir. Default is C<< <slash> >>.
 
 =back
 
