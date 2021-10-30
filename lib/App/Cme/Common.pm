@@ -109,6 +109,10 @@ sub process_args {
             die "application $application requires a 3rd argument$insert. "
                 . "I.e. 'cme $command $application <backend_arg>'\n";
         }
+
+        if ( $appli_info->{$application}{use_backend_argument_as_config_file} ) {
+            $config_file = $appli_info->{$application}{config_dir} . '/' . $b_arg;
+        }
     }
 
     # remove legacy '~~'
