@@ -98,6 +98,7 @@ sub find_script_file ($self, $script_name) {
 }
 
 # replace variables with command arguments or eval'ed variables or env variables
+## no critic (Subroutines::ProhibitManyArgs)
 sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
     my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
 
@@ -114,40 +115,10 @@ sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
         # now change \$var in $var
         s!\\\$!\$!g;
     }
-};
+    return;
+}
 
-
-sub execute {
-    my ($self, $opt, $app_args) = @_;
-
-    # cannot use logger until Config::Model is initialised
-
-    # see Debian #839593 and perlunicook(1) section X 13
-    @$app_args = map { decode_utf8($_, 1) } @$app_args;
-
-    my $script_name = shift @$app_args;
-
-    return unless $self->check_script_arguments($opt, $script_name);
-
-    my $script = $self->find_script_file($script_name);
-
-    my $content = $script->slurp_utf8;
-
-    if ($opt->{cat}) {
-        print $content;
-        return;
-    }
-
-    # parse variables passed on command line
-    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
-
-    if ($content =~ m/^#!/ or $content =~ /^use/m) {
-        splice @ARGV, 0,2; # remove 'run script' arguments
-        my $done = eval $script->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
-        die "Error in script $script_name: $@\n" unless $done;
-        return;
-    }
-
+sub parse_script ($script, $content, $user_args, $app_args) {
     my %var;
 
     # find if all variables are accounted for
@@ -159,7 +130,7 @@ sub execute {
     # %args can be used in var section of a script. A new entry in
     # added in %missing if the script tries to read an undefined value
     tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
-    %args = %user_args;
+    %args = $user_args->%*;
 
     my @lines =  split /\n/,$content;
     my @load;
@@ -192,7 +163,7 @@ sub execute {
 
         next unless $key ; # empty line
 
-        replace_var_in_value(\%user_args, \%var, \%default, \%missing, \@value) unless $key eq 'var';
+        replace_var_in_value($user_args, \%var, \%default, \%missing, \@value) unless $key eq 'var';
 
         for ($key) {
             when (/^app/) {
@@ -222,14 +193,55 @@ sub execute {
             }
         }
     }
+    return {
+        doc => \@doc,
+        commit_msg => $commit_msg,
+        missing => \%missing,
+        load => \@load,
+    }
+}
+
+sub execute {
+    my ($self, $opt, $app_args) = @_;
+
+    # cannot use logger until Config::Model is initialised
+
+    # see Debian #839593 and perlunicook(1) section X 13
+    @$app_args = map { decode_utf8($_, 1) } @$app_args;
+
+    my $script_name = shift @$app_args;
+
+    return unless $self->check_script_arguments($opt, $script_name);
+
+    my $script = $self->find_script_file($script_name);
+
+    my $content = $script->slurp_utf8;
+
+    if ($opt->{cat}) {
+        print $content;
+        return;
+    }
+
+    # parse variables passed on command line
+    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
+
+    if ($content =~ m/^#!/ or $content =~ /^use/m) {
+        splice @ARGV, 0,2; # remove 'run script' arguments
+        my $done = eval $script->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        die "Error in script $script_name: $@\n" unless $done;
+        return;
+    }
+
+    my $script_data = parse_script($script, $content, \%user_args, $app_args);
+    my $commit_msg = $script_data->{commit_msg};
 
     if ($opt->doc) {
-        say join "\n", @doc;
+        say join "\n", $script_data->{doc}->@*;
         say "will commit with message: '$commit_msg'" if $commit_msg;
         return;
     }
 
-    if (my @missing = sort keys %missing) {
+    if (my @missing = sort keys $script_data->{missing}->%*) {
         die "Error: Missing variables '". join("', '",@missing)."' in command arguments for script $script\n"
             ."Please use option '".join(' ', map { "-arg $_=xxx"} @missing)."'\n";
     }
@@ -254,7 +266,7 @@ sub execute {
 
     # call loads
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
-    map { $root->load($_) } @load;
+    map { $root->load($_) } $script_data->{load}->@*;
 
     $self->save($inst,$opt) ;
 
