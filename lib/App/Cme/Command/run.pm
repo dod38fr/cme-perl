@@ -97,6 +97,26 @@ sub find_script_file ($self, $script_name) {
     return $script;
 }
 
+# replace variables with command arguments or eval'ed variables or env variables
+sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
+    my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
+
+    foreach ($vars->@*) {
+        # change $var but not \$var, not $var{} and not $1
+        s~ $var_pattern
+         ~ $user_args->{$1} // $script_var->{$1} // $ENV{$1} // $default->{$1} // '$'.$1 ~xeg;
+
+        # register vars without replacements
+        foreach my $var (m~ $var_pattern ~xg) {
+            $missing->{$var} = 1 ;
+        }
+
+        # now change \$var in $var
+        s!\\\$!\$!g;
+    }
+};
+
+
 sub execute {
     my ($self, $opt, $app_args) = @_;
 
@@ -109,7 +129,7 @@ sub execute {
 
     return unless $self->check_script_arguments($opt, $script_name);
 
-    my $script = $self->find_script_file();
+    my $script = $self->find_script_file($script_name);
 
     my $content = $script->slurp_utf8;
 
@@ -140,25 +160,6 @@ sub execute {
     # added in %missing if the script tries to read an undefined value
     tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
     %args = %user_args;
-
-    my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
-
-    # replace variables with command arguments or eval'ed variables or env variables
-    my $replace_var = sub {
-        foreach (@_) {
-            # change $var but not \$var, not $var{} and not $1
-            s~ $var_pattern
-             ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
-
-            # register vars without replacements
-            foreach my $var (m~ $var_pattern ~xg) {
-                $missing{$var} = 1 ;
-            }
-
-            # now change \$var in $var
-            s!\\\$!\$!g;
-        }
-    };
 
     my @lines =  split /\n/,$content;
     my @load;
@@ -191,7 +192,7 @@ sub execute {
 
         next unless $key ; # empty line
 
-        $replace_var->(@value) unless $key eq 'var';
+        replace_var_in_value(\%user_args, \%var, \%default, \%missing, \@value) unless $key eq 'var';
 
         for ($key) {
             when (/^app/) {
