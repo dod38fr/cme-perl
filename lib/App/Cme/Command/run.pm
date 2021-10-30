@@ -140,7 +140,9 @@ sub execute {
              ~ $user_args{$1} // $var{$1} // $ENV{$1} // $default{$1} // '$'.$1 ~xeg;
 
             # register vars without replacements
-            map { $missing{$_} = 1 ;} ( m~ $var_pattern ~xg );
+            foreach my $var (m~ $var_pattern ~xg) {
+                $missing{$var} = 1 ;
+            }
 
             # now change \$var in $var
             s!\\\$!\$!g;
