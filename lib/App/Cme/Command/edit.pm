@@ -80,8 +80,8 @@ sub execute {
 
         print "In case of error, check $err_file\n";
 
-        open( my $fh, ">", $err_file ) || die "Can't open $err_file: $!";
-        open(STDERR, ">&", $fh);
+        open( my $fh, ">", $err_file ) || die "Can't open $err_file: $!\n";
+        open(STDERR, ">&", $fh)|| die "Can't open STDERR:$!\n";
 
         my $dialog = Config::Model::CursesUI->new();
 
@@ -96,7 +96,7 @@ sub execute {
         $self ->run_tk_ui ( $inst, $opt);
     }
     else {
-        die "Unsupported user interface: $ui_type";
+        die "Unsupported user interface: $ui_type\n";
     }
     return;
 }

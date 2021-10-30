@@ -226,7 +226,7 @@ sub execute {
     # check if workspace and index are clean
     if ($commit_msg) {
         my $r = `git status --porcelain --untracked-files=no`;
-        die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r"
+        die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
             if $r;
     }
 

@@ -49,7 +49,7 @@ sub check_unknown_args {
 
     my @unknown_options = grep { /^-/ } @$args ;
     # $self->usage_error("Unknown option: @unknown_options") if @unknown_options;
-    warn("Unknown option: @unknown_options. Unknown option will soon be a fatal error.") if @unknown_options;
+    warn("Unknown option: @unknown_options. Unknown option will soon be a fatal error.\n") if @unknown_options;
     return;
 }
 
@@ -238,7 +238,7 @@ sub get_documentation {
     my $pkg = blessed ($self);
     $pkg =~ s!::!/!g;
     my $pom = $parser->parse_file($INC{$pkg.'.pm'})
-        || die $parser->error();
+        || croak $parser->error();
 
     my $sections = $pom->head1();
     my @ret ;
