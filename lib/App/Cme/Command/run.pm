@@ -180,30 +180,32 @@ sub execute {
 
         $replace_var->(@value) unless $key eq 'var';
 
-        if ($key =~ /^app/) {
-            unshift @$app_args, @value;
-        }
-        elsif ($key eq 'var') {
-            # value comes from system file, not from user data
-            my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
-            die "Error in var specification line $line_nb: $@\n" if $@;
-        }
-        elsif ($key eq 'default') {
-            # multi-line default value is not supported
-            my ($dk, $dv) = split /[\s:=]+/, $value[0], 2;
-            $default{$dk} = $dv;
-        }
-        elsif ($key eq 'doc') {
-            push @doc, @value;
-        }
-        elsif ($key eq 'load') {
-            push @load, @value;
-        }
-        elsif ($key eq 'commit') {
-            $commit_msg = join "\n",@value;
-        }
-        else {
-            die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
+        for ($key) {
+            when (/^app/) {
+                unshift @$app_args, @value;
+            }
+            when ('var') {
+                # value comes from system file, not from user data
+                my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
+                die "Error in var specification line $line_nb: $@\n" if $@;
+            }
+            when ('default') {
+                # multi-line default value is not supported
+                my ($dk, $dv) = split /[\s:=]+/, $value[0], 2;
+                $default{$dk} = $dv;
+            }
+            when ('doc') {
+                push @doc, @value;
+            }
+            when ('load') {
+                push @load, @value;
+            }
+            when ('commit') {
+                $commit_msg = join "\n",@value;
+            }
+            default {
+                die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
+            }
         }
     }
 
