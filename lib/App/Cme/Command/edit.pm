@@ -44,11 +44,9 @@ sub execute {
 
     my ($model, $inst, $root) = $self->init_cme($opt,$args);
 
-    eval { require Config::Model::TkUI; };
-    my $has_tk = $@ ? 0 : 1;
+    my $has_tk =  eval { require Config::Model::TkUI; 1; };
 
-    eval { require Config::Model::CursesUI; };
-    my $has_curses = $@ ? 0 : 1;
+    my $has_curses = eval { require Config::Model::CursesUI; 1; };
 
     my $ui_type = $opt->{ui};
 

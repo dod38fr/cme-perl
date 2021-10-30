@@ -17,8 +17,7 @@ sub validate_args {
     $self->check_unknown_args($args);
     $self->process_args($opt,$args);
 
-    eval { require Config::Model::FuseUI; };
-    my $has_fuse = $@ ? 0 : 1;
+    my $has_fuse = eval { require Config::Model::FuseUI; 1; };
 
     die "could not load Config::Model::FuseUI. Is Fuse installed ?\n"
         unless $has_fuse;

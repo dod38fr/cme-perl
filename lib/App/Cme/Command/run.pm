@@ -109,8 +109,8 @@ sub execute {
 
     if ($content =~ m/^#!/ or $content =~ /^use/m) {
         splice @ARGV, 0,2; # remove 'run script' arguments
-        eval $script->slurp_utf8; ## no critic BuiltinFunctions::ProhibitStringyEval
-        die "Error in script $script_name: $@\n" if $@;
+        my $done = eval $script->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        die "Error in script $script_name: $@\n" unless $done;
         return;
     }
 
