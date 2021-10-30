@@ -4,7 +4,7 @@ package App::Cme::Command::run ;
 
 use strict;
 use warnings;
-use 5.10.1;
+use v5.20;
 use File::HomeDir;
 use Path::Tiny;
 use Config::Model;
@@ -15,7 +15,8 @@ use Encode qw(decode_utf8);
 use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
-no warnings qw(experimental::smartmatch);
+use experimental qw/signatures/;
+no warnings qw(experimental::smartmatch experimental::signatures);
 
 my $__test_home = '';
 # used only by tests
@@ -63,16 +64,7 @@ sub description {
     return $self->get_documentation;
 }
 
-sub execute {
-    my ($self, $opt, $app_args) = @_;
-
-    # cannot use logger until Config::Model is initialised
-
-    # see Debian #839593 and perlunicook(1) section X 13
-    @$app_args = map { decode_utf8($_, 1) } @$app_args;
-
-    my $script_name = shift @$app_args;
-
+sub check_script_arguments ($self, $opt, $script_name) {
     if ($opt->{list} or not $script_name) {
         my @scripts;
         foreach my $path ( @script_paths ) {
@@ -81,11 +73,13 @@ sub execute {
         }
         say $opt->{list} ? "Available scripts:" : "Missing script argument. Choose one of:";
         say map {"- ".$_->basename."\n"} @scripts ;
-        return;
+        return 0;
     }
+    return 1;
+}
 
+sub find_script_file ($self, $script_name) {
     my $script;
-
     if ($script_name =~ m!/!) {
         $script = path($script_name);
     }
@@ -99,6 +93,23 @@ sub execute {
     }
 
     die "Error: cannot find script $script_name\n" unless $script->is_file;
+
+    return $script;
+}
+
+sub execute {
+    my ($self, $opt, $app_args) = @_;
+
+    # cannot use logger until Config::Model is initialised
+
+    # see Debian #839593 and perlunicook(1) section X 13
+    @$app_args = map { decode_utf8($_, 1) } @$app_args;
+
+    my $script_name = shift @$app_args;
+
+    return unless $self->check_script_arguments($opt, $script_name);
+
+    my $script = $self->find_script_file();
 
     my $content = $script->slurp_utf8;
 
