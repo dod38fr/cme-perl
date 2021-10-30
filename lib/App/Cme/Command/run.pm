@@ -15,8 +15,11 @@ use Encode qw(decode_utf8);
 use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
+no warnings qw(experimental::smartmatch);
 
 my $__test_home = '';
+# used only by tests
+## no critic (Subroutines::ProhibitUnusedPrivateSubroutines)
 sub _set_test_home { $__test_home = shift; return;}
 
 my $home = $__test_home || File::HomeDir->my_home;
@@ -225,6 +228,7 @@ sub execute {
 
     # check if workspace and index are clean
     if ($commit_msg) {
+        ## no critic(InputOutput::ProhibitBacktickOperators)
         my $r = `git status --porcelain --untracked-files=no`;
         die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
             if $r;
@@ -250,6 +254,7 @@ package App::Cme::Run::Var; ## no critic (Modules::ProhibitMultiplePackages)
 
 require Tie::Hash;
 
+## no critic (ClassHierarchies::ProhibitExplicitISA)
 our @ISA = qw(Tie::ExtraHash);
 
 sub FETCH {

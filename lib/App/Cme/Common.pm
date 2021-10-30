@@ -16,6 +16,7 @@ use Encode qw(decode_utf8);
 
 my @store;
 
+## no critic (Variables::ProhibitPackageVars)
 $::_use_log4perl_to_warn = 1;
 
 sub cme_global_options {
@@ -194,7 +195,7 @@ sub run_tk_ui {
     require Tk::ErrorDialog;
     Tk->import;
 
-    no warnings 'once'; ## no critic TestingAndDebugging::ProhibitNoWarnings
+    no warnings 'once'; ## no critic (TestingAndDebugging::ProhibitNoWarnings)
     my $mw = MainWindow->new;
     $mw->withdraw;
 
