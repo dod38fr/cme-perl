@@ -276,7 +276,7 @@ sub execute {
     $self->save($inst,$opt) ;
 
     # commit if needed
-    if ($commit_msg and not $opt->{'no-commit'}) {
+    if ($commit_msg and not $opt->{no_commit}) {
         system(qw/git commit -a -m/, $commit_msg);
     }
 
