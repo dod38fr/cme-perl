@@ -268,6 +268,11 @@ sub execute {
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
     map { $root->load($_) } $script_data->{load}->@*;
 
+    unless ($inst->needs_save) {
+        say "No change were applied";
+        return;
+    }
+
     $self->save($inst,$opt) ;
 
     # commit if needed
