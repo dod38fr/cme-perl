@@ -178,7 +178,8 @@ Changes applied to popcon configuration:
     {
         label => "line ".__LINE__.": modification with a script and a default value",
         script => [ "app:  popcon", "default: name foobar", 'load ! MY_HOSTID=\$name$name'],
-        test => qr/"\$namefoobar"/
+        test => qr/"\$namefoobar"/,
+        stdout => "No change were applied\n",
     },
     {
         label => "line ".__LINE__.": modification with a script and a var that uses a default value",
@@ -187,7 +188,8 @@ Changes applied to popcon configuration:
                     'var: $var{name} = $args{defname}',
                     'load ! MY_HOSTID=\$name$name'
                 ],
-        test => qr/"\$namefoobar"/
+        test => qr/"\$namefoobar"/,
+        stdout => "No change were applied\n",
     },
     {
         label => "line ".__LINE__.": quiet modification with a script and var section",
@@ -199,7 +201,8 @@ Changes applied to popcon configuration:
         label => "line ".__LINE__.": modification with a script and var section which uses args",
         script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
         args => [qw/--arg fooname=foo/],
-        test => qr/"\$namefoobar2"/
+        test => qr/"\$namefoobar2"/,
+        stdout => "No change were applied\n",
     },
     {
         label => "line ".__LINE__.": modification with a Perl script run by cme run with args",
