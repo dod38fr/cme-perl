@@ -176,12 +176,12 @@ Changes applied to popcon configuration:
 ),
     },
     {
-        label => __LINE__.": modification with a script and a default value",
+        label => "line ".__LINE__.": modification with a script and a default value",
         script => [ "app:  popcon", "default: name foobar", 'load ! MY_HOSTID=\$name$name'],
         test => qr/"\$namefoobar"/
     },
     {
-        label => __LINE__.": modification with a script and a var that uses a default value",
+        label => "line ".__LINE__.": modification with a script and a var that uses a default value",
         script => [ "app:  popcon",
                     "default: defname foobar",
                     'var: $var{name} = $args{defname}',
@@ -190,19 +190,19 @@ Changes applied to popcon configuration:
         test => qr/"\$namefoobar"/
     },
     {
-        label => __LINE__.": quiet modification with a script and var section",
+        label => "line ".__LINE__.": quiet modification with a script and var section",
         script => [ "app:  popcon", 'var: $var{name}="foobar2"','load ! MY_HOSTID=\$name$name'],
         test => qr/"\$namefoobar2"/,
         args => ['-quiet'],
     },
     {
-        label => __LINE__.": modification with a script and var section which uses args",
+        label => "line ".__LINE__.": modification with a script and var section which uses args",
         script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
         args => [qw/--arg fooname=foo/],
         test => qr/"\$namefoobar2"/
     },
     {
-        label => __LINE__.": modification with a Perl script run by cme run with args",
+        label => "line ".__LINE__.": modification with a Perl script run by cme run with args",
         script => [
             "use Config::Model qw(cme);",
             'my ($opt,$val,$name) = @ARGV;',
@@ -212,7 +212,7 @@ Changes applied to popcon configuration:
         test => qr/"\$namefoobar3"/
     },
     {
-        label => __LINE__.": modification with a script and var section which uses regexp and capture",
+        label => "line ".__LINE__.": modification with a script and var section which uses regexp and capture",
         script => [
             "app:  popcon",
             'load: ! MY_HOSTID=aaaaab MY_HOSTID=~s/(a{$times})/$1x$times/',
@@ -260,19 +260,19 @@ foreach my $test ( @script_tests) {
 # test failure case for run script
 my @bad_script_tests = (
     {
-        label => __LINE__.": modification with a Perl script run by cme run with missing arg",
+        label => "line ".__LINE__.": modification with a Perl script run by cme run with missing arg",
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
         args => [],
         error_regexp => qr/use option '-arg name=xxx'/
     },
     {
-        label => __LINE__.": modification with a Perl script run by cme run with 2 missing args",
+        label => "line ".__LINE__.": modification with a Perl script run by cme run with 2 missing args",
         script => [ "app:  popcon", 'load ! MY_HOSTID=$name1$name2'],
         args => [],
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
     },
     {
-        label => __LINE__.": modification with a Perl script run by cme run with  missing args in var line",
+        label => "line ".__LINE__.": modification with a Perl script run by cme run with  missing args in var line",
         script => [
             "app:  popcon",
             'var: $var{name} = $args{name1}.$args{name2}',
