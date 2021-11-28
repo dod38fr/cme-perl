@@ -218,7 +218,27 @@ Changes applied to popcon configuration:
 )
     },
     {
-        label => "line ".__LINE__.": modification with a Perl script run by cme run with args",
+        label => "line ".__LINE__.": modification with a script with load =~ regex and quotes and \\s",
+        script => [
+            "app:  popcon",
+            '---var',
+            '$var{change_it} = qq{',
+            '( s/^(a)a+/',   # comment
+            '\$1.\\"$args{fooname}\\" x2',
+            '/xe )}',
+            '---',
+            'load: ! MY_HOSTID=~"$change_it"',
+        ],
+        args => [qw/--arg fooname=foo/],
+        test => qr/MY_HOSTID="afoofoo"/,
+        stdout => q(
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'afoofoo'
+
+)
+    },
+    {
+        label =>"line ". __LINE__.": modification with a Perl script run by cme run with args",
         script => [
             "use Config::Model qw(cme);",
             'my ($opt,$val,$name) = @ARGV;',
