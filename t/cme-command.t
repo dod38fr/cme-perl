@@ -95,6 +95,7 @@ subtest "check verbose mode" => sub {
 };
 
 subtest "minimal modification" => sub {
+    $conf_file->spew_utf8(@orig);
     # test minimal modif (re-order)
     my @test_cmd = (qw/modify popcon -save -backup -canonical -root-dir/, $wr_dir->stringify);
     my $ok = test_app( 'App::Cme' => \@test_cmd );
@@ -115,6 +116,7 @@ subtest "minimal modification" => sub {
 };
 
 subtest "modification with wrong parameter" => sub {
+    $conf_file->spew_utf8(@orig);
     my @test_cmd = (qw/modify popcon -root-dir/, $wr_dir->stringify, qq/PARITICIPATE=yes/);
     my $oops = test_app( 'App::Cme' => \@test_cmd );
     isnt ($oops->exit_code, 0, 'error detected' );
@@ -124,6 +126,7 @@ subtest "modification with wrong parameter" => sub {
 };
 
 subtest "modification with good parameter" => sub {
+    $conf_file->spew_utf8(@orig);
     # use -save to force a file save to update file header
     my @test_cmd = (qw/modify popcon -save -root-dir/, $wr_dir->stringify, qq/PARTICIPATE=yes/);
     my $ok = test_app( 'App::Cme' => \@test_cmd );
@@ -135,6 +138,7 @@ subtest "modification with good parameter" => sub {
 };
 
 subtest "modification with verbose option" => sub {
+    $conf_file->spew_utf8(@orig);
     my @test_cmd = (qw/modify popcon -verbose -root-dir/, $wr_dir->stringify, qq/PARTICIPATE=yes/);
     my $ok = test_app( 'App::Cme' => \@test_cmd );
     is ($ok->exit_code, 0, 'no error detected' ) or diag("Failed command @test_cmd");
@@ -152,6 +156,7 @@ subtest "search" => sub {
 };
 
 subtest "modification with utf8 parameter" => sub {
+    $conf_file->spew_utf8(@orig);
     my $utf8_name = "héhôßœ";
     my @test_cmd = ((qw/modify popcon -root-dir/, $wr_dir->stringify),
         encode('UTF-8',qq/MY_HOSTID="$utf8_name"/) );
@@ -163,23 +168,26 @@ subtest "modification with utf8 parameter" => sub {
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
+my $expect_namefoobar = << 'EOF';
+
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> '$namefoobar'
+
+EOF
+
 my @script_tests = (
     {
         label => __LINE__.": modification with a script and args",
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
         args => [qw!--arg name=foobar!],
         test => qr/"\$namefoobar"/,
-        stdout => q(
-Changes applied to popcon configuration:
-- MY_HOSTID: 'héhôßœ' -> '$namefoobar'
-
-),
+        stdout => $expect_namefoobar,
     },
     {
         label => "line ".__LINE__.": modification with a script and a default value",
         script => [ "app:  popcon", "default: name foobar", 'load ! MY_HOSTID=\$name$name'],
         test => qr/"\$namefoobar"/,
-        stdout => "No change were applied\n",
+        stdout => $expect_namefoobar,
     },
     {
         label => "line ".__LINE__.": modification with a script and a var that uses a default value",
@@ -189,7 +197,8 @@ Changes applied to popcon configuration:
                     'load ! MY_HOSTID=\$name$name'
                 ],
         test => qr/"\$namefoobar"/,
-        stdout => "No change were applied\n",
+        stdout => $expect_namefoobar,
+
     },
     {
         label => "line ".__LINE__.": quiet modification with a script and var section",
@@ -202,7 +211,11 @@ Changes applied to popcon configuration:
         script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
         args => [qw/--arg fooname=foo/],
         test => qr/"\$namefoobar2"/,
-        stdout => "No change were applied\n",
+        stdout => q(
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> '$namefoobar2'
+
+)
     },
     {
         label => "line ".__LINE__.": modification with a Perl script run by cme run with args",
@@ -224,7 +237,7 @@ Changes applied to popcon configuration:
         test => qr/aaaax4ab/,
         stdout => q(
 Changes applied to popcon configuration:
-- MY_HOSTID: '$namefoobar3' -> 'aaaaab'
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'aaaaab'
 - MY_HOSTID: 'aaaaab' -> 'aaaax4ab'
 
 ),
@@ -240,6 +253,7 @@ command 'MY_HOSTID=~s/(a{4})/$1x4/': Applying regexp 's/(a{4})/$1x4/' to leaf 'M
 my $i=0;
 foreach my $test ( @script_tests) {
     subtest $test->{label} => sub {
+        $conf_file->spew_utf8(@orig);
         my $script = $wr_dir->child('my-script'.$i++.'.cme');
         $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
@@ -287,6 +301,7 @@ my @bad_script_tests = (
 
 foreach my $test ( @bad_script_tests) {
     subtest $test->{label} => sub {
+        $conf_file->spew_utf8(@orig);
         my $script = $wr_dir->child('my-script.cme');
         $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
