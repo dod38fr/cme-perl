@@ -15,8 +15,9 @@ use Encode qw(decode_utf8);
 use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
-use experimental qw/signatures/;
-no warnings qw(experimental::smartmatch experimental::signatures);
+use feature qw/postderef signatures/;
+no warnings qw/experimental::postderef experimental::signatures experimental::smartmatch/;
+
 
 my $__test_home = '';
 # used only by tests
