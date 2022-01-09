@@ -255,7 +255,7 @@ sub execute {
     }
 
     # check if workspace and index are clean
-    if ($commit_msg) {
+    if ($commit_msg and not $opt->{no_commit}) {
         ## no critic(InputOutput::ProhibitBacktickOperators)
         my $r = `git status --porcelain --untracked-files=no`;
         die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
