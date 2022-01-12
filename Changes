@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+1.036 2022-01-12
+
+  Bug fix:
+    * fix test broken by output change in Config::Model 2.148
+
+  Misc changes:
+    * tests requires Config::Model 2.148
+
 1.035 2022-01-09
 
   Bug fix:
