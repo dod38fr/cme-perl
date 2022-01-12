@@ -15,7 +15,7 @@ use Test::File::Contents;
 
 use App::Cmd::Tester;
 use App::Cme ;
-use Config::Model qw/initialize_log4perl/;
+use Config::Model 2.148 qw/initialize_log4perl/;
 
 # work around a problem in IO::TieCombine (used by App::Cmd::Tester)
 # to avoid messing up output of stderr of tested command (See
@@ -172,7 +172,6 @@ my $expect_namefoobar = << 'EOF';
 
 Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> '$namefoobar'
-
 EOF
 
 my @script_tests = (
@@ -181,13 +180,13 @@ my @script_tests = (
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
         args => [qw!--arg name=foobar!],
         test => qr/"\$namefoobar"/,
-        stdout => $expect_namefoobar,
+        stderr => $expect_namefoobar,
     },
     {
         label => "line ".__LINE__.": modification with a script and a default value",
         script => [ "app:  popcon", "default: name foobar", 'load ! MY_HOSTID=\$name$name'],
         test => qr/"\$namefoobar"/,
-        stdout => $expect_namefoobar,
+        stderr => $expect_namefoobar,
     },
     {
         label => "line ".__LINE__.": modification with a script and a var that uses a default value",
@@ -197,7 +196,7 @@ my @script_tests = (
                     'load ! MY_HOSTID=\$name$name'
                 ],
         test => qr/"\$namefoobar"/,
-        stdout => $expect_namefoobar,
+        stderr => $expect_namefoobar,
 
     },
     {
@@ -211,10 +210,9 @@ my @script_tests = (
         script => [ "app:  popcon", 'var: $var{name}=$args{fooname}."bar2"','load ! MY_HOSTID=\$name$name'],
         args => [qw/--arg fooname=foo/],
         test => qr/"\$namefoobar2"/,
-        stdout => q(
+        stderr => q(
 Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> '$namefoobar2'
-
 )
     },
     {
@@ -231,10 +229,9 @@ Changes applied to popcon configuration:
         ],
         args => [qw/--arg fooname=foo/],
         test => qr/MY_HOSTID="afoofoo"/,
-        stdout => q(
+        stderr => q(
 Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'afoofoo'
-
 )
     },
     {
@@ -245,7 +242,12 @@ Changes applied to popcon configuration:
             'cme(application => "popcon", root_dir => $val)->modify("! MY_HOSTID=\$name$name");'
         ],
         args => ['foobar3'],
-        test => qr/"\$namefoobar3"/
+        test => qr/"\$namefoobar3"/,
+        stderr => q(
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> '$namefoobar3'
+)
+
     },
     {
         label => "line ".__LINE__.": modification with a script and var section which uses regexp and capture",
@@ -255,16 +257,14 @@ Changes applied to popcon configuration:
         ],
         args => [qw/--arg times=4 --verbose/],
         test => qr/aaaax4ab/,
-        stdout => q(
+        stderr => q[command '!': Going from root node to root node
+command 'MY_HOSTID=aaaaab': Setting leaf 'MY_HOSTID' uniline to 'aaaaab'.
+command 'MY_HOSTID=~s/(a{4})/$1x4/': Applying regexp 's/(a{4})/$1x4/' to leaf 'MY_HOSTID' uniline. Result is 'aaaax4ab'.
+
 Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'aaaaab'
 - MY_HOSTID: 'aaaaab' -> 'aaaax4ab'
-
-),
-        stderr => q<command '!': Going from root node to root node
-command 'MY_HOSTID=aaaaab': Setting leaf 'MY_HOSTID' uniline to 'aaaaab'.
-command 'MY_HOSTID=~s/(a{4})/$1x4/': Applying regexp 's/(a{4})/$1x4/' to leaf 'MY_HOSTID' uniline. Result is 'aaaax4ab'.
->,
+],
     },
 );
 
@@ -290,7 +290,7 @@ foreach my $test ( @script_tests) {
         file_contents_like $conf_file->stringify, $test->{test},
             "updated MY_HOSTID with script" ,{ encoding => 'UTF-8' };
         is(colorstrip($ok->stderr), $test->{stderr} || '', 'run "'.$test->{label}.'" stderr content' );
-        is($ok->stdout.'', $test->{stdout} || '', 'run "'.$test->{label}.'": stdout content' );
+        is(colorstrip($ok->stdout.''), $test->{stdout} || '', 'run "'.$test->{label}.'": stdout content' );
     };
 }
 
