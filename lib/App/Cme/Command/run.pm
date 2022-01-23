@@ -164,8 +164,6 @@ sub parse_script ($script, $content, $user_args, $app_args) {
 
         next unless $key ; # empty line
 
-        replace_var_in_value($user_args, \%var, \%default, \%missing, \@value) unless $key eq 'var';
-
         for ($key) {
             when (/^app/) {
                 unshift @$app_args, @value;
@@ -181,9 +179,11 @@ sub parse_script ($script, $content, $user_args, $app_args) {
                 $default{$dk} = $dv;
             }
             when ('doc') {
+                replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @doc, @value;
             }
             when ('load') {
+                replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @load, @value;
             }
             when ('commit') {
@@ -194,6 +194,7 @@ sub parse_script ($script, $content, $user_args, $app_args) {
             }
         }
     }
+
     return {
         doc => \@doc,
         commit_msg => $commit_msg,
