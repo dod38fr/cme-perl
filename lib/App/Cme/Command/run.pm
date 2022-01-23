@@ -268,7 +268,9 @@ sub execute {
 
     # call loads
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
-    map { $root->load($_) } $script_data->{load}->@*;
+    foreach my $load_str ($script_data->{load}->@*) {
+        $root->load($load_str);
+    }
 
     unless ($inst->needs_save) {
         say "No change were applied";
