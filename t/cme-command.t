@@ -309,7 +309,7 @@ my @bad_script_tests = (
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
     },
     {
-        label => "line ".__LINE__.": modification with a Perl script run by cme run with  missing args in var line",
+        label => "line ".__LINE__.": modification with a Perl script run by cme run with missing args in var line",
         script => [
             "app:  popcon",
             'var: $var{name} = $args{name1}.$args{name2}',
