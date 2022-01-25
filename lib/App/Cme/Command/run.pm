@@ -137,6 +137,7 @@ sub parse_script ($script, $content, $user_args) {
     my @load;
     my @doc;
     my @code;
+    my @var_to_eval;
     my $commit_msg ;
     my $app;
     my $line_nb = 0;
@@ -171,9 +172,7 @@ sub parse_script ($script, $content, $user_args) {
                 $app = $value[0];
             }
             when ('var') {
-                # value comes from system file, not from user data
-                my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
-                die "Error in var specification line $line_nb: $@\n" if $@;
+                push @var_to_eval, [ $line_nb, @value ];
             }
             when ('default') {
                 # multi-line default value is not supported
@@ -198,6 +197,13 @@ sub parse_script ($script, $content, $user_args) {
                 die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
             }
         }
+    }
+
+    foreach my $eval_data (@var_to_eval) {
+        my ($line_nb, @value) = $eval_data->@*;
+        # eval'ed string comes from system file, not from user data
+        my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
+        die "Error in var specification line $line_nb: $@\n" if $@;
     }
 
     replace_var_in_value($user_args, \%var, \%default, \%missing, \@doc);
