@@ -16,9 +16,6 @@ use Encode qw(decode_utf8);
 
 my @store;
 
-## no critic (Variables::ProhibitPackageVars)
-$::_use_log4perl_to_warn = 1;
-
 sub cme_global_options {
   my ( $class, $app ) = @_;
 
