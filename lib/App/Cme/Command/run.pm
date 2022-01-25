@@ -184,12 +184,10 @@ sub parse_script ($script, $content, $user_args, $app_args) {
                 push @code, @value;
             }
             when ('doc') {
-                replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @doc, @value;
             }
             when ('load') {
                 die "Error line $line_nb: Cannot mix code and load section\n" if @code;
-                replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @load, @value;
             }
             when ('commit') {
@@ -200,6 +198,9 @@ sub parse_script ($script, $content, $user_args, $app_args) {
             }
         }
     }
+
+    replace_var_in_value($user_args, \%var, \%default, \%missing, \@doc);
+    replace_var_in_value($user_args, \%var, \%default, \%missing, \@load);
 
     return {
         doc => \@doc,
