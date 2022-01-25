@@ -120,20 +120,10 @@ sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
 }
 
 sub parse_script ($script, $content, $user_args) {
-    my %var;
-
-    # find if all variables are accounted for
-    my %missing ;
+    my @lines =  split /\n/,$content;
 
     # provide default values
     my %default ;
-
-    # %args can be used in var section of a script. A new entry in
-    # added in %missing if the script tries to read an undefined value
-    tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
-    %args = $user_args->%*;
-
-    my @lines =  split /\n/,$content;
     my @load;
     my @doc;
     my @code;
@@ -198,6 +188,17 @@ sub parse_script ($script, $content, $user_args) {
             }
         }
     }
+
+    # $var is used in eval'ed strings
+    my %var;
+
+    # find if all variables are accounted for
+    my %missing ;
+
+    # %args can be used in var section of a script. A new entry in
+    # added in %missing if the script tries to read an undefined value
+    tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
+    %args = $user_args->%*;
 
     foreach my $eval_data (@var_to_eval) {
         my ($line_nb, @value) = $eval_data->@*;
