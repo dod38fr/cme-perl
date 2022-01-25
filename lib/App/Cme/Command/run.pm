@@ -119,7 +119,7 @@ sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
     return;
 }
 
-sub parse_script ($script, $content, $user_args, $app_args) {
+sub parse_script ($script, $content, $user_args) {
     my %var;
 
     # find if all variables are accounted for
@@ -138,6 +138,7 @@ sub parse_script ($script, $content, $user_args, $app_args) {
     my @doc;
     my @code;
     my $commit_msg ;
+    my $app;
     my $line_nb = 0;
 
     # check content, store app
@@ -167,7 +168,7 @@ sub parse_script ($script, $content, $user_args, $app_args) {
 
         for ($key) {
             when (/^app/) {
-                unshift @$app_args, @value;
+                $app = $value[0];
             }
             when ('var') {
                 # value comes from system file, not from user data
@@ -203,6 +204,7 @@ sub parse_script ($script, $content, $user_args, $app_args) {
     replace_var_in_value($user_args, \%var, \%default, \%missing, \@load);
 
     return {
+        app => $app,
         doc => \@doc,
         code => \@code,
         commit_msg => $commit_msg,
@@ -243,7 +245,7 @@ sub execute {
         return;
     }
 
-    my $script_data = parse_script($script, $content, \%user_args, $app_args);
+    my $script_data = parse_script($script, $content, \%user_args);
     my $commit_msg = $script_data->{commit_msg};
 
     if ($opt->doc) {
@@ -257,7 +259,7 @@ sub execute {
             ."Please use option '".join(' ', map { "-arg $_=xxx"} @missing)."'\n";
     }
 
-    $self->process_args($opt, $app_args);
+    $self->process_args($opt, [ $script_data->{app}, $app_args->@* ]);
 
     # override commit message. may also trigger a commit even if none
     # is specified in script
