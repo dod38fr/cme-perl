@@ -266,6 +266,21 @@ Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaab' -> 'aaaax4ab'
 ],
     },
+    {
+        label => "line ".__LINE__.": modification with a script with code",
+        script => [
+            "app:  popcon",
+            '---code',
+            q!$root->fetch_element('MY_HOSTID')->store($to_store);!,
+            '---',
+        ],
+        args => [qw/--arg to_store=with_code/],
+        test => qr/MY_HOSTID="with_code"/,
+        stderr => q(
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'with_code'
+)
+    },
 );
 
 
@@ -316,6 +331,16 @@ my @bad_script_tests = (
             'load: ! MY_HOSTID=$name'],
         args => [],
         error_regexp => qr/use option '-arg name1=xxx -arg name2=xxx'/
+    },
+    {
+        label => "line ".__LINE__.":  load and code section",
+        script => [
+            "app:  popcon",
+            'load: ! MY_HOSTID=$name',
+            q!code: $root->load("MY_HOSTID=$name")!,
+        ],
+        args => [],
+        error_regexp => qr/Cannot mix code and load section/
     },
 );
 
