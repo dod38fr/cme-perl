@@ -136,6 +136,7 @@ sub parse_script ($script, $content, $user_args, $app_args) {
     my @lines =  split /\n/,$content;
     my @load;
     my @doc;
+    my @code;
     my $commit_msg ;
     my $line_nb = 0;
 
@@ -178,11 +179,16 @@ sub parse_script ($script, $content, $user_args, $app_args) {
                 my ($dk, $dv) = split /[\s:=]+/, $value[0], 2;
                 $default{$dk} = $dv;
             }
+            when ('code') {
+                die "Error line $line_nb: Cannot mix code and load section\n" if @load;
+                push @code, @value;
+            }
             when ('doc') {
                 replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @doc, @value;
             }
             when ('load') {
+                die "Error line $line_nb: Cannot mix code and load section\n" if @code;
                 replace_var_in_value($user_args, \%var, \%default, \%missing, \@value);
                 push @load, @value;
             }
@@ -197,9 +203,11 @@ sub parse_script ($script, $content, $user_args, $app_args) {
 
     return {
         doc => \@doc,
+        code => \@code,
         commit_msg => $commit_msg,
         missing => \%missing,
         load => \@load,
+        values => {%default, %var, $user_args->%*},
     }
 }
 
@@ -270,6 +278,16 @@ sub execute {
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
     foreach my $load_str ($script_data->{load}->@*) {
         $root->load($load_str);
+    }
+
+    if ($script_data->{code}) {
+        my $to_run = '';
+        while (my ($name, $value) = each $script_data->{values}->%*) {
+            $to_run .= "my \$$name = '$value';\n";
+        }
+        $to_run .= join("\n",$script_data->{code}->@*);
+        my $res = eval($to_run); ## no critic (ProhibitStringyEval)
+        die "Error in code specification: $@\ncode is: \n$to_run\n" if $@;
     }
 
     unless ($inst->needs_save) {
@@ -430,6 +448,10 @@ L<Config::Model::Loader>. This string can contain variable
 foo=bar>) or by a variable set in var: line (e.g. C<$var{foo}> as set
 above) or by an environment variable (e.g. C<$ENV{foo}>)
 
+=item code
+
+Specify Perl code to run. See L</code section> for details.
+
 =item commit
 
 Specify that the change must be committed with the passed commit
@@ -453,6 +475,33 @@ transforms the instruction:
 in
 
   load: ! a=foo b=bar
+
+=head1 Code section
+
+The code section can contain variable (e.g. C<$foo>) which are replaced by
+command argument (e.g. C<-arg foo=bar>) or by a variable set in var:
+line (e.g. C<$var{foo}> as set above).
+
+When evaluated the following variables are also set:
+
+=over
+
+=item $root
+
+Root node of the configuration (See L<Config::Model::Node>)
+
+=item $inst
+
+Configuration instance (See L<Config::Model::Instance>)
+
+=item $commit_msg
+
+Message used to commit the modification.
+
+=back
+
+Since the code is run in an C<eval>, other variables are available
+(like C<$self>) to shoot yourself in the foot.
 
 =head1 Options
 
