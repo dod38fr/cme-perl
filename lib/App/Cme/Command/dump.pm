@@ -11,7 +11,7 @@ use App::Cme -command ;
 use base qw/App::Cme::Common/;
 
 use Config::Model::ObjTreeScanner;
-use YAML;
+use YAML::PP qw/Dump/;
 use JSON;
 use Data::Dumper;
 
