@@ -201,31 +201,44 @@ sub parse_script_lines ($script, $lines) {
 sub parse_script ($script, $content, $user_args) {
     my $lines->@* =  split /\n/,$content;
 
-    my $data = parse_script_lines ($script, $lines);
+    my $data;
+    given ($lines->[0]) {
+        when (/Format: perl/i) {
+            ## no critic (ProhibitStringyEval)
+            $data = eval($content);
+            die "Error in script $script (Perl format): $@\n" if $@;
+            foreach my $forbidden (qw/load var default/) {
+                die "Unexpected '$forbidden\ section in Perl format script $script\n" if $data->{$forbidden};
+            }
+            die "Unexpected 'code' section in Perl format script $script. Please use a sub section.\n" if $data->{code};
+        }
+        default {
+            $data = parse_script_lines ($script, $lines);
+            # $var is used in eval'ed strings
+            my %var;
 
-    # $var is used in eval'ed strings
-    my %var;
+            # find if all variables are accounted for
+            $data->{missing} = {};
 
-    # find if all variables are accounted for
-    $data->{missing} = {};
+            # %args can be used in var section of a script. A new entry in
+            # added in %missing if the script tries to read an undefined value
+            tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
+            %args = $user_args->%*;
 
-    # %args can be used in var section of a script. A new entry in
-    # added in %missing if the script tries to read an undefined value
-    tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
-    %args = $user_args->%*;
+            my $var_to_eval = delete $data->{var_to_eval};
+            foreach my $eval_data ($var_to_eval->@*) {
+                my ($line_nb, @value) = $eval_data->@*;
+                # eval'ed string comes from system file, not from user data
+                my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
+                die "Error in var specification line $line_nb: $@\n" if $@;
+            }
 
-    my $var_to_eval = delete $data->{var_to_eval};
-    foreach my $eval_data ($var_to_eval->@*) {
-        my ($line_nb, @value) = $eval_data->@*;
-        # eval'ed string comes from system file, not from user data
-        my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
-        die "Error in var specification line $line_nb: $@\n" if $@;
+            replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
+            replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{load});
+
+            $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
+        }
     }
-
-    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
-    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{load});
-
-    $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
 
     return $data;
 }
@@ -307,6 +320,10 @@ sub execute {
         $to_run .= join("\n",$script_data->{code}->@*);
         my $res = eval($to_run); ## no critic (ProhibitStringyEval)
         die "Error in code specification: $@\ncode is: \n$to_run\n" if $@;
+    }
+
+    if ($script_data->{sub}) {
+        $script_data->{sub}->($root, \%user_args);
     }
 
     unless ($inst->needs_save) {
@@ -420,7 +437,7 @@ commits the result if C<commit> is specified (either in script or on command lin
 
 See L<App::Cme::Command::run> for details.
 
-=head1 Syntax
+=head1 Syntax of text format
 
 The script accepts instructions in the form:
 
@@ -495,7 +512,7 @@ in
 
   load: ! a=foo b=bar
 
-=head1 Code section
+=head2 Code section
 
 The code section can contain variable (e.g. C<$foo>) which are replaced by
 command argument (e.g. C<-arg foo=bar>) or by a variable set in var:
@@ -521,6 +538,25 @@ Message used to commit the modification.
 
 Since the code is run in an C<eval>, other variables are available
 (like C<$self>) to shoot yourself in the foot.
+
+=head1 Syntax of Perl format
+
+This format is intended for more complex script where using C<load>
+instructions is not enough.
+
+This script must then begin with C<# Format: perl> and specifies a
+hash. For instance:
+
+ # Format: perl
+ {
+      app => 'popcon', # mandatory
+      doc => "blah blah',
+      commit => "control: update Vcs-Browser and Vcs-Git"
+      sub => sub ($root, $arg) { $root->fetch_element('MY_HOSTID')->store($arg->{to_store}); }
+ }
+
+C<$root> is the root if the configuration tree (See L<Config::Model::Node>).
+C<$arg> is a hash containing the arguments passed to C<cme run> with C<-arg> options.
 
 =head1 Options
 
