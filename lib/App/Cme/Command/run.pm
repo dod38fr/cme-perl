@@ -119,9 +119,7 @@ sub replace_var_in_value ($user_args, $script_var, $default, $missing, $vars) {
     return;
 }
 
-sub parse_script ($script, $content, $user_args) {
-    my @lines =  split /\n/,$content;
-
+sub parse_script_lines ($script, $lines) {
     # provide default values
     my %default ;
     my @load;
@@ -133,8 +131,8 @@ sub parse_script ($script, $content, $user_args) {
     my $line_nb = 0;
 
     # check content, store app
-    while (@lines) {
-        my $line = shift @lines;
+    while ($lines->@*) {
+        my $line = shift $lines->@*;
         $line_nb++;
         $line =~ s/#.*//; # remove comments
         $line =~ s/^\s+//;
@@ -143,9 +141,9 @@ sub parse_script ($script, $content, $user_args) {
 
         if ($line =~ /^---\s*(\w+)$/) {
             $key = $1;
-            while ($lines[0] !~ /^---/) {
-                $lines[0] =~ s/#.*//; # remove comments
-                push @value,  shift @lines;
+            while ($lines->[0] !~ /^---/) {
+                $lines->[0] =~ s/#.*//; # remove comments
+                push @value,  shift $lines->@*;
             }
         }
         elsif ($line eq '---') {
@@ -189,36 +187,47 @@ sub parse_script ($script, $content, $user_args) {
         }
     }
 
+    return {
+        app => $app,
+        doc => \@doc,
+        code => \@code,
+        commit_msg => $commit_msg,
+        default => \%default,
+        load => \@load,
+        var_to_eval => \@var_to_eval,
+    }
+}
+
+sub parse_script ($script, $content, $user_args) {
+    my $lines->@* =  split /\n/,$content;
+
+    my $data = parse_script_lines ($script, $lines);
+
     # $var is used in eval'ed strings
     my %var;
 
     # find if all variables are accounted for
-    my %missing ;
+    $data->{missing} = {};
 
     # %args can be used in var section of a script. A new entry in
     # added in %missing if the script tries to read an undefined value
-    tie my %args, 'App::Cme::Run::Var', \%missing, \%default;
+    tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
     %args = $user_args->%*;
 
-    foreach my $eval_data (@var_to_eval) {
+    my $var_to_eval = delete $data->{var_to_eval};
+    foreach my $eval_data ($var_to_eval->@*) {
         my ($line_nb, @value) = $eval_data->@*;
         # eval'ed string comes from system file, not from user data
         my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
         die "Error in var specification line $line_nb: $@\n" if $@;
     }
 
-    replace_var_in_value($user_args, \%var, \%default, \%missing, \@doc);
-    replace_var_in_value($user_args, \%var, \%default, \%missing, \@load);
+    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
+    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{load});
 
-    return {
-        app => $app,
-        doc => \@doc,
-        code => \@code,
-        commit_msg => $commit_msg,
-        missing => \%missing,
-        load => \@load,
-        values => {%default, %var, $user_args->%*},
-    }
+    $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
+
+    return $data;
 }
 
 sub execute {
