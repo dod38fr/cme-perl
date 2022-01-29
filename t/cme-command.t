@@ -281,6 +281,24 @@ Changes applied to popcon configuration:
 - MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'with_code'
 )
     },
+    {
+        label => "line ".__LINE__.": modification with a script with Perl format",
+        script => [
+            <<'EOS'
+# Format: perl
+{
+   app => 'popcon',
+   sub => sub ($root, $arg ) { $root->fetch_element('MY_HOSTID')->store($arg->{to_store});  },
+};
+EOS
+        ],
+        args => [qw/--arg to_store=with_code/],
+        test => qr/MY_HOSTID="with_code"/,
+        stderr => q(
+Changes applied to popcon configuration:
+- MY_HOSTID: 'aaaaaaaaaaaaaaaaaaaa' -> 'with_code'
+)
+    },
 );
 
 
