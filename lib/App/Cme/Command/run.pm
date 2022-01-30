@@ -125,7 +125,7 @@ sub parse_script_lines ($script, $lines) {
     my @load;
     my @doc;
     my @code;
-    my @var_to_eval;
+    my @var;
     my $commit_msg ;
     my $app;
     my $line_nb = 0;
@@ -160,7 +160,7 @@ sub parse_script_lines ($script, $lines) {
                 $app = $value[0];
             }
             when ('var') {
-                push @var_to_eval, [ $line_nb, @value ];
+                push @var, [ $line_nb, @value ];
             }
             when ('default') {
                 # multi-line default value is not supported
@@ -194,7 +194,7 @@ sub parse_script_lines ($script, $lines) {
         commit_msg => $commit_msg,
         default => \%default,
         load => \@load,
-        var_to_eval => \@var_to_eval,
+        var => \@var,
     }
 }
 
@@ -210,8 +210,8 @@ sub process_script_vars ($user_args, $data) {
     tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
     %args = $user_args->%*;
 
-    my $var_to_eval = delete $data->{var_to_eval};
-    foreach my $eval_data ($var_to_eval->@*) {
+    my $var = delete $data->{var};
+    foreach my $eval_data ($var->@*) {
         my ($line_nb, @value) = $eval_data->@*;
         # eval'ed string comes from system file, not from user data
         my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
