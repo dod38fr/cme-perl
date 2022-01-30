@@ -200,6 +200,20 @@ my @script_tests = (
 
     },
     {
+        label => "line ".__LINE__.": modification with a YAML script and a var that uses a default value",
+        script => [
+            "# Format: YAML",
+            "---",
+            "app: popcon",
+            "default: ",
+            "  defname: foobar",
+            'var: "$var{name} = $args{defname}"',
+            'load: "! MY_HOSTID=\\\\$name$name"'
+        ],
+        test => qr/"\$namefoobar"/,
+        stderr => $expect_namefoobar
+    },
+    {
         label => "line ".__LINE__.": quiet modification with a script and var section",
         script => [ "app:  popcon", 'var: $var{name}="foobar2"','load ! MY_HOSTID=\$name$name'],
         test => qr/"\$namefoobar2"/,
