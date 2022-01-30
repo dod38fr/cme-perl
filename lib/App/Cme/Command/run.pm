@@ -9,6 +9,7 @@ use File::HomeDir;
 use Path::Tiny;
 use Config::Model;
 use Log::Log4perl qw(get_logger :levels);
+use YAML::PP;
 
 use Encode qw(decode_utf8);
 
@@ -210,12 +211,21 @@ sub process_script_vars ($user_args, $data) {
     tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
     %args = $user_args->%*;
 
-    my $var = delete $data->{var};
+    my $var = delete $data->{var} // [];
     foreach my $eval_data ($var->@*) {
-        my ($line_nb, @value) = $eval_data->@*;
-        # eval'ed string comes from system file, not from user data
-        my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
-        die "Error in var specification line $line_nb: $@\n" if $@;
+        my ($line_nb, @value);
+        if (ref $eval_data) {
+            # coming from text format
+            ($line_nb, @value) = $eval_data->@*;
+            # eval'ed string comes from system file, not from user data
+            my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
+            die "Error in var specification line $line_nb: $@\n" if $@;
+        }
+        else {
+            # coming from YAML format
+            my $res = eval ($eval_data) ; ## no critic (ProhibitStringyEval)
+            die "Error in var specification: $@\n" if $@;
+        }
     }
 
     replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
@@ -238,6 +248,20 @@ sub parse_script ($script, $content, $user_args) {
                 die "Unexpected '$forbidden\ section in Perl format script $script\n" if $data->{$forbidden};
             }
             die "Unexpected 'code' section in Perl format script $script. Please use a sub section.\n" if $data->{code};
+            return $data;
+        }
+        when (/Format: yaml/i) {
+            my $ypp = YAML::PP->new;
+            my $data = $ypp->load_string($content);
+            foreach my $key (qw/doc code load var/) {
+                next unless defined $data->{$key};
+                next if ref $data->{$key} eq 'ARRAY';
+                $data->{$key} = [ $data->{$key} ]
+            }
+            if ($data->{default} and ref $data->{default} ne 'HASH') {
+                die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
+            }
+            $data = process_script_vars ($user_args, $data);
             return $data;
         }
         default {
