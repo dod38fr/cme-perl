@@ -198,6 +198,34 @@ sub parse_script_lines ($script, $lines) {
     }
 }
 
+sub process_script_vars ($user_args, $data) {
+    # $var is used in eval'ed strings
+    my %var;
+
+    # find if all variables are accounted for
+    $data->{missing} = {};
+
+    # %args can be used in var section of a script. A new entry in
+    # added in %missing if the script tries to read an undefined value
+    tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
+    %args = $user_args->%*;
+
+    my $var_to_eval = delete $data->{var_to_eval};
+    foreach my $eval_data ($var_to_eval->@*) {
+        my ($line_nb, @value) = $eval_data->@*;
+        # eval'ed string comes from system file, not from user data
+        my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
+        die "Error in var specification line $line_nb: $@\n" if $@;
+    }
+
+    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
+    replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{load});
+
+    $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
+
+    return $data;
+}
+
 sub parse_script ($script, $content, $user_args) {
     my $lines->@* =  split /\n/,$content;
 
@@ -214,29 +242,7 @@ sub parse_script ($script, $content, $user_args) {
         }
         default {
             $data = parse_script_lines ($script, $lines);
-            # $var is used in eval'ed strings
-            my %var;
-
-            # find if all variables are accounted for
-            $data->{missing} = {};
-
-            # %args can be used in var section of a script. A new entry in
-            # added in %missing if the script tries to read an undefined value
-            tie my %args, 'App::Cme::Run::Var',$data->{missing}, $data->{default};
-            %args = $user_args->%*;
-
-            my $var_to_eval = delete $data->{var_to_eval};
-            foreach my $eval_data ($var_to_eval->@*) {
-                my ($line_nb, @value) = $eval_data->@*;
-                # eval'ed string comes from system file, not from user data
-                my $res = eval ("@value") ; ## no critic (ProhibitStringyEval)
-                die "Error in var specification line $line_nb: $@\n" if $@;
-            }
-
-            replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{doc});
-            replace_var_in_value($user_args, \%var, $data->{default},$data->{missing}, $data->{load});
-
-            $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
+            $data = process_script_vars ($user_args, $data);
         }
     }
 
