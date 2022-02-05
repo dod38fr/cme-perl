@@ -427,8 +427,7 @@ __END__
 
 =head1 DESCRIPTION
 
-Run a script written with cme DSL (Design specific language) or in
-plain Perl.
+Run a script written for C<cme>
 
 A script passed by name is searched in C<~/.cme/scripts>,
 C</etc/cme/scripts> or C</usr/share/perl5/Config/Model/scripts>.
@@ -439,9 +438,35 @@ C</usr/share/perl5/Config/Model/scripts/foo>
 No search is done if the script is passed with a path
 (e.g. C<cme run ./foo>)
 
+C<cme run> accepts scripts written with different syntaxes:
+
+=over
+
+=item in text
+
+For simple script, this text specifies the target app, the doc,
+optional variables and a load string used by L<Config::Model::Loader> or
+Perl code.
+
+=item YAML
+
+Like text above, but using Yaml syntax.
+
+=item Perl data structure
+
+Writing Perl code in a text file or in a YAML field can be painful as
+Perl syntax is not highlighted. With a Perl data structure, a cme
+script specifies the target app, the doc, optional variables, and a
+perl subroutine (see below).
+
+=item plain Perl script
+
 C<cme run> can also run plain Perl script. This is syntactic sugar to
 avoid polluting global namespace, i.e. there's no need to store a
 script using L<cme function|Config::Model/cme> in C</usr/local/bin/>.
+
+=back
+
 
 When run, this script:
 
@@ -453,7 +478,7 @@ opens the configuration file of C<app>
 
 =item *
 
-applies the modifications specified with C<load> instructions
+applies the modifications specified with C<load> instructions or the Perl code.
 
 =item *
 
@@ -490,6 +515,14 @@ The script accepts the following instructions:
 Specify the target application. Must be one of the application listed
 by C<cme list> command. Mandatory. Only one C<app> instruction is
 allowed.
+
+=item default
+
+Specify default values that can be used in C<load> or C<var> sections.
+
+For instance:
+
+ default: name=foobar
 
 =item var
 
@@ -542,6 +575,15 @@ in
 
   load: ! a=foo b=bar
 
+=head2 Example
+
+Here's an example from L<libconfig-model-dpkg-perl scripts|https://salsa.debian.org/perl-team/modules/packages/libconfig-model-dpkg-perl/-/blob/master/lib/Config/Model/scripts/add-me-to-uploaders>:
+
+  doc: add myself to Uploaders
+  app: dpkg-control
+  load: source Uploaders:.insort("$DEBFULLNAME <$DEBEMAIL>")
+  commit: add $DEBEMAIL to Uploaders
+
 =head2 Code section
 
 The code section can contain variable (e.g. C<$foo>) which are replaced by
@@ -569,6 +611,28 @@ Message used to commit the modification.
 Since the code is run in an C<eval>, other variables are available
 (like C<$self>) to shoot yourself in the foot.
 
+For example:
+
+ app:  popcon
+ ---code
+ $root->fetch_element('MY_HOSTID')->store($to_store);
+ ---
+
+=head1 Syntax of YAML format
+
+This format is intented for people not wanting to user the text format
+above. It supoorts the same parameters as the text format.
+
+For instance:
+
+ # Format: YAML
+ ---
+ app: popcon
+ default:
+   defname: foobar
+ var: "$var{name} = $args{defname}"
+ load: "! MY_HOSTID=$name"
+
 =head1 Syntax of Perl format
 
 This format is intended for more complex script where using C<load>
@@ -580,13 +644,21 @@ hash. For instance:
  # Format: perl
  {
       app => 'popcon', # mandatory
-      doc => "blah blah',
+      doc => "Use --arg to_store=a_value to store a_value in MY_HOSTID',
       commit => "control: update Vcs-Browser and Vcs-Git"
       sub => sub ($root, $arg) { $root->fetch_element('MY_HOSTID')->store($arg->{to_store}); }
  }
 
 C<$root> is the root if the configuration tree (See L<Config::Model::Node>).
 C<$arg> is a hash containing the arguments passed to C<cme run> with C<-arg> options.
+
+The C<sub> parameter value must be a sub ref. Its parameters are
+C<$root> (a L<Config::Model::Node> object containing the root of the
+configuration tree) and C<$arg> (a hash ref containing the keys and
+values passed to C<cme run> wiht C<--arg> options).
+
+Note that this format does not support C<var>, C<default> and C<load>
+parameters as you can easily achieve the same result with Perl code.
 
 =head1 Options
 
