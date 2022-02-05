@@ -655,7 +655,7 @@ C<$arg> is a hash containing the arguments passed to C<cme run> with C<-arg> opt
 The C<sub> parameter value must be a sub ref. Its parameters are
 C<$root> (a L<Config::Model::Node> object containing the root of the
 configuration tree) and C<$arg> (a hash ref containing the keys and
-values passed to C<cme run> wiht C<--arg> options).
+values passed to C<cme run> with C<--arg> options).
 
 Note that this format does not support C<var>, C<default> and C<load>
 parameters as you can easily achieve the same result with Perl code.
