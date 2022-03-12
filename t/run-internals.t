@@ -23,4 +23,18 @@ EOS
     is($data->{load}[0], '! MY_HOSTID=~" s/^(a)a+/  $1.\"foo\" x2 /xe"', "test parsed script");
 };
 
+subtest "process_script_vars" => sub {
+    my $data = {
+        app => 'dpkg-copyright',
+        doc => [ 'test $foo $bar'],
+        load => [ 'load $foo $bar'],
+        default => {},
+    };
+    $ENV{bar}='BAR';
+    App::Cme::Command::run::process_script_vars({ foo=> 'FOO' }, $data);
+
+    is($data->{doc}[0],'test FOO BAR',"doc var replacement" );
+    is($data->{load}[0],'load FOO BAR',"load var replacement" );
+};
+
 done_testing;
