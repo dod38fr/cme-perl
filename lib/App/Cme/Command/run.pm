@@ -101,7 +101,7 @@ sub find_script_file ($self, $script_name) {
 
 # replace variables with command arguments or eval'ed variables or env variables
 ## no critic (Subroutines::ProhibitManyArgs)
-sub replace_var_in_value ($user_args, $script_var, $data, @items) {
+sub replace_vars ($user_args, $script_var, $data, @items) {
     my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
 
     foreach my $item (@items) {
@@ -232,7 +232,7 @@ sub process_script_vars ($user_args, $data) {
         }
     }
 
-    replace_var_in_value($user_args, \%var, $data, 'doc', 'load');
+    replace_vars($user_args, \%var, $data, 'doc', 'load', 'commit_msg');
 
     $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
 
