@@ -129,6 +129,9 @@ sub replace_vars ($user_args, $script_var, $data, @items) {
             }
             $data->{$item} = \@new;
         }
+        elsif ($data->{$item}) {
+            $data->{$item} = replace_var_in_value ($user_args, $script_var, $data, $data->{$item});
+        }
     }
     return;
 }
