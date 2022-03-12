@@ -28,6 +28,7 @@ subtest "process_script_vars" => sub {
         app => 'dpkg-copyright',
         doc => [ 'test $foo $bar'],
         load => [ 'load $foo $bar'],
+        commit_msg => 'commit $foo $bar',
         default => {},
     };
     $ENV{bar}='BAR';
@@ -35,6 +36,7 @@ subtest "process_script_vars" => sub {
 
     is($data->{doc}[0],'test FOO BAR',"doc var replacement" );
     is($data->{load}[0],'load FOO BAR',"load var replacement" );
+    is($data->{commit_msg},'commit FOO BAR',"commit msg var replacement" );
 };
 
 done_testing;
