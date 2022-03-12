@@ -99,26 +99,35 @@ sub find_script_file ($self, $script_name) {
     return $script;
 }
 
+## no critic (Subroutines::ProhibitManyArgs)
+sub replace_var_in_value ($user_args, $script_var, $data, $value) {
+    state $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
+
+    # change $var but not \$var, not $var{} and not $1
+    $value =~ s~ $var_pattern
+               ~ $user_args->{$1} // $script_var->{$1} // $ENV{$1} // $data->{default}{$1} // '$'.$1 ~xeg;
+
+    # register vars without replacements
+    foreach my $var ($value =~ m~ $var_pattern ~xg) {
+        $data->{missing}{$var} = 1 ;
+    }
+
+    # now change \$var in $var
+    $value =~ s!\\\$!\$!g;
+
+    return $value;
+}
+
 # replace variables with command arguments or eval'ed variables or env variables
 ## no critic (Subroutines::ProhibitManyArgs)
 sub replace_vars ($user_args, $script_var, $data, @items) {
-    my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
-
     foreach my $item (@items) {
-        my $vars = $data->{$item};
-
-        foreach ($vars->@*) {
-            # change $var but not \$var, not $var{} and not $1
-            s~ $var_pattern
-             ~ $user_args->{$1} // $script_var->{$1} // $ENV{$1} // $data->{default}{$1} // '$'.$1 ~xeg;
-
-            # register vars without replacements
-            foreach my $var (m~ $var_pattern ~xg) {
-                $data->{missing}{$var} = 1 ;
+        if (ref $data->{$item}  eq 'ARRAY') {
+            my @new;
+            foreach my $value ($data->{$item}->@*) {
+                push @new, replace_var_in_value ($user_args, $script_var, $data, $value);
             }
-
-            # now change \$var in $var
-            s!\\\$!\$!g;
+            $data->{$item} = \@new;
         }
     }
     return;
