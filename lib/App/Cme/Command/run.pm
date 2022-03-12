@@ -101,22 +101,25 @@ sub find_script_file ($self, $script_name) {
 
 # replace variables with command arguments or eval'ed variables or env variables
 ## no critic (Subroutines::ProhibitManyArgs)
-sub replace_var_in_value ($user_args, $script_var, $data, $item) {
+sub replace_var_in_value ($user_args, $script_var, $data, @items) {
     my $var_pattern = qr~(?<!\\) \$([a-zA-Z]\w+) (?!\s*{)~x;
 
-    my $vars = $data->{$item};
-    foreach ($vars->@*) {
-        # change $var but not \$var, not $var{} and not $1
-        s~ $var_pattern
-         ~ $user_args->{$1} // $script_var->{$1} // $ENV{$1} // $data->{default}{$1} // '$'.$1 ~xeg;
+    foreach my $item (@items) {
+        my $vars = $data->{$item};
 
-        # register vars without replacements
-        foreach my $var (m~ $var_pattern ~xg) {
-            $data->{missing}{$var} = 1 ;
+        foreach ($vars->@*) {
+            # change $var but not \$var, not $var{} and not $1
+            s~ $var_pattern
+             ~ $user_args->{$1} // $script_var->{$1} // $ENV{$1} // $data->{default}{$1} // '$'.$1 ~xeg;
+
+            # register vars without replacements
+            foreach my $var (m~ $var_pattern ~xg) {
+                $data->{missing}{$var} = 1 ;
+            }
+
+            # now change \$var in $var
+            s!\\\$!\$!g;
         }
-
-        # now change \$var in $var
-        s!\\\$!\$!g;
     }
     return;
 }
@@ -229,8 +232,7 @@ sub process_script_vars ($user_args, $data) {
         }
     }
 
-    replace_var_in_value($user_args, \%var, $data, 'doc');
-    replace_var_in_value($user_args, \%var, $data, 'load');
+    replace_var_in_value($user_args, \%var, $data, 'doc', 'load');
 
     $data->{values} = {$data->{default}->%*, %var, $user_args->%*};
 
