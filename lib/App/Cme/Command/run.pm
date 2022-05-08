@@ -312,9 +312,13 @@ sub execute {
     # parse variables passed on command line
     my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
-    if ($content =~ m/^#!/ or $content =~ /^use/m) {
+    if ($content =~ m/^#!/ and -x $script) {
         splice @ARGV, 0,2; # remove 'run script' arguments
         my $done = eval $script->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        if (ref $done eq 'HASH') {
+            warn "script $script_name returns a hash but it's processed as a plain script.",
+                " This may not be what you want\n";
+        }
         die "Error in script $script_name: $@\n" unless $done;
         return;
     }
@@ -479,6 +483,8 @@ perl subroutine (see below).
 C<cme run> can also run plain Perl script. This is syntactic sugar to
 avoid polluting global namespace, i.e. there's no need to store a
 script using L<cme function|Config::Model/cme> in C</usr/local/bin/>.
+Note that the script must begin with the usual shebang line (C<#!>)
+and be executable.
 
 =back
 
