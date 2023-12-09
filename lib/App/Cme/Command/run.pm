@@ -199,7 +199,7 @@ sub parse_script_lines ($script, $lines) {
                 $commit_msg = join "\n",@value;
             }
             default {
-                die "Error in file $script line $line_nb: unexpected '$key' instruction\n";
+                die "Error in cme DSL file $script line $line_nb: unexpected '$key' instruction\n";
             }
         }
     }
@@ -458,9 +458,9 @@ C<cme run> accepts scripts written with different syntaxes:
 
 =over
 
-=item in text
+=item cme DSL
 
-For simple script, this text specifies the target app, the doc,
+For simple script, this DSL text specifies the target app, the doc,
 optional variables and a load string used by L<Config::Model::Loader> or
 Perl code.
 
