@@ -254,38 +254,35 @@ sub process_script_vars ($user_args, $data) {
 sub parse_script ($script, $content, $user_args) {
     my $lines->@* =  split /\n/,$content;
 
-    given ($lines->[0]) {
-        when (/Format: perl/i) {
-            ## no critic (ProhibitStringyEval)
-            my $data = eval($content);
-            die "Error in script $script (Perl format): $@\n" if $@;
-            foreach my $forbidden (qw/load var default/) {
-                die "Unexpected '$forbidden\ section in Perl format script $script\n" if $data->{$forbidden};
-            }
-            die "Unexpected 'code' section in Perl format script $script. Please use a sub section.\n" if $data->{code};
-            return $data;
+    if ($lines->[0] =~ /Format: perl/i) {
+        ## no critic (ProhibitStringyEval)
+        my $data = eval($content);
+        die "Error in script $script (Perl format): $@\n" if $@;
+        foreach my $forbidden (qw/load var default/) {
+            die "Unexpected '$forbidden\ section in Perl format script $script\n" if $data->{$forbidden};
         }
-        when (/Format: yaml/i) {
-            my $ypp = YAML::PP->new;
-            my $data = $ypp->load_string($content);
-            foreach my $key (qw/doc code load var/) {
-                next unless defined $data->{$key};
-                next if ref $data->{$key} eq 'ARRAY';
-                $data->{$key} = [ $data->{$key} ]
-            }
-            if ($data->{default} and ref $data->{default} ne 'HASH') {
-                die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
-            }
-            $data = process_script_vars ($user_args, $data);
-            return $data;
-        }
-        default {
-            my $data = parse_script_lines ($script, $lines);
-            $data = process_script_vars ($user_args, $data);
-            return $data;
-        }
+        die "Unexpected 'code' section in Perl format script $script. Please use a sub section.\n" if $data->{code};
+        return $data;
     }
 
+    if ($lines->[0] =~ /Format: yaml/i) {
+        my $ypp = YAML::PP->new;
+        my $data = $ypp->load_string($content);
+        foreach my $key (qw/doc code load var/) {
+            next unless defined $data->{$key};
+            next if ref $data->{$key} eq 'ARRAY';
+            $data->{$key} = [ $data->{$key} ]
+        }
+        if ($data->{default} and ref $data->{default} ne 'HASH') {
+            die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
+        }
+        $data = process_script_vars ($user_args, $data);
+        return $data;
+    }
+
+    my $data = parse_script_lines ($script, $lines);
+    $data = process_script_vars ($user_args, $data);
+    return $data;
 }
 
 sub execute {
