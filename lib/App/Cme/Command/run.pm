@@ -254,7 +254,7 @@ sub process_script_vars ($user_args, $data) {
 sub parse_script ($script, $content, $user_args) {
     my $lines->@* =  split /\n/,$content;
 
-    if ($lines->[0] =~ /Format: perl/i) {
+    if ($lines->[0] =~ /Format:\s*perl/i) {
         ## no critic (ProhibitStringyEval)
         my $data = eval($content);
         die "Error in script $script (Perl format): $@\n" if $@;
@@ -265,7 +265,7 @@ sub parse_script ($script, $content, $user_args) {
         return $data;
     }
 
-    if ($lines->[0] =~ /Format: yaml/i) {
+    if ($lines->[0] =~ /Format:\s*yaml/i) {
         my $ypp = YAML::PP->new;
         my $data = $ypp->load_string($content);
         foreach my $key (qw/doc code load var/) {

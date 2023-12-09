@@ -202,7 +202,7 @@ my @script_tests = (
     {
         label => "line ".__LINE__.": modification with a YAML script and a var that uses a default value",
         script => [
-            "# Format: YAML",
+            "# Format:  YAML",
             "---",
             "app: popcon",
             "default: ",
@@ -301,7 +301,7 @@ Changes applied to popcon configuration:
         label => "line ".__LINE__.": modification with a script with Perl format",
         script => [
             <<'EOS'
-# Format: perl
+# Format:perl
 {
    app => 'popcon',
    sub => sub ($root, $arg ) { $root->fetch_element('MY_HOSTID')->store($arg->{to_store});  },
