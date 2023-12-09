@@ -156,7 +156,8 @@ See L<cme/"Global Options">.
 
 =item -open-item
 
-Open a specific item of the configuration when opening the editor
+Open a specific item of the configuration when opening the editor. Trying to open
+a non-existing item triggers an error.
 
 =back
 

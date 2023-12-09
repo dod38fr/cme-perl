@@ -205,8 +205,14 @@ sub run_tk_ui {
     $instance->on_message_cb(sub{$cmu->show_message(@_);});
 
     if ($opt->{open_item}) {
-        my $obj = $instance->grab($opt->{open_item});
-        $cmu->force_element_display($obj);
+        my $obj = $instance->grab(step => $opt->{open_item}, autoadd => 0);
+        # using afterIdle avoids geometry problem where the right side
+        # of the widget is not visible
+        $mw->afterIdle( sub {
+            $cmu->force_element_display($obj);
+            my $path = $cmu->{tktree}->selectionGet;
+            $cmu->create_element_widget('edit', $path);
+        })
     }
 
     &MainLoop;    # Tk's
