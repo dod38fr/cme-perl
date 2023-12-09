@@ -1,5 +1,13 @@
 {{$NEXT}}
 
+1.039 2023-12-09
+
+  New feature:
+    * tkui: open write widget with "cme edit <app> --open-item "<element path>"
+
+  Bug fix:
+    * cme run: improve heuristic to detect plain Perl script
+
 1.038 2022-03-13
 
   Bug fix:
