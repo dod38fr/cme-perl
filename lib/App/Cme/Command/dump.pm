@@ -40,6 +40,9 @@ sub opt_spec {
                 default => 'yaml'
             },
         ],
+        [
+            "verbose!" => "Show what's going on"
+        ],
         $class->cme_global_options,
     );
 }
