@@ -172,35 +172,34 @@ sub parse_script_lines ($script, $lines) {
 
         next unless $key ; # empty line
 
-        for ($key) {
-            when (/^app/) {
-                $app = $value[0];
-            }
-            when ('var') {
-                push @var, [ $line_nb, @value ];
-            }
-            when ('default') {
-                # multi-line default value is not supported
-                my ($dk, $dv) = split /[\s:=]+/, $value[0], 2;
-                $default{$dk} = $dv;
-            }
-            when ('code') {
-                die "Error line $line_nb: Cannot mix code and load section\n" if @load;
-                push @code, @value;
-            }
-            when ('doc') {
-                push @doc, @value;
-            }
-            when ('load') {
-                die "Error line $line_nb: Cannot mix code and load section\n" if @code;
-                push @load, @value;
-            }
-            when ('commit') {
-                $commit_msg = join "\n",@value;
-            }
-            default {
-                die "Error in cme DSL file $script line $line_nb: unexpected '$key' instruction\n";
-            }
+        if ( $key =~ /^app/ ) {
+            $app = $value[0];
+        }
+        elsif ( $key eq 'var' ) {
+            push @var, [ $line_nb, @value ];
+        }
+        elsif ( $key eq 'default' ) {
+
+            # multi-line default value is not supported
+            my ( $dk, $dv ) = split /[\s:=]+/, $value[0], 2;
+            $default{$dk} = $dv;
+        }
+        elsif ( $key eq 'code' ) {
+            die "Error line $line_nb: Cannot mix code and load section\n" if @load;
+            push @code, @value;
+        }
+        elsif ( $key eq 'doc' ) {
+            push @doc, @value;
+        }
+        elsif ( $key eq 'load' ) {
+            die "Error line $line_nb: Cannot mix code and load section\n" if @code;
+            push @load, @value;
+        }
+        elsif ( $key eq 'commit' ) {
+            $commit_msg = join "\n", @value;
+        }
+        else {
+            die "Error in cme DSL file $script line $line_nb: unexpected '$key' instruction\n";
         }
     }
 
