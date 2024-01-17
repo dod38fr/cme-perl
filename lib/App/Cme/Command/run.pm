@@ -137,14 +137,17 @@ sub replace_vars ($user_args, $script_var, $data, @items) {
 }
 
 sub parse_script_lines ($script, $lines) {
-    # provide default values
-    my %default ;
-    my @load;
-    my @doc;
-    my @code;
-    my @var;
-    my $commit_msg ;
-    my $app;
+    my $parsed_data = {
+        app => '',
+        doc => [],
+        code => [],
+        commit_msg => '',
+        # provide default values
+        default => {},
+        load => [],
+        var => [],
+    };
+
     my $line_nb = 0;
 
     # check content, store app
@@ -172,46 +175,43 @@ sub parse_script_lines ($script, $lines) {
 
         next unless $key ; # empty line
 
-        if ( $key =~ /^app/ ) {
-            $app = $value[0];
-        }
-        elsif ( $key eq 'var' ) {
-            push @var, [ $line_nb, @value ];
-        }
-        elsif ( $key eq 'default' ) {
-
-            # multi-line default value is not supported
-            my ( $dk, $dv ) = split /[\s:=]+/, $value[0], 2;
-            $default{$dk} = $dv;
-        }
-        elsif ( $key eq 'code' ) {
-            die "Error line $line_nb: Cannot mix code and load section\n" if @load;
-            push @code, @value;
-        }
-        elsif ( $key eq 'doc' ) {
-            push @doc, @value;
-        }
-        elsif ( $key eq 'load' ) {
-            die "Error line $line_nb: Cannot mix code and load section\n" if @code;
-            push @load, @value;
-        }
-        elsif ( $key eq 'commit' ) {
-            $commit_msg = join "\n", @value;
-        }
-        else {
-            die "Error in cme DSL file $script line $line_nb: unexpected '$key' instruction\n";
-        }
+        parse_command($key, $parsed_data, $line_nb, \@value)
+            or die "Error in cme DSL file $script line $line_nb: unexpected '$key' instruction\n";
     }
 
-    return {
-        app => $app,
-        doc => \@doc,
-        code => \@code,
-        commit_msg => $commit_msg,
-        default => \%default,
-        load => \@load,
-        var => \@var,
+    return $parsed_data;
+}
+
+sub parse_command ($key, $parsed_data, $line_nb, $value) {
+    if ( $key =~ /^app/ ) {
+        $parsed_data->{app} = $value->[0];
     }
+    elsif ( $key eq 'var' ) {
+        push $parsed_data->{var}->@*, [ $line_nb, $value->@* ];
+    }
+    elsif ( $key eq 'default' ) {
+        # multi-line default value is not supported
+        my ( $dk, $dv ) = split /[\s:=]+/, $value->[0], 2;
+        $parsed_data->{default}{$dk} = $dv;
+    }
+    elsif ( $key eq 'code' ) {
+        die "Error line $line_nb: Cannot mix code and load section\n" if $parsed_data->{load}->@*;
+        push $parsed_data->{code}->@*, $value->@*;
+    }
+    elsif ( $key eq 'doc' ) {
+        push $parsed_data->{doc}->@*, $value->@*;
+    }
+    elsif ( $key eq 'load' ) {
+        die "Error line $line_nb: Cannot mix code and load section\n" if $parsed_data->{code}->@*;
+        push $parsed_data->{load}->@*, $value->@*;
+    }
+    elsif ( $key eq 'commit' ) {
+        $parsed_data->{commit_msg} = join "\n", $value->@*;
+    }
+    else {
+        return 0;
+    }
+    return 1;
 }
 
 sub process_script_vars ($user_args, $data) {
