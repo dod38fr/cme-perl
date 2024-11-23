@@ -272,6 +272,7 @@ sub parse_script ($script, $content, $user_args) {
             next if ref $data->{$key} eq 'ARRAY';
             $data->{$key} = [ $data->{$key} ]
         }
+        $data->{default} //= {};
         if ($data->{default} and ref $data->{default} ne 'HASH') {
             die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
         }
