@@ -286,6 +286,12 @@ sub parse_script ($script, $content, $user_args) {
     return $data;
 }
 
+sub commit ($self, $root, $msg) {
+    $msg =~ s/\{\{(.*?)\}\}/$root->grab_value($1)/e;
+
+    system(qw/git commit -a -m/, $msg);
+}
+
 sub execute {
     my ($self, $opt, $app_args) = @_;
 
@@ -382,7 +388,7 @@ sub execute {
 
     # commit if needed
     if ($commit_msg and not $opt->{no_commit}) {
-        system(qw/git commit -a -m/, $commit_msg);
+        $self->commit($root, $commit_msg);
     }
 
     return;
@@ -575,6 +581,19 @@ Specify Perl code to run. See L</code section> for details.
 Specify that the change must be committed with the passed commit
 message. When this option is used, C<cme> raises an error if used on a
 non-clean workspace. This option works only with L<git>.
+
+Strings like C<{{ load path }}> are substituted with a value extracted
+from configuration tree with the specified load path. See
+L<Config::Model::Loader> for a valid load path.
+
+For example, this specification:
+
+    load: source Standards-Version="4.7.0"
+    commit: declare compliance with policy {{source Standards-Version}}
+
+yields this commit message:
+
+    declare compliance with policy 4.7.0
 
 =back
 
