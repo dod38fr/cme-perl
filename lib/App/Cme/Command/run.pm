@@ -273,6 +273,7 @@ sub parse_script ($script, $content, $user_args) {
             $data->{$key} = [ $data->{$key} ]
         }
         $data->{default} //= {};
+        $data->{commit_msg} = delete $data->{commit};
         if ($data->{default} and ref $data->{default} ne 'HASH') {
             die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
         }
