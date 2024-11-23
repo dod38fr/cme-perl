@@ -639,7 +639,10 @@ For example:
 =head1 Syntax of YAML format
 
 This format is intented for people not wanting to user the text format
-above. It supoorts the same parameters as the text format.
+above. It supports the same parameters as the text format.
+
+When using "!" and "$" characters in a string, using YAML block scalar
+is probably easier.
 
 For instance:
 
@@ -648,8 +651,10 @@ For instance:
  app: popcon
  default:
    defname: foobar
- var: "$var{name} = $args{defname}"
- load: "! MY_HOSTID=$name"
+ var: |-
+   $var{name} = $args{defname}
+ load: |-
+   ! MY_HOSTID=$name
 
 =head1 Syntax of Perl format
 
