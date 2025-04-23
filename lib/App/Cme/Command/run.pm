@@ -17,8 +17,6 @@ use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
 use feature qw/postderef signatures/;
-no warnings qw/experimental::postderef experimental::signatures experimental::smartmatch/;
-
 
 my $__test_home = '';
 # used only by tests
@@ -183,6 +181,7 @@ sub parse_script_lines ($script, $lines) {
 }
 
 sub parse_command ($key, $parsed_data, $line_nb, $value) {
+    ## no critic (ControlStructures::ProhibitCascadingIfElse)
     if ( $key =~ /^app/ ) {
         $parsed_data->{app} = $value->[0];
     }
@@ -290,6 +289,8 @@ sub commit ($self, $root, $msg) {
     $msg =~ s/\{\{(.*?)\}\}/$root->grab_value($1)/e;
 
     system(qw/git commit -a -m/, $msg);
+
+    return;
 }
 
 sub execute {
