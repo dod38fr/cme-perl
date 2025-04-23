@@ -17,6 +17,12 @@ use App::Cmd::Tester;
 use App::Cme ;
 use Config::Model 2.148 qw/initialize_log4perl/;
 
+# WARNING: these tests check the output of cme command. This output is
+# created with Log4Perl to User class with INFO level.
+# if present, ~/.log4config-model must containt the lines:
+#     log4perl.logger.User = INFO, PlainMsgOnScreen
+#     log4perl.additivity.User = 0
+
 # work around a problem in IO::TieCombine (used by App::Cmd::Tester)
 # to avoid messing up output of stderr of tested command (See
 # ACHTUNG!! notes in IO::TieCombine doc)
