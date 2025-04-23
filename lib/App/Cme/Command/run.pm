@@ -360,6 +360,12 @@ sub execute {
 
     $opt->{_verbose} = 'Loader' if $opt->{verbose};
 
+    $self->run_script ($opt, $app_args, $script_data, \%user_args);
+
+    return;
+}
+
+sub run_script ($self, $opt, $app_args, $script_data, $user_args){
     # call loads
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
     foreach my $load_str ($script_data->{load}->@*) {
@@ -377,7 +383,7 @@ sub execute {
     }
 
     if ($script_data->{sub}) {
-        $script_data->{sub}->($root, \%user_args);
+        $script_data->{sub}->($root, $user_args);
     }
 
     unless ($inst->needs_save) {
@@ -386,6 +392,8 @@ sub execute {
     }
 
     $self->save($inst,$opt) ;
+
+    my $commit_msg = $script_data->{commit_msg};
 
     # commit if needed
     if ($commit_msg and not $opt->{no_commit}) {
