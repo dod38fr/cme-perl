@@ -1,4 +1,3 @@
-# -*- cperl -*-
 use strict;
 use warnings;
 use utf8;
@@ -7,11 +6,14 @@ use open ':std', ':encoding(utf8)';
 
 use Encode;
 
-use Path::Tiny;
+use Path::Tiny 0.125;
 use Term::ANSIColor 2.01 qw(colorstrip);
 
 use Test::More;
 use Test::File::Contents;
+
+# used by "foreach loop" test to find test script
+use lib 't/lib';
 
 use App::Cmd::Tester;
 use App::Cme ;
@@ -62,6 +64,26 @@ subtest "list command" => sub {
     my $result = test_app( 'App::Cme' => \@test_cmd );
     say "-- stdout --\n", $result->stdout,"-----"  if $trace;
     is($result->error, undef, 'threw no exceptions');
+};
+
+subtest "foreach option" => sub {
+    my @t_dirs = map {$wr_root->child($_)} qw/for1 for2 for3/;
+    foreach my $d (@t_dirs) {
+        $d->remove_tree;
+        $d->mkdir;
+    }
+    my @test_cmd = (qw!run t/lib/Config/Model/scripts/cme-test!,
+                    '--model-dir' => path("t/lib/Config/Model/models/")->absolute->stringify,
+                    '--foreach' => join(' ', @t_dirs));
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is( $ok->error, undef, 'threw no exceptions');
+    print $ok->stdout if $trace;
+    is( $ok->exit_code, 0, 'all went well' ) or diag("Failed command @test_cmd");
+
+    foreach my $d (@t_dirs) {
+        my $t_file = $d->child('cme-test.yml');
+        file_contents_like $t_file->stringify,   qr/test ok/, "check $t_file" ;
+    }
 };
 
 subtest "modification without config file" => sub {

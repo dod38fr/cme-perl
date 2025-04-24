@@ -8,6 +8,7 @@ use v5.20;
 use File::HomeDir;
 use Path::Tiny;
 use Config::Model;
+use Config::Model::Lister;
 use Log::Log4perl qw(get_logger :levels);
 use YAML::PP;
 
@@ -37,6 +38,8 @@ sub opt_spec {
     return ( 
         [ "arg=s@"  => "script argument. run 'cme run <script> -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
+        [ "foreach=s" => "Run script in several directories. The list of directories "
+          . "must be passed as a single argument, i.e. --foreach 'foo bar'" ],
         [ "commit|c:s" => "commit change with passed message" ],
         [ "cat" => "Show the script file" ],
         [ "no-commit|nc!" => "skip commit to git" ],
@@ -360,7 +363,38 @@ sub execute {
 
     $opt->{_verbose} = 'Loader' if $opt->{verbose};
 
-    $self->run_script ($opt, $app_args, $script_data, \%user_args);
+    my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
+    my $app = $script_data->{app};
+    if ($opt->{foreach} and $appli_info->{$app}{_category} ne 'application') {
+        die "Cannot use --foreach option with $app. This option can only be used with ".
+            join(' ', $categories->{application}->@*). ". Check your cme script.\n";
+    }
+
+    if ($opt->{foreach}) {
+        my @dirs = $opt->{foreach} eq '-' ? <STDIN> : split /\s+/,$opt->{foreach};
+        chomp(@dirs); # cleanup stdin
+        my $start = path('.')->absolute;
+        foreach my $d (@dirs) {
+            my $t_dir = $start->child($d);
+            if (not $t_dir->is_dir) {
+                die "Cannot chdir in $d: not a directory\n";
+            }
+            say "Running script in $t_dir ...";
+            # instance is stored in Config::Model, so the name must be changed
+            $opt->{instance_name} = $d;
+            # instance is persisted in $self, so its ref must be removed
+            delete $self->{_instance};
+            # tell instance where is the config. This avoids a chdir
+            $opt->{root_dir} = $d;
+            $self->run_script ($opt, $app_args, $script_data, {%user_args});
+            # once we're done, remove instance from Model to avoid memory leaks
+            # TODO: use delete_instance method provided by Config::Model from version 2.156
+            delete $self->{_model}{instances}{$d};
+        }
+    }
+    else {
+        $self->run_script ($opt, $app_args, $script_data, \%user_args);
+    }
 
     return;
 }
@@ -456,6 +490,11 @@ __END__
  Available scripts:
  - update-copyright
  - add-me-to-uploaders
+
+ # mass modification
+ $ cme run add-me-to-uploaders --foreach "raku-log raku-zef"
+ # similar result
+ $ echo "raku-*" | cme run add-me-to-uploaders --foreach -
 
 =head1 DESCRIPTION
 
@@ -739,6 +778,21 @@ committed with the passed commit message.
 =head2 no-commit
 
 Don't commit to git (even if the above option is set)
+
+=head2 foreach
+
+Apply the script in specific directories. This option is available
+only when dealing with application (See the list returned by C<cme list>).
+
+For instance, if your directory contains several Debian packages and
+you want to apply the same modification to all packages, you can run
+something like:
+
+   cme run add-me-to-uploaders --foreach "raku-log raku-zef"
+
+or use C<STDIN> to send the package directories:
+
+   ls "raku-*" | cme run add-me-to-uploaders --foreach -
 
 =head2 verbose
 

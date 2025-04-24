@@ -159,7 +159,7 @@ sub instance {
             config_dir      => $opt->{_config_dir},
     );
 
-    foreach my $param (qw/root_dir canonical backup/) {
+    foreach my $param (qw/root_dir canonical backup instance_name/) {
         $instance_args{$param} = $opt->{$param} if defined $opt->{$param};
     }
 
