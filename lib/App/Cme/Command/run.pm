@@ -266,9 +266,10 @@ sub parse_script ($script, $content, $user_args) {
         return $data;
     }
 
+    my $data;
     if ($lines->[0] =~ /Format:\s*yaml/i) {
         my $ypp = YAML::PP->new;
-        my $data = $ypp->load_string($content);
+        $data = $ypp->load_string($content);
         foreach my $key (qw/doc code load var/) {
             next unless defined $data->{$key};
             next if ref $data->{$key} eq 'ARRAY';
@@ -279,13 +280,13 @@ sub parse_script ($script, $content, $user_args) {
         if ($data->{default} and ref $data->{default} ne 'HASH') {
             die "default spec must be a hash ref, not a ", ref $data->{default} // 'scalar', "\n";
         }
-        $data = process_script_vars ($user_args, $data);
-        return $data;
+    }
+    else {
+        $data = parse_script_lines ($script, $lines);
     }
 
-    my $data = parse_script_lines ($script, $lines);
-    $data = process_script_vars ($user_args, $data);
-    return $data;
+    my $processed_data = process_script_vars ($user_args, $data);
+    return $processed_data;
 }
 
 sub commit ($self, $root, $msg) {
