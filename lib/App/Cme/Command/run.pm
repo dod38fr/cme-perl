@@ -323,6 +323,17 @@ sub get_script_data ($self, $script_name, $opt = {}) {
     return ($script_file, parse_script($script_file, $content, \%user_args));
 }
 
+sub run_script_as_code ($self, $script_name, $script_file) {
+    splice @ARGV, 0,2;          # remove 'run script' arguments
+    my $done = eval $script_file->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+    if (ref $done eq 'HASH') {
+        warn "script $script_name returns a hash but it's processed as a plain script.",
+            " This may not be what you want\n";
+    }
+    die "Error in script $script_name: $@\n" unless $done;
+    return;
+}
+
 sub execute {
     my ($self, $opt, $app_args) = @_;
 
@@ -343,16 +354,9 @@ sub execute {
     }
 
     if (not defined $script_data->{app}) {
-        splice @ARGV, 0,2; # remove 'run script' arguments
-        my $done = eval $script_file->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
-        if (ref $done eq 'HASH') {
-            warn "script $script_name returns a hash but it's processed as a plain script.",
-                " This may not be what you want\n";
-        }
-        die "Error in script $script_name: $@\n" unless $done;
+        $self->run_script_as_code ($script_name, $script_file);
         return;
     }
-
 
     my $commit_msg = $script_data->{commit_msg};
 
