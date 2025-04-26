@@ -308,9 +308,9 @@ sub execute {
 
     return unless $self->check_script_arguments($opt, $script_name);
 
-    my $script = $self->find_script_file($script_name);
+    my $script_file = $self->find_script_file($script_name);
 
-    my $content = $script->slurp_utf8;
+    my $content = $script_file->slurp_utf8;
 
     if ($opt->{cat}) {
         print $content;
@@ -320,9 +320,9 @@ sub execute {
     # parse variables passed on command line
     my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
-    if ($content =~ m/^#!/ and -x $script) {
+    if ($content =~ m/^#!/ and -x $script_file) {
         splice @ARGV, 0,2; # remove 'run script' arguments
-        my $done = eval $script->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
+        my $done = eval $script_file->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
         if (ref $done eq 'HASH') {
             warn "script $script_name returns a hash but it's processed as a plain script.",
                 " This may not be what you want\n";
@@ -331,7 +331,7 @@ sub execute {
         return;
     }
 
-    my $script_data = parse_script($script, $content, \%user_args);
+    my $script_data = parse_script($script_file, $content, \%user_args);
     my $commit_msg = $script_data->{commit_msg};
 
     if ($opt->doc) {
@@ -341,7 +341,8 @@ sub execute {
     }
 
     if (my @missing = sort keys $script_data->{missing}->%*) {
-        die "Error: Missing variables '". join("', '",@missing)."' in command arguments for script $script\n"
+        die "Error: Missing variables '". join("', '",@missing)
+            ."' in command arguments for script $script_file\n"
             ."Please use option '".join(' ', map { "-arg $_=xxx"} @missing)."'\n";
     }
 
