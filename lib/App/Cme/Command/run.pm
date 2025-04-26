@@ -898,6 +898,14 @@ This script can also be written using multi line instructions:
  load: ! source Vcs-Browser="$browser" Vcs-Git="$url"
  commit: control: update Vcs-Browser and Vcs-Git
 
+=head2 personal scripts
+
+You may create your own scripts in C<~/.cme/scripts>. Here's an example:
+
+ $ cat ~/.cme/scripts/set-any-arch
+ app: dpkg-control
+ load: binary:~".*" Architecture=any
+
 =head1 SEE ALSO
 
 L<cme>

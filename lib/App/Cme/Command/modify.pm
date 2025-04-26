@@ -118,6 +118,45 @@ Show effect of the modify instructions.
 
 =back
 
+=head1 Examples
+
+=head2 Set identity file for a domain
+
+ $ cme modify ssh 'Host:"*.work.com" IdentityFile:="~/.ssh/id_work"'
+
+This example requires L<Config::Model::OpenSsh>.
+
+=head2 Update Dpkg file
+
+To set C<Architecture> parameter for all binary packages:
+
+ $ cme modify dpkg-control 'binary:~".*" Architecture=any'
+
+This achieves the same result but can be slower since all package
+files are read:
+
+ $ cme modify dpkg 'control binary:~".*" Architecture=any'
+
+This Debian example requires C<libconfig-model-dpkg-perl>
+
+=head1 Re-use your one-liners
+
+These modification instructions can be re-used once they are stored in
+a run script (See L<App::Cme::Command::run> for details).
+
+The following one-liner:
+
+ $ cme modify dpkg 'control binary:~".*" Architecture=any'
+
+can be stored in C<~/.cme/scripts/set-arch-as-any>:
+
+  app: dpkg-control
+  load: binary:~".*" Architecture=any
+
+and then run with:
+
+  $ cme run set-arch-as-any
+
 =head1 SEE ALSO
 
 L<cme>
