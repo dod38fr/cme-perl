@@ -80,11 +80,6 @@ Example:
    cme modify dpkg 'source format="(3.0) quilt"'
    cme modify multistrap my_mstrap.conf 'sections:base source="http://ftp.fr.debian.org"'
 
-Some application like dpkg-copyright allows you to override the
-configuration file name. You must then use C<-file> option:
-
-   cme modify dpkg-copyright -file ubuntu/copyright 'Comment="Silly example"'
-
 Finding the right instructions to perform a modification may be
 difficult when starting from scratch.
 
