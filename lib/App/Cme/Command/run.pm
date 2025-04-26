@@ -398,32 +398,41 @@ sub execute {
     }
 
     # parse variables passed on command line
-    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
     if ($opt->{foreach}) {
-        my @dirs = $opt->{foreach} eq '-' ? <STDIN> : split /\s+/,$opt->{foreach};
-        chomp(@dirs); # cleanup stdin
-        my $start = path('.')->absolute;
-        foreach my $d (@dirs) {
-            my $t_dir = $start->child($d);
-            if (not $t_dir->is_dir) {
-                die "Cannot chdir in $d: not a directory\n";
-            }
-            say "Running script in $t_dir ...";
-            # instance is stored in Config::Model, so the name must be changed
-            $opt->{instance_name} = $d;
-            # instance is persisted in $self, so its ref must be removed
-            delete $self->{_instance};
-            # tell instance where is the config. This avoids a chdir
-            $opt->{root_dir} = $d;
-            $self->run_script ($opt, $app_args, $script_data, {%user_args});
-            # once we're done, remove instance from Model to avoid memory leaks
-            # TODO: use delete_instance method provided by Config::Model from version 2.156
-            delete $self->{_model}{instances}{$d};
-        }
+        $self->run_foreach_loop($opt,$app_args, $script_data);
     }
     else {
+        my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
         $self->run_script ($opt, $app_args, $script_data, \%user_args);
+    }
+
+    return;
+}
+
+sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
+    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
+
+    my @dirs = $opt->{foreach} eq '-' ? <STDIN> : split /\s+/,$opt->{foreach};
+    chomp(@dirs);               # cleanup stdin
+    my $start = path('.')->absolute;
+
+    foreach my $d (@dirs) {
+        my $t_dir = $start->child($d);
+        if (not $t_dir->is_dir) {
+            die "Cannot run script in $d: not a directory\n";
+        }
+        say "Running script in $t_dir ...";
+        # instance is stored in Config::Model, so the name must be changed
+        $opt->{instance_name} = $d;
+        # instance is persisted in $self, so its ref must be removed
+        delete $self->{_instance};
+        # tell instance where is the config. This avoids a chdir
+        $opt->{root_dir} = $d;
+        $self->run_script ($opt, $app_args, $script_data, {%user_args});
+        # once we're done, remove instance from Model to avoid memory leaks
+        # TODO: use delete_instance method provided by Config::Model from version 2.156
+        delete $self->{_model}{instances}{$d};
     }
 
     return;
