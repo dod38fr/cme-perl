@@ -72,10 +72,15 @@ sub check_script_arguments ($self, $opt, $script_name) {
         my @scripts;
         foreach my $path ( @script_paths ) {
             next unless $path->is_dir;
-            push @scripts, grep { ! /~$/ } $path->children();
+            push @scripts, map {$_->basename} grep { ! /~$/ } $path->children();
         }
         say $opt->{list} ? "Available scripts:" : "Missing script argument. Choose one of:";
-        say map {"- ".$_->basename."\n"} @scripts ;
+        foreach my $script_path (sort @scripts) {
+            my $data = $self->get_script_data($script_path);
+            printf("- %s (app: %s)\n",$script_path, $data->{app} );
+        }
+        say "";
+        say "Run 'cme run <script> -doc' to get more details on a script.";
         return 0;
     }
     return 1;
