@@ -108,8 +108,7 @@ See L<cme/"Global Options">.
 
 =over
 
-=item -savek
-
+=item -save
 
 Force a save even if no change was done. Useful to reformat the configuration file.
 
