@@ -302,6 +302,22 @@ sub commit ($self, $root, $msg) {
     return;
 }
 
+# returns: script file name, script data if script is *not* Perl code
+sub get_script_data ($self, $script_name, $opt = {}) {
+    my $script_file = $self->find_script_file($script_name);
+
+    my $content = $script_file->slurp_utf8;
+
+    if ($content =~ m/^#!/ and -x $script_file) {
+        return $script_file, {};
+    }
+
+    # parse variables passed on command line
+    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
+
+    return ($script_file, parse_script($script_file, $content, \%user_args));
+}
+
 sub execute {
     my ($self, $opt, $app_args) = @_;
 
@@ -314,19 +330,14 @@ sub execute {
 
     return unless $self->check_script_arguments($opt, $script_name);
 
-    my $script_file = $self->find_script_file($script_name);
-
-    my $content = $script_file->slurp_utf8;
+    my ($script_file, $script_data) = $self->get_script_data($script_name, $opt);
 
     if ($opt->{cat}) {
-        print $content;
+        print $script_file->slurp_utf8;
         return;
     }
 
-    # parse variables passed on command line
-    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
-
-    if ($content =~ m/^#!/ and -x $script_file) {
+    if (not defined $script_data->{app}) {
         splice @ARGV, 0,2; # remove 'run script' arguments
         my $done = eval $script_file->slurp_utf8."\n1;\n"; ## no critic (BuiltinFunctions::ProhibitStringyEval)
         if (ref $done eq 'HASH') {
@@ -337,7 +348,7 @@ sub execute {
         return;
     }
 
-    my $script_data = parse_script($script_file, $content, \%user_args);
+
     my $commit_msg = $script_data->{commit_msg};
 
     if ($opt->doc) {
@@ -376,6 +387,9 @@ sub execute {
         die "Cannot use --foreach option with $app. This option can only be used with ".
             join(' ', $categories->{application}->@*). ". Check your cme script.\n";
     }
+
+    # parse variables passed on command line
+    my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
     if ($opt->{foreach}) {
         my @dirs = $opt->{foreach} eq '-' ? <STDIN> : split /\s+/,$opt->{foreach};
