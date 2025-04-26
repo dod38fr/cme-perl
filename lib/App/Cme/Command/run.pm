@@ -286,6 +286,11 @@ sub parse_script ($script, $content, $user_args) {
     }
 
     my $processed_data = process_script_vars ($user_args, $data);
+
+    if (not $processed_data->{app}) {
+        die "Missing 'app' parameter in script $script.\n"
+    }
+
     return $processed_data;
 }
 

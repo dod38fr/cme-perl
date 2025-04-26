@@ -382,6 +382,12 @@ foreach my $test ( @script_tests) {
 # test failure case for run script
 my @bad_script_tests = (
     {
+        label => "line ".__LINE__.": missing app",
+        script => [ 'load ! MY_HOSTID=dontcare'],
+        args => [],
+        error_regexp => qr/Missing 'app' parameter in script/
+    },
+    {
         label => "line ".__LINE__.": modification with a Perl script run by cme run with missing arg",
         script => [ "app:  popcon", 'load ! MY_HOSTID=\$name$name'],
         args => [],
@@ -417,7 +423,7 @@ my @bad_script_tests = (
 foreach my $test ( @bad_script_tests) {
     subtest $test->{label} => sub {
         $conf_file->spew_utf8(@orig);
-        my $script = $wr_dir->child('my-script.cme');
+        my $script = $wr_dir->child('my-script'.$i++.'.cme');
         $script->spew_utf8( map { "$_\n"} @{$test->{script}});
 
         my $cmd = [
