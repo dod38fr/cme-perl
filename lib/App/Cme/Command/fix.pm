@@ -10,8 +10,6 @@ use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
 
-use Config::Model::ObjTreeScanner;
-
 sub validate_args {
     my ($self, $opt, $args) = @_;
     $self->check_unknown_args($args);
@@ -23,7 +21,6 @@ sub opt_spec {
     my ( $class, $app ) = @_;
     return ( 
         [ "from=s@"  => "fix only a subset of a configuration tree" ],
-        [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "filter=s" => "pattern to select the element name to be fixed"],
         $class->cme_global_options,
     );
