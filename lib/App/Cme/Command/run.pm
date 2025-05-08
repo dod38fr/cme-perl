@@ -434,6 +434,8 @@ sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
 
 sub run_script ($self, $opt, $app_args, $script_data, $user_args){
     my $commit_msg = $script_data->{commit_msg};
+    my $stashed;
+
     # check if workspace and index are clean
     if ($commit_msg and not $opt->{no_commit}) {
         ## no critic(InputOutput::ProhibitBacktickOperators)
@@ -441,8 +443,11 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
         if ($?) {
             die "git status command failed: $?\n";
         }
-        die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
-            if $r;
+        if ($r) {
+            system(qw/git stash push --quiet --message/, "cme run auto stash") == 0
+                or die "git stash push failed: $?\n";
+            $stashed = 1;
+        };
     }
 
     # call loads
@@ -465,16 +470,21 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
         $script_data->{sub}->($root, $user_args);
     }
 
-    unless ($inst->needs_save) {
+    if ($inst->needs_save) {
+        $self->save($inst,$opt) ;
+
+        # commit if needed
+        if ($commit_msg and not $opt->{no_commit}) {
+            $self->commit($root, $commit_msg);
+        }
+    } else {
         say "No change were applied";
-        return;
     }
 
-    $self->save($inst,$opt) ;
 
-    # commit if needed
-    if ($commit_msg and not $opt->{no_commit}) {
-        $self->commit($root, $commit_msg);
+    if ($stashed) {
+        system(qw/git stash pop --quiet/) == 0
+            or die "git stash pop failed: $?\n";
     }
 
     return;
@@ -670,8 +680,9 @@ Specify Perl code to run. See L</code section> for details.
 =item commit
 
 Specify that the change must be committed with the passed commit
-message. When this option is used, C<cme> raises an error if used on a
-non-clean workspace. This option works only with L<git>.
+message. When this option is used, C<cme> stashes and restores all
+modifications if used on a non-clean workspace. This option works only
+with L<git>.
 
 Strings like C<{{ load path }}> are substituted with a value extracted
 from configuration tree with the specified load path. See
