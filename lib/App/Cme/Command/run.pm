@@ -302,7 +302,8 @@ sub parse_script ($script, $content, $user_args) {
 sub commit ($self, $root, $msg) {
     $msg =~ s/\{\{(.*?)\}\}/$root->grab_value($1)/e;
 
-    system(qw/git commit -a -m/, $msg);
+    system(qw/git commit -a -m/, $msg) == 0
+        or die "git commit failed: $?\n";
 
     return;
 }
