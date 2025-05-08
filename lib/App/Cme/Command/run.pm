@@ -429,14 +429,14 @@ sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
         $opt->{instance_name} = $d;
         # instance is persisted in $self, so its ref must be removed
         delete $self->{_instance};
-        # tell instance where is the config. This avoids a chdir
-        $opt->{root_dir} = $d;
+        chdir $t_dir->stringify;
         $self->run_script ($opt, $app_args, $script_data, {%user_args});
         # once we're done, remove instance from Model to avoid memory leaks
         # TODO: use delete_instance method provided by Config::Model from version 2.156
         delete $self->{_model}{instances}{$d};
     }
 
+    chdir $start->stringify;
     return;
 }
 
