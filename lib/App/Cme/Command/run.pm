@@ -413,8 +413,9 @@ sub execute {
 sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
     my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
-    my @dirs = $opt->{foreach} eq '-' ? <STDIN> : split /\s+/,$opt->{foreach};
-    chomp(@dirs);               # cleanup stdin
+    my @dirs = map { chomp ; split /\s+/; }
+        ($opt->{foreach} eq '-' ? <STDIN> : ($opt->{foreach}));
+
     my $start = path('.')->absolute;
 
     foreach my $d (@dirs) {
