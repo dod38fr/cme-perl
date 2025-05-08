@@ -381,14 +381,6 @@ sub execute {
         $commit_msg = $opt->{commit};
     }
 
-    # check if workspace and index are clean
-    if ($commit_msg and not $opt->{no_commit}) {
-        ## no critic(InputOutput::ProhibitBacktickOperators)
-        my $r = `git status --porcelain --untracked-files=no`;
-        die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
-            if $r;
-    }
-
     $opt->{_verbose} = 'Loader' if $opt->{verbose};
 
     my ( $categories, $appli_info, $appli_map ) = Config::Model::Lister::available_models;
@@ -441,6 +433,18 @@ sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
 }
 
 sub run_script ($self, $opt, $app_args, $script_data, $user_args){
+    my $commit_msg = $script_data->{commit_msg};
+    # check if workspace and index are clean
+    if ($commit_msg and not $opt->{no_commit}) {
+        ## no critic(InputOutput::ProhibitBacktickOperators)
+        my $r = `git status --porcelain --untracked-files=no`;
+        if ($?) {
+            die "git status command failed: $?\n";
+        }
+        die "Cannot run commit command in a non clean repo. Please commit or stash pending changes: $r\n"
+            if $r;
+    }
+
     # call loads
     my ($model, $inst, $root) = $self->init_cme($opt,$app_args);
     foreach my $load_str ($script_data->{load}->@*) {
@@ -467,8 +471,6 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
     }
 
     $self->save($inst,$opt) ;
-
-    my $commit_msg = $script_data->{commit_msg};
 
     # commit if needed
     if ($commit_msg and not $opt->{no_commit}) {
