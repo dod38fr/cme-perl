@@ -67,6 +67,8 @@ Checks the content of the configuration file of an application (and show
 warnings if needed), update deprecated parameters (old value are saved
 to new parameters) and save the new configuration. See L<App::Cme::Command::migrate>.
 
+This command is equivalent to C<cme modify xxx -save>.
+
 For more details, see L<Config::Model::Value/Upgrade>
 
 =head1 Common options
