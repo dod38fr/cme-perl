@@ -21,7 +21,7 @@ use Config::Model 2.148 qw/initialize_log4perl/;
 
 # WARNING: these tests check the output of cme command. This output is
 # created with Log4Perl to User class with INFO level.
-# if present, ~/.log4config-model must containt the lines:
+# if present, ~/.log4config-model must contain the lines:
 #     log4perl.logger.User = INFO, PlainMsgOnScreen
 #     log4perl.additivity.User = 0
 
