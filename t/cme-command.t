@@ -196,6 +196,17 @@ subtest "modification with utf8 parameter" => sub {
         "updated MY_HOSTID with weird utf8 hostname" ,{ encoding => 'UTF-8' };
 };
 
+subtest "migrate" => sub {
+    $conf_file->spew_utf8(@orig);
+    my @test_cmd = (qw/migrate popcon -root-dir/, $wr_dir->stringify );
+    my $ok = test_app( 'App::Cme' => \@test_cmd );
+    is( $ok->error, undef, 'threw no exceptions');
+    is( $ok->exit_code, 0, 'all went well' ) or diag("Failed command @test_cmd");
+
+    file_contents_like $conf_file->stringify,   qr/PARTICIPATE="yes"/,
+        "«true» value was changed to «yes»" ;
+};
+
 my $expect_namefoobar = << 'EOF';
 
 Changes applied to popcon configuration:
@@ -451,7 +462,7 @@ __END__
 
 MY_HOSTID="aaaaaaaaaaaaaaaaaaaa"
 # we participate
-PARTICIPATE="yes"
+PARTICIPATE="true"
 USEHTTP="yes" # always http
 DAY="6"
 

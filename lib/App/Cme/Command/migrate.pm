@@ -45,6 +45,9 @@ sub execute {
 
     $root->migrate;
 
+    # force save to reformat or apply minor changes brought by model
+    $opt->{save} = 1 ;
+
     $self->save($inst,$opt) ;
     return;
 }
