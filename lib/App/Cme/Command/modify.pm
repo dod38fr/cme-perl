@@ -110,7 +110,10 @@ See L<cme/"Global Options">.
 
 =item -save
 
-Force a save even if no change was done. Useful to reformat the configuration file.
+Force a save even if no change was done by user (although some minor
+change like migrating deprecated values can be done by cme). Useful to
+minimize changes and reformat the configuration file.  Running C<cme
+modify xxx -save> is equivalent to running C<cme migrate xxx>.
 
 =item -verbose
 
