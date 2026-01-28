@@ -299,9 +299,14 @@ sub parse_script ($script, $content, $user_args) {
     return $processed_data;
 }
 
-sub commit ($self, $root, $msg) {
+sub process_commit_message($self, $root, $values, $msg) {
+    # replace strings like "{{ config_load_path }}" in $msg
     $msg =~ s/\{\{(.*?)\}\}/$root->grab_value($1)/e;
 
+    return $msg;
+}
+
+sub commit ($self, $msg) {
     system(qw/git commit -a -m/, $msg) == 0
         or die "git commit failed: $?\n";
 
@@ -475,7 +480,10 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
 
         # commit if needed
         if ($commit_msg and not $opt->{no_commit}) {
-            $self->commit($root, $commit_msg);
+            my $processed_msg = $self->process_commit_message(
+                $root, $script_data->{values}, $commit_msg
+            );
+            $self->commit($processed_msg);
         }
     } else {
         say "No change were applied";
