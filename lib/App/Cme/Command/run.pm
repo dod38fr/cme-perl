@@ -303,6 +303,9 @@ sub process_commit_message($self, $root, $values, $msg) {
     # replace strings like "{{ config_load_path }}" in $msg
     $msg =~ s/\{\{(.*?)\}\}/$root->grab_value($1)/e;
 
+    # replace strings like "$value" in $msg
+    $msg =~ s/\$(\w+)/$values->{$1}/eg;
+
     return $msg;
 }
 
@@ -705,6 +708,19 @@ yields this commit message:
 
     declare compliance with policy 4.7.0
 
+String like C<$some_value> are with substituted with a value coming
+from an environment variable, a script argument or a value defined as
+a C<var> line.
+
+For example, this specification:
+
+  var: $var{close_str} = defined $args{closes} ? " (Closes: #$args{closes})" : ""
+  commit: set $DEBEMAIL as Maintainer$close_str
+
+invoked with argument C<-arg closes=1234>, yields this commit message:
+
+  set dod@example.com as Maintainer (Closes: #1234)
+
 =back
 
 All instructions can use variables like C<$stuff> whose value can be
@@ -731,6 +747,8 @@ Here's an example from L<libconfig-model-dpkg-perl scripts|https://salsa.debian.
   app: dpkg-control
   load: source Uploaders:.insort("$DEBFULLNAME <$DEBEMAIL>")
   commit: add $DEBEMAIL to Uploaders
+
+You can find other examples on L<script directory of libconfig-model-dpkg-perl|https://salsa.debian.org/perl-team/modules/packages/libconfig-model-dpkg-perl/-/blob/master/lib/Config/Model/scripts/>
 
 =head2 Code section
 
