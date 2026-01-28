@@ -670,8 +670,8 @@ option. Reading a value from C<%args> which is not set by user
 triggers a missing option error. Use C<exists> if you need to test if
 a argument was set by user:
 
-    var: $var{foo} = exists $var{bar} ? $var{bar} : 'default' # good
-    var: $var{foo} = $var{bar} || 'default' # triggers a "missing arg" error
+    var: $var{foo} = exists $args{bar} ? $args{bar} : 'default' # good
+    var: $var{foo} = $args{bar} || 'default' # triggers a "missing arg" error
 
 =item load
 
