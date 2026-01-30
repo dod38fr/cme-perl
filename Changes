@@ -1,5 +1,20 @@
 {{$NEXT}}
 
+1.044 2026-01-30
+
+  New feature:
+    * run: allow substitution of variables in commit message
+
+  Bug fix:
+    * migrate: fix bug where migrate subcommand did not always save file
+
+  Doc:
+    * all: update pod documentation, remove most mentions of late
+      multistrap project
+    * README: remove mention of *recent* (2016) Debian package
+    * run: fix misleading doc about var parameter
+    * modify: update doc of -save option
+
 1.043 2025-05-08
 
   New feature:
