@@ -92,9 +92,15 @@ Narrows down the search to:
 
 =item element
 
+The element name (e.g. C<Host> for ssh model)
+
 =item value
 
+The element value
+
 =item key
+
+A hash key (e.g. key of C<Match> element for ssh model)
 
 =item summary
 
@@ -114,10 +120,8 @@ value help text
 
 Example:
 
- $ cme search multistrap my_mstrap.conf -search http -narrow value
- sections:base source -> 'http://ftp.fr.debian.org'
- sections:debian source -> 'http://ftp.uk.debian.org/debian'
- sections:toolchains source -> 'http://www.emdebian.org/debian'
+ $ cme search ssh --search dod -narrow value
+ Host:"*.debian.org" User -> 'dod'
 
 =head1 Common options
 

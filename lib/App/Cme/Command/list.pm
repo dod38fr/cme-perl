@@ -15,7 +15,7 @@ Show a list all applications where a model is available. This list depends on
 installed Config::Model modules. Applications are divided in 3 categories:
 - system: for system wide applications (e.g. daemon like sshd)
 - user: for user applications (e.g. ssh configuration)
-- application: misc application like multistrap or Debian packaging
+- application: misc application like Debian packaging
 EOD
 }
 

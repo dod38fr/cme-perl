@@ -35,9 +35,8 @@ __END__
   # edit ~/.ssh/config (with Config::Model::OpenSsh)
   cme edit ssh
 
-  # just check the validity of a file. Both commands are equivalent
-  cme check multistrap file.conf
-  cme check multistrap -file file.conf
+  # check validity
+  cme check dpkg
 
   # check dpkg files, update deprecated parameters and save
   cme migrate dpkg
@@ -51,14 +50,11 @@ __END__
   # likewise with an application that accepts file override
   cme modify dpkg-copyright 'Comment="Modified with cme"'
 
-  # edit a file (file name specification is mandatory here)
-  cme edit multistrap my.conf
-
   # map conf data to a fuse file system
-  cme fusefs multistrap my.conf -d fuse_dir
-
-  # likewise for dpkg data
-  cme fusefs dpkg -d fuse_dir
+  cme fusefs dpkg-copyright -d fuse_dir
+  $ ls -l fuse_dir/License/LGPL-2.1+/text
+  -rw-r--r-- 1 domi domi 391 30 Jan 19:00 fuse_dir/License/LGPL-2.1+/text
+  $ fusermount -u fuse_dir
 
   # list all available applications (depends on your installation)
   cme list
@@ -76,7 +72,7 @@ is the most simple case. For instance:
 
   sudo cme check popcon
 
-Some application like C<multistrap> have no constraint on the
+Some application like the late C<multistrap> have no constraint on the
 configuration file name and will require you to specify your
 configuration file name:
 
@@ -91,12 +87,12 @@ or
 The configuration of an application can take different forms. Either
 several files (like debian packages), a single file with a predefined
 file (popcon), or a single file with an arbitrary file name
-(multistrap).
+(like the late multistrap).
 
-When needed the configuration file name is specified as the 3rd command
-argument, i.e. C<cme command application file_name>. This applies if the
-application requires a configuration file name (like multistrap), or if
-the application allows configuration file override.
+When needed the configuration file name is specified as the 3rd
+command argument, i.e. C<cme command application file_name>. This
+applies if the application requires a configuration file name to edit,
+or if the application allows configuration file override.
 
 =head1 Main commands
 
@@ -172,7 +168,7 @@ For model that support it, specify an alternate file to read and write the
 configuration.
 
 You can use this option for model that require the target file to be
-specified (e.g. multitrap model), but file can in this case be also
+specified (e.g. the late multitrap model). A file can also be
 specified with the 4th command argument. E.g. these 2 commands have
 the same effect:
 
@@ -181,7 +177,7 @@ the same effect:
 
 =item -force-load
 
-Load file even if error are found in data. Bad data are discarded
+Load file even if errors are found in data. Bad data is discarded
 
 =item -canonical
 

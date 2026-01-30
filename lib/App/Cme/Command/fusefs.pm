@@ -119,13 +119,13 @@ Use this option to debug fuse problems.
 
 =item -dir-char
 
-Fuse will fail if an element name or key name contains '/'. You can specify a
+Fuse fails when an element name or key name contains '/'. You can specify a
 substitution string to replace '/' in the fused dir. Default is C<< <slash> >>.
 
 =back
 
 =head1 SEE ALSO
 
-L<cme>
+L<cme>, L<fusermount>
 
 =cut

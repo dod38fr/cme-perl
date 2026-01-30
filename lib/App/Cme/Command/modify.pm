@@ -77,8 +77,8 @@ These command must follow the syntax defined in L<Config::Model::Loader>
 
 Example:
 
-   cme modify dpkg 'source format="(3.0) quilt"'
-   cme modify multistrap my_mstrap.conf 'sections:base source="http://ftp.fr.debian.org"'
+   cme modify dpkg 'control source format="(3.0) quilt"'
+   cme modify ssh 'Host:"*.debian.org" User=dod'
 
 Finding the right instructions to perform a modification may be
 difficult when starting from scratch.

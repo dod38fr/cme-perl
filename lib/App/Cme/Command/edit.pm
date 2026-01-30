@@ -119,9 +119,6 @@ __END__
   # edit ~/.ssh/config (requires Config::Model::OpenSsh)
   cme edit ssh
 
-  # edit a file (file name specification is mandatory here)
-  cme edit multistrap my.conf
-
 =head1 DESCRIPTION
 
 Edit a configuration. By default, a Tk GUI will be opened if C<Config::Model::TkUI> is
