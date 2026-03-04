@@ -58,13 +58,15 @@ sub execute {
             . " model has no provision for update";
     }
 
+    # remove undef values or empty strings. Literal '0' are not
+    # expected here
+    say join("\n", grep {$_} @msgs );
+
     if ($opt->{edit}) {
-        say join("\n", grep {defined $_} @msgs );
         $self->run_tk_ui ( $inst, $opt);
     }
     else {
         $self->save($inst,$opt) ;
-        say join("\n", grep {defined $_} @msgs );
     }
 
     return;
