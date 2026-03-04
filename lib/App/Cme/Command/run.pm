@@ -39,7 +39,8 @@ sub opt_spec {
         [ "arg=s@"  => "script argument. run 'cme run <script> -doc' for possible arguments" ],
         [ "backup:s"  => "Create a backup of configuration files before saving." ],
         [ "foreach=s" => "Run script in several directories. The list of directories "
-          . "must be passed as a single argument, i.e. --foreach 'foo bar'" ],
+          . "must be passed as a single argument, i.e. --foreach 'foo bar'. If this "
+          . "argument is '-', the list is taken from STDIN."],
         [ "commit|c:s" => "commit change with passed message" ],
         [ "cat" => "Show the script file" ],
         [ "no-commit|nc!" => "skip commit to git" ],
