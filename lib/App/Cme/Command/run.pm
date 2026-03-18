@@ -434,8 +434,7 @@ sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
         chdir $t_dir->stringify;
         $self->run_script ($opt, $app_args, $script_data, {%user_args});
         # once we're done, remove instance from Model to avoid memory leaks
-        # TODO: use delete_instance method provided by Config::Model from version 2.156
-        delete $self->{_model}{instances}{$d};
+        $self->{_model}->delete_instance($d);
     }
 
     chdir $start->stringify;
