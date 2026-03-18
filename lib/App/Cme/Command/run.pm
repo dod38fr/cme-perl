@@ -415,7 +415,8 @@ sub execute {
 sub run_foreach_loop($self, $opt,$app_args, $script_data ) {
     my %user_args = map { split '=',$_,2; } @{ $opt->{arg} };
 
-    my @dirs = map { chomp ; split /\s+/; }
+    ## no critic (BuiltinFunctions::ProhibitComplexMappings)
+    my @dirs = map { chomp; split /\s+/; }
         ($opt->{foreach} eq '-' ? <STDIN> : ($opt->{foreach}));
 
     my $start = path('.')->absolute;
