@@ -1,5 +1,18 @@
 {{$NEXT}}
 
+1.045 2026-03-19
+
+  New feature:
+    * modify command: add "--commit <msg>" option
+
+  Bug fix:
+    * dist.ini: add test requires for Config::Model::Backend::Yaml
+      (closes: #9)
+    * update: fix undef warnings
+
+  Doc:
+    * run: improve "foreach" argument doc
+
 1.044 2026-01-30
 
   New feature:
