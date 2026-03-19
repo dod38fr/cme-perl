@@ -4,7 +4,9 @@ package App::Cme::Common;
 
 use strict;
 use warnings;
-use 5.10.1;
+use v5.20;
+use feature qw/postderef signatures/;
+no warnings qw/experimental::postderef experimental::signatures/;
 
 use Config::Model 2.124 qw/initialize_log4perl/;
 use Config::Model::Lister;
@@ -220,9 +222,7 @@ sub run_tk_ui {
     return;
 }
 
-sub run_shell_ui ($$$) {
-    my ($self, $term_class, $inst) = @_;
-
+sub run_shell_ui ($self, $term_class, $inst) {
     my $shell_ui = $term_class->new (
         root   => $inst->config_root,
         title  => $inst->application . ' configuration',
@@ -250,6 +250,33 @@ sub get_documentation {
         push (@ret ,$s) if $s->title() =~ /DESCRIPTION|USAGE|OPTIONS|EXIT/;
     }
     return join ("", map { Pod::POM::View::Text->print($_)} @ret) . "Options:\n";;
+}
+
+sub commit ($self, $msg) {
+    system(qw/git commit -a -m/, $msg) == 0
+        or die "git commit failed: $?\n";
+
+    return;
+}
+
+sub autostash ($self) {
+    ## no critic(InputOutput::ProhibitBacktickOperators)
+    my $r = `git status --porcelain --untracked-files=no`;
+    if ($?) {
+        die "git status command failed: $?\n";
+    }
+    if ($r) {
+        system(qw/git stash push --quiet --message/, "cme run auto stash") == 0
+            or die "git stash push failed: $?\n";
+        return 1;
+    }
+    return 0;
+}
+
+sub pop_stash ($self) {
+    system(qw/git stash pop --quiet/) == 0
+        or die "git stash pop failed: $?\n";
+    return;
 }
 
 1;

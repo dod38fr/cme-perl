@@ -310,13 +310,6 @@ sub process_commit_message($self, $root, $values, $msg) {
     return $msg;
 }
 
-sub commit ($self, $msg) {
-    system(qw/git commit -a -m/, $msg) == 0
-        or die "git commit failed: $?\n";
-
-    return;
-}
-
 # returns: script file name, script data if script is *not* Perl code
 sub get_script_data ($self, $script_name, $opt = {}) {
     my $script_file = $self->find_script_file($script_name);
@@ -445,18 +438,9 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
     my $commit_msg = $script_data->{commit_msg};
     my $stashed;
 
-    # check if workspace and index are clean
+    # stash pending work
     if ($commit_msg and not $opt->{no_commit}) {
-        ## no critic(InputOutput::ProhibitBacktickOperators)
-        my $r = `git status --porcelain --untracked-files=no`;
-        if ($?) {
-            die "git status command failed: $?\n";
-        }
-        if ($r) {
-            system(qw/git stash push --quiet --message/, "cme run auto stash") == 0
-                or die "git stash push failed: $?\n";
-            $stashed = 1;
-        };
+        $stashed = $self->autostash;
     }
 
     # call loads
@@ -495,8 +479,7 @@ sub run_script ($self, $opt, $app_args, $script_data, $user_args){
 
 
     if ($stashed) {
-        system(qw/git stash pop --quiet/) == 0
-            or die "git stash pop failed: $?\n";
+        $self->pop_stash;
     }
 
     return;
