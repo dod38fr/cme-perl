@@ -7,7 +7,7 @@ use warnings;
 use v5.20;
 use File::HomeDir;
 use Path::Tiny;
-use Config::Model;
+use Config::Model 2.156; # for delete_instance
 use Config::Model::Lister;
 use Log::Log4perl qw(get_logger :levels);
 use YAML::PP;
