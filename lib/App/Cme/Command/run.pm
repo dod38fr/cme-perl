@@ -18,6 +18,7 @@ use App::Cme -command ;
 
 use base qw/App::Cme::Common/;
 use feature qw/postderef signatures/;
+no warnings qw/experimental::postderef experimental::signatures/;
 
 my $__test_home = '';
 # used only by tests
