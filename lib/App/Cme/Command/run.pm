@@ -79,7 +79,8 @@ sub check_script_arguments ($self, $opt, $script_name) {
         say $opt->{list} ? "Available scripts:" : "Missing script argument. Choose one of:";
         foreach my $script_path (sort @scripts) {
             my $data = $self->get_script_data($script_path);
-            printf("- %s (app: %s)\n",$script_path, $data->{app} );
+            my $app_info = $data->{app} ? sprintf(" (app %s)", $data->{app}) : "";
+            printf("- %s%s\n",$script_path, $app_info );
         }
         say "";
         say "Run 'cme run <script> -doc' to get more details on a script.";
