@@ -319,7 +319,9 @@ sub get_script_data ($self, $script_name, $opt = {}) {
     my $content = $script_file->slurp_utf8;
 
     if ($content =~ m/^#!/ and -x $script_file) {
-        return $script_file, {};
+        my ($app) = $content =~ /# app:\s?(.*?)\n/;
+        my @doc = grep {s/^##\s?//;} split /\n/, $content;
+        return $script_file, {doc => \@doc, app => $app};
     }
 
     # parse variables passed on command line
@@ -358,16 +360,16 @@ sub execute {
         return;
     }
 
-    if (not defined $script_data->{app}) {
-        $self->run_script_as_code ($script_name, $script_file);
-        return;
-    }
-
     my $commit_msg = $script_data->{commit_msg};
 
     if ($opt->doc) {
         say join "\n", $script_data->{doc}->@*;
         say "will commit with message: '$commit_msg'" if $commit_msg;
+        return;
+    }
+
+    if (not defined $script_data->{app}) {
+        $self->run_script_as_code ($script_name, $script_file);
         return;
     }
 
@@ -587,6 +589,10 @@ avoid polluting global namespace, i.e. there's no need to store a
 script using L<cme function|Config::Model/cme> in C</usr/local/bin/>.
 Note that the script must begin with the usual shebang line (C<#!>)
 and be executable.
+
+To help management with C<cme run>, comment lines beginning with C<##>
+are shown as doc (with C<cme run xxx --doc>), comment line beginning
+with C<# app:> indicates the app shown by C<cme run --list> command.
 
 =back
 
