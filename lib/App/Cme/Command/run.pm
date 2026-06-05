@@ -78,7 +78,7 @@ sub check_script_arguments ($self, $opt, $script_name) {
         }
         say $opt->{list} ? "Available scripts:" : "Missing script argument. Choose one of:";
         foreach my $script_path (sort @scripts) {
-            my $data = $self->get_script_data($script_path);
+            my ($file, $data) = $self->get_script_data($script_path);
             my $app_info = $data->{app} ? sprintf(" (app %s)", $data->{app}) : "";
             printf("- %s%s\n",$script_path, $app_info );
         }
